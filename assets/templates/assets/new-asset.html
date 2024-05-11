@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-md-center">
+        <div class="col col-lg-6">
+            <h3 class="text-center">New asset</h3>
+            <form method="POST" action="{% url 'assets:create_asset' %}">
+                {% csrf_token %}
+                <div id="oidcps-list" hx-trigger="load, tickerListChanged from:body" hx-get="{% url 'assets:assets-htmx-api:ticker-list' %}" hx-target="this">
+                </div>
+
+                <button
+                    hx-get="{% url 'assets:assets-htmx-api:ticker_create' %}"
+                    hx-target="#ticker-form-dialog"
+                    hx-trigger="click"
+                    class="btn btn-primary btn-sm float-end">+ add a ticker
+                </button>
+
+                <div id="modal-ticker" class="modal fade">
+                    <div id="ticker-form-dialog" class="modal-dialog" hx-target="this"></div>
+                </div>
+
+                <br>
+                {{ asset_form|crispy  }}
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a href="{% url 'assets:create_asset' %}" class="btn btn-primary">
+                    Clear
+                </a>
+                <a href="{% url 'assets:assets' %}" class="btn btn-secondary">
+                    << Back to assets
+                </a>
+            </form>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block js %}
+    <script src="{% static 'assets/js/dashboard.js' %}"></script>
+{% endblock js %}

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ title }}{% endblock title %}
+
+{% block content %}
+    <div class="row justify-content-md-center">
+        <div class="col text-center">
+            <h3>
+                {% if asset_list %}
+                    Assets
+                {% else %}
+                    Your have no assets.
+                {% endif %}
+            </h3>
+           <br>
+        </div>
+    </div>
+    {% if asset_list %}
+        {% include 'assets/partials/assets_table.html' %}
+    {% endif %}
+    <a href="{% url 'assets:create_asset' %}" class="btn btn-primary btn-sm float-end" role="button">
+        + New asset
+    </a>
+{% endblock %}
