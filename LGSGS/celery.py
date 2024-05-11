@@ -12,7 +12,7 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {
     'update_prices-30-minutes': {
         'task': 'assets.tasks.update_prices',
-        'schedule': 60.0
+        'schedule': 1800.0
     },
 }
 app.conf.timezone = 'UTC'
