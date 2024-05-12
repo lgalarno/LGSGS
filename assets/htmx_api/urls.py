@@ -8,5 +8,6 @@ app_name = 'assets_htmx-api'
 urlpatterns = [
     path('ticker-create/', login_required(views.ticker_create), name="ticker_create"),
     path('ticker-list/', login_required(views.ticker_list), name="ticker-list"),
+    path('asset-list/', login_required(views.asset_list), name="asset-list"),
     # path('ticker-validate/', login_required(views.ticker_validate), name="ticker_validate"),
 ]

@@ -1,10 +1,9 @@
-from django.contrib import messages
-from django.shortcuts import render, redirect, HttpResponse
+from django.shortcuts import render, HttpResponse
+from django.utils import timezone
 
-import yfinance as yf
-
-from assets.forms import AssetForm, TickerForm
-from assets.models import Ticker
+from assets.backend import update_prices, get_refresh_info
+from assets.forms import TickerForm
+from assets.models import Ticker, Asset
 
 
 def ticker_list(request):
@@ -28,6 +27,17 @@ def ticker_create(request):
         # "tickers": Ticker.objects.all(),
     }
     return render(request, 'assets/partials/ticker-form.html', context)
+
+
+def asset_list(request):
+    print('asset_list')
+    qs = Asset.objects.filter(user=request.user)
+    update_prices(qs)
+    context = {
+        'asset_list': qs,
+        **get_refresh_info()
+    }
+    return render(request, 'assets/partials/assets_table.html', context)
 
 #
 # def ticker_validate(request):

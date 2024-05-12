@@ -52,7 +52,7 @@ class AssetForm(forms.ModelForm):
 class AssetUpdateForm(forms.ModelForm):
     class Meta:
         model = Asset
-        fields = ['ticker', 'description', 'quantity', 'price', 'margin']
+        fields = ['ticker', 'description', 'quantity', 'price', 'margin', 'emailed']
 
         labels = {
             "ticker": "Ticker/Symbol",

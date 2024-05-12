@@ -1,9 +1,16 @@
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.views.generic import ListView, UpdateView, DeleteView, DetailView
 
+from django_celery_beat.models import PeriodicTask
+
+from dateutil.relativedelta import relativedelta
+
+from .backend import update_prices, current_price, get_refresh_info
 from .forms import AssetForm, AssetUpdateForm
 from .models import Asset, Ticker
 
@@ -20,6 +27,7 @@ def create_asset(request):
                 instance = form.save(commit=False)
                 instance.ticker = t
                 instance.user = request.user
+                instance.current = current_price(symbol)
                 instance.save()
                 messages.success(request, 'Asset created!')
         else:
@@ -27,7 +35,6 @@ def create_asset(request):
 
     context = {
         "title": "new-asset",
-        # "tickers": Ticker.objects.all(),
         'asset_form': form,
     }
     return render(request, 'assets/new-asset.html', context)
@@ -38,14 +45,22 @@ class AssetListView(LoginRequiredMixin, ListView):
     template_name = 'assets/assets.html'
 
     def get_queryset(self):
-        return Asset.objects.filter(user=self.request.user)
+        qs = Asset.objects.filter(user=self.request.user)
+        update_prices(qs)
+        return qs
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data()
-        context['title'] = 'dashboard'
+        # pt = PeriodicTask.objects.get(name='update_prices-30-minutes')  # name in celery.py
+        # min = 240 - settings.UPDT_INTERVAL
+        # context['update_at'] = pt.last_run_at + relativedelta(minutes=-min)  # -240 min for ETC then + 30min
+        # context['last_updated'] = timezone.now() + relativedelta(minutes=-240)
+        context['title'] = 'assets'
+        context = {**context, **get_refresh_info()}
         return context
 
 
+# TODO add details
 class AssetDetailView(DetailView):
     model = Asset
 

@@ -1,13 +1,18 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load tz %}
+{% get_current_timezone as TIME_ZONE %}
+
 {% block title %}{{ title }}{% endblock title %}
 
 {% block content %}
     <div class="row justify-content-md-center">
         <div class="col text-center">
+        {{ TIME_ZONE }}
             <h3>
                 {% if asset_list %}
                     Assets
+                   
                 {% else %}
                     Your have no assets.
                 {% endif %}
@@ -16,9 +21,12 @@
         </div>
     </div>
     {% if asset_list %}
-        {% include 'assets/partials/assets_table.html' %}
+        <div id="assets_table_htmx">
+            {% include 'assets/partials/assets_table.html' %}
+        </div>
+
     {% endif %}
-    <a href="{% url 'assets:create_asset' %}" class="btn btn-primary btn-sm float-end" role="button">
+    <a href="{% url 'assets:create_asset' %}" class="btn btn-primary btn-sm float-end" role="button" title="Create new asset">
         + New asset
     </a>
 {% endblock %}
