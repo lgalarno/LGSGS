@@ -159,7 +159,7 @@ MEDIA_ROOT = config.get('MEDIA_ROOT', BASE_DIR / '..' / "media")
 # LOGIN/LOGOUT REDIRECT
 ######################################################################
 LOGOUT_REDIRECT_URL = '/'
-LOGIN_URL = '/'
+LOGIN_URL = '/assets'
 
 ######################################################################
 # CRISPY_FORMS

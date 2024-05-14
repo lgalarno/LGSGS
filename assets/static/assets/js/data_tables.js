@@ -3,7 +3,8 @@ $(function() {
     // DataTable
     /////////////////////////////////////////////////////////////
     $('#data_table').DataTable({
-        searching: true,
+        searching: false,
+        bPaginate: false,
         order: [],
         processing: true,
         deferRender: true,
