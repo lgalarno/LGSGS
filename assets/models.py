@@ -71,6 +71,7 @@ class Asset(models.Model):
     user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     ticker = models.ForeignKey(to=Ticker, related_name='ticker', on_delete=models.CASCADE)
     trader = models.ForeignKey(to=Trader, related_name='trader', on_delete=models.CASCADE, null=True, blank=True)
+    date = models.DateField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     quantity = models.FloatField(validators=[MinValueValidator(0.0)])
     price = models.DecimalField(max_digits=14, decimal_places=6, validators=[MinValueValidator(0.0)])
