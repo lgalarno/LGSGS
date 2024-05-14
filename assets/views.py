@@ -3,12 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.utils import timezone
 from django.views.generic import ListView, UpdateView, DeleteView, DetailView
-
-from django_celery_beat.models import PeriodicTask
-
-from dateutil.relativedelta import relativedelta
 
 from .backend import update_prices, current_price, get_refresh_info
 from .forms import AssetForm, AssetUpdateForm

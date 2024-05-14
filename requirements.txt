@@ -13,8 +13,7 @@ click-plugins==1.1.1
 click-repl==0.3.0
 crispy-bootstrap5==2024.2
 cron-descriptor==1.4.3
-
-Django>=4.2,<4.3
+Django==4.2.13
 django-celery-beat==2.6.0
 django-crispy-forms==2.1
 django-redis==5.4.0
@@ -31,6 +30,7 @@ numpy==1.26.4
 packaging==24.0
 pandas==2.2.2
 peewee==3.17.3
+pillow==10.3.0
 prompt-toolkit==3.0.43
 python-crontab==3.0.0
 python-dateutil==2.9.0.post0

@@ -47,7 +47,6 @@ class TickerForm(forms.ModelForm):
 
 
 class AssetForm(forms.ModelForm):
-    #date = forms.DateField(input_formats=["%d-%m-%Y"])
 
     class Meta:
         model = Asset
