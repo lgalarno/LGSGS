@@ -3,6 +3,10 @@ $(function() {
     // DataTable
     /////////////////////////////////////////////////////////////
     $('#data_table').DataTable({
+        columnDefs: [
+            { orderable: false,
+                targets: -1 }
+            ],
         searching: false,
         bPaginate: false,
         info: false,
