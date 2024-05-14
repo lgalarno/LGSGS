@@ -2,8 +2,8 @@ from django.shortcuts import render, HttpResponse
 from django.utils import timezone
 
 from assets.backend import update_prices, get_refresh_info
-from assets.forms import TickerForm
-from assets.models import Ticker, Asset
+from assets.forms import TickerForm, TraderForm
+from assets.models import Ticker, Asset, Trader
 
 
 def ticker_list(request):
@@ -24,9 +24,31 @@ def ticker_create(request):
     context = {
         "title": "new-ticker",
         'form_ticker': form,
-        # "tickers": Ticker.objects.all(),
     }
     return render(request, 'assets/partials/ticker-form.html', context)
+
+
+def trader_list(request):
+    print('trader_list')
+    context = {
+        'traders': Trader.objects.all(),
+    }
+    return render(request, 'assets/partials/trader-select.html', context)
+
+
+def trader_create(request):
+    print('trader_create')
+    form = TraderForm(request.POST or None, request.FILES or None)
+
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            return HttpResponse(status=204, headers={'HX-Trigger': 'traderListChanged'})
+    context = {
+        "title": "new-trader",
+        'form_trader': form,
+    }
+    return render(request, 'assets/partials/trader-form.html', context)
 
 
 def asset_list(request):

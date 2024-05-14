@@ -3,8 +3,8 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Description</th>
+                    <th scope="col" data-sortable="true">Name</th>
+                    <th scope="col">Trader</th>
                     <th scope="col">Symbol</th>
                     <th scope="col">Purchased</th>
                     <th scope="col">#</th>
@@ -23,8 +23,8 @@
                     <td>
                         <a href = "{{ a.get_absolute_url }}">{{ a.ticker.name }}</a>
                      </td>
-                    <td>
-                        <small>{{ a.description }}</small>
+                    <td >
+                        {{ a.trader.name }} {% if a.trader.logo %}<img title="logo" src="{{ a.trader.logo.url }}" height="20"> {% endif %}
                     </td>
                     <td>
                         {{ a.ticker.symbol }}

@@ -1,0 +1,8 @@
+{% load static %}
+
+<label for="trader-input" class="form-label"> Trader</label>
+<select class="form-select" aria-label="Select" name="trader-input" id="trader-input">
+    {% for t in traders %}
+        <option value="{{ t.id }}">{{ t.name }}</option>
+    {% endfor %}
+</select>

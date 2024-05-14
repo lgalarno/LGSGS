@@ -1,6 +1,6 @@
 <label for="ticker-input" class="form-label"> Ticker</label>
 <select class="form-select" aria-label="Select" name="ticker-input" id="ticker-input">
     {% for t in tickers %}
-        <option value="{{ t.symbol }}">{{ t.symbol }} - {{ t.name }}</option>
+        <option value="{{ t.id }}">{{ t.symbol }} - {{ t.name }}</option>
     {% endfor %}
 </select>

@@ -1,7 +1,22 @@
 from django import forms
 
 from .backend import ticker_name
-from .models import Asset, Ticker
+from .models import Asset, Ticker, Trader
+
+
+class TraderForm(forms.ModelForm):
+    class Meta:
+        model = Trader
+        fields = ['name', 'logo']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        print(cleaned_data)
+        name = cleaned_data.get('name')
+        qs = Trader.objects.filter(name=name).first()
+        if qs:
+            self.add_error("name", "Trader already exists")
+        return cleaned_data
 
 
 class TickerForm(forms.ModelForm):
@@ -52,7 +67,7 @@ class AssetForm(forms.ModelForm):
 class AssetUpdateForm(forms.ModelForm):
     class Meta:
         model = Asset
-        fields = ['ticker', 'description', 'quantity', 'price', 'margin', 'emailed']
+        fields = ['ticker', 'trader', 'description', 'quantity', 'price', 'margin', 'emailed']
 
         labels = {
             "ticker": "Ticker/Symbol",

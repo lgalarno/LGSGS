@@ -12,7 +12,7 @@ from dateutil.relativedelta import relativedelta
 
 from .backend import update_prices, current_price, get_refresh_info
 from .forms import AssetForm, AssetUpdateForm
-from .models import Asset, Ticker
+from .models import Asset, Ticker, Trader
 
 # Create your views here.
 
@@ -22,10 +22,13 @@ def create_asset(request):
     if request.method == 'POST':
         symbol = request.POST.get('ticker-input')
         if symbol:
-            t = Ticker.objects.get(symbol=request.POST.get('ticker-input'))
+
             if form.is_valid():
                 instance = form.save(commit=False)
-                instance.ticker = t
+                q = Ticker.objects.get(pk=request.POST.get('ticker-input'))
+                instance.ticker = q
+                q = Trader.objects.get(pk=request.POST.get('trader-input'))
+                instance.trader = q
                 instance.user = request.user
                 instance.current = current_price(symbol)
                 instance.save()

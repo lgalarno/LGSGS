@@ -5,9 +5,15 @@ from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from django.shortcuts import reverse
 
+import os
+
 from assets.tasks import send_email
 
 # Create your models here.
+
+
+def upload_location(instance, filename):
+    return f"logos/{filename}"
 
 
 class Ticker(models.Model):
@@ -18,9 +24,53 @@ class Ticker(models.Model):
         return self.symbol
 
 
+class Trader(models.Model):
+    name = models.CharField(max_length=255, null=True, blank=True)
+    logo = models.ImageField(upload_to=upload_location,
+                             null=True,
+                             blank=True)
+
+    def __str__(self):
+        return self.name
+
+
+@receiver(models.signals.post_delete, sender=Trader)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+    """
+    Deletes file from filesystem
+    when corresponding `Player` object is deleted.
+    """
+    if instance.logo:
+        if os.path.isfile(instance.logo.path):
+            os.remove(instance.logo.path)
+
+
+@receiver(models.signals.pre_save, sender=Trader)
+def auto_delete_file_on_change(sender, instance, **kwargs):
+    """
+    Deletes old file from filesystem
+    when corresponding `Player` object is updated
+    with new file.
+    """
+    if not instance.pk:
+        return False
+    try:
+        old_logo = Trader.objects.get(pk=instance.pk).logo
+    except Trader.DoesNotExist:
+        return False
+    # TODO make it better...
+    new_logo = instance.logo
+    if not bool(old_logo):
+        return False
+    if not old_logo == new_logo:
+        if os.path.isfile(old_logo.path):
+            os.remove(old_logo.path)
+
+
 class Asset(models.Model):
     user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     ticker = models.ForeignKey(to=Ticker, related_name='ticker', on_delete=models.CASCADE)
+    trader = models.ForeignKey(to=Trader, related_name='trader', on_delete=models.CASCADE, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     quantity = models.FloatField(validators=[MinValueValidator(0.0)])
     price = models.DecimalField(max_digits=14, decimal_places=6, validators=[MinValueValidator(0.0)])
