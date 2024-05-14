@@ -1,5 +1,8 @@
 from django import forms
 
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Row, Column
+
 from .backend import ticker_name
 from .models import Asset, Ticker, Trader
 
@@ -64,6 +67,21 @@ class AssetForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'rows': 3}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super(AssetForm, self).__init__(*args, **kwargs)
+        # format the form using crispy_forms FormHelper
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.layout = Layout(
+            'description',
+            Row(
+                Column('date', css_class='form-group col-md-3 mb-0'),
+                Column('quantity', css_class='form-group col-md-3 mb-0'),
+                Column('price', css_class='form-group col-md-3 mb-0'),
+                Column('margin', css_class='form-group col-md-3 mb-0')
+            )
+        )
+
 
 class AssetUpdateForm(forms.ModelForm):
     class Meta:
@@ -79,3 +97,23 @@ class AssetUpdateForm(forms.ModelForm):
             'date': forms.DateInput(attrs={"type": "date"}),
             'description': forms.Textarea(attrs={'rows': 3}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super(AssetUpdateForm, self).__init__(*args, **kwargs)
+        # format the form using crispy_forms FormHelper
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.layout = Layout(
+            Row(
+                Column('ticker', css_class='form-group col-md-6 mb-0'),
+                Column('trader', css_class='form-group col-md-6 mb-0')
+            ),
+            'description',
+            Row(
+                Column('date', css_class='form-group col-md-3 mb-0'),
+                Column('quantity', css_class='form-group col-md-3 mb-0'),
+                Column('price', css_class='form-group col-md-3 mb-0'),
+                Column('margin', css_class='form-group col-md-3 mb-0')
+            ),
+            'emailed'
+        )

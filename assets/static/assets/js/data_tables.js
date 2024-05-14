@@ -5,6 +5,7 @@ $(function() {
     $('#data_table').DataTable({
         searching: false,
         bPaginate: false,
+        info: false,
         order: [],
         processing: true,
         deferRender: true,

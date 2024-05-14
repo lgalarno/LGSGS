@@ -49,10 +49,6 @@ class AssetListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data()
-        # pt = PeriodicTask.objects.get(name='update_prices-30-minutes')  # name in celery.py
-        # min = 240 - settings.UPDT_INTERVAL
-        # context['update_at'] = pt.last_run_at + relativedelta(minutes=-min)  # -240 min for ETC then + 30min
-        # context['last_updated'] = timezone.now() + relativedelta(minutes=-240)
         context['title'] = 'assets'
         context = {**context, **get_refresh_info()}
         return context
