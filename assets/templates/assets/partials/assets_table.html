@@ -1,6 +1,5 @@
-<div class="row justify-content-md-center">
     <div class="table-responsive">
-        <table class="table" id="data_table">
+        <table class="table default_form" id="table_assets">
             <thead>
                 <tr>
                     <th scope="col">Symbol</th>
@@ -64,14 +63,4 @@
             </tbody>
          </table>
     </div>
-    <small>
-        <i >Last updated: {{ last_updated }}</i>
-        ; 
-        <i>Next price update at {{ update_at }}</i>
-        <button class="btn btn-secondary btn-sm"
-            hx-get="{% url 'assets:assets-htmx-api:asset-list' %}"
-            hx-target="#assets_table_htmx" title="refresh">
-            <i class="bi bi-arrow-clockwise"></i>
-        </button>
-    </small>
-</div>
+

@@ -1,33 +1,35 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load tz %}
-{% get_current_timezone as TIME_ZONE %}
 
 {% block title %}{{ title }}{% endblock title %}
 
 {% block content %}
     <div class="row justify-content-md-center">
-        <div class="col text-center">
-        {{ TIME_ZONE }}
-            <h3>
-                {% if asset_list %}
-                    Assets
-                {% else %}
-                    Your have no assets.
-                {% endif %}
-            </h3>
-           <br>
-        </div>
+        {% if not asset_list %}
+            <div class="col text-center">
+                <h3>Your have no assets.</h3>
+            </div>
+        {% endif %}
     </div>
     {% if asset_list %}
-        <div id="assets_table_htmx">
+        <div class="row justify-content-md-center" id="assets_table_htmx">
             {% include 'assets/partials/assets_table.html' %}
         </div>
-
+        <small  style="display: inline" >
+            <i >Last updated: {{ last_updated }}</i>
+            ; 
+            <i>Next price update at {{ update_at }}</i>
+            <button class="btn btn-secondary btn-sm"
+                hx-get="{% url 'assets:assets-htmx-api:asset-list' %}"
+                hx-target="#assets_table_htmx" title="refresh">
+                <i class="bi bi-arrow-clockwise"></i>
+            </button>
+        </small>
     {% endif %}
-    <a href="{% url 'assets:create_asset' %}" class="btn btn-primary btn-sm float-end" role="button" title="Create new asset">
+    <a href="{% url 'assets:create_asset' %}" class="btn btn-primary btn-sm float-end" role="button" style="display: inline" title="Create new asset">
         + New asset
     </a>
+    
 {% endblock %}
 
 {% block js %}

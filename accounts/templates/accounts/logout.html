@@ -3,7 +3,7 @@
 {% block content %}
     <br>
     <div class="row justify-content-md-center">
-        <div class="col-4">
+        <div class="col-4 login_form">
             {% if request.user.is_authenticated %}
                 <form method='POST'>{% csrf_token %}
                     <p>Are you sure you want to log out?</p>

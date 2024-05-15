@@ -2,7 +2,7 @@ $(function() {
     /////////////////////////////////////////////////////////////
     // DataTable
     /////////////////////////////////////////////////////////////
-    $('#data_table').DataTable({
+    $('#table_assets').DataTable({
         columnDefs: [
             { orderable: false,
                 targets: -1 }

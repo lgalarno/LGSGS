@@ -83,7 +83,7 @@ class Asset(models.Model):
     emailed = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.user.username} - {self.ticker.symbol}"
+        return f"{self.ticker.symbol}"
 
     @property
     def get_absolute_url(self):
