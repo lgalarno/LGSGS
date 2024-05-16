@@ -4,10 +4,12 @@
     <div class="row">
         <div class="col text-center">
             <h2>Welcome to LGSGS</h2>
+            <br>
             {% if not request.user.is_authenticated %}
-                <br>
                 <p>You need to <a href="{% url "accounts:login" %}">log in</a> to view your dashboard!</p>
                 <p>Need an account? Please <a href={% url 'accounts:register' %}>Register</a></p>
+            {% else %}
+                <a class="btn btn-primary" type="button" href="{% url 'assets:assets' %}">Go to your assets</a>
             {% endif %}
         </div>
     </div>
