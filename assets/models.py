@@ -170,7 +170,8 @@ def target_reached(sender, instance, *args, **kwargs):
 
 @receiver(post_save, sender=Asset)
 def target_reached(sender, instance, created, *args, **kwargs):
-    if instance.target_reached and not instance.emailed:
-        instance.compose_email()
-        instance.emailed = True
-        instance.save()
+    if instance.monitor and not instance.emailed:
+        if instance.target_reached:
+            instance.compose_email()
+            instance.emailed = True
+            instance.save()

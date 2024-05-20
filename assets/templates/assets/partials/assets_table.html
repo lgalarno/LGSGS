@@ -1,5 +1,5 @@
     <div class="table-responsive">
-        <table class="table default_form" id="table_assets">
+        <table class="table" id="table_assets">
             <thead>
                 <tr>
                     <th scope="col">Symbol</th>
@@ -17,12 +17,12 @@
             </thead>
             <tbody>
             {% for a in asset_list %}
-                <tr>
+                <tr {% if not a.monitor %} class="not_monitored" {% endif %}>
                     <td title="{{ a.ticker.name }}">
                         <a href = "{{ a.get_absolute_url }}">{{ a.ticker.symbol }}</a>
                     </td>
                     <td >
-                        {{ a.trader.name }} {% if a.trader.logo %}<img title="logo" src="{{ a.trader.logo.url }}" height="20"> {% endif %}
+                        {% if a.trader.logo %} <img title="logo" src="{{ a.trader.logo.url }}" height="20"> {% else %} {{ a.trader.name }} {% endif %}
                     </td>
                     <td>
                         {{ a.date }}
