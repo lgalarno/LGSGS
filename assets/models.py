@@ -82,6 +82,9 @@ class Asset(models.Model):
     monitor = models.BooleanField(default=True)
     emailed = models.BooleanField(default=False)
 
+    class Meta:
+        ordering = ['trader']
+
     def __str__(self):
         return f"{self.ticker.symbol}"
 
