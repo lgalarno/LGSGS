@@ -17,7 +17,6 @@ def create_asset(request):
     if request.method == 'POST':
         symbol = request.POST.get('ticker-input')
         if symbol:
-
             if form.is_valid():
                 instance = form.save(commit=False)
                 q = Ticker.objects.get(pk=request.POST.get('ticker-input'))

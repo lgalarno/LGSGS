@@ -157,14 +157,14 @@ class Asset(models.Model):
 
 @receiver(pre_save, sender=Asset)
 def target_reached(sender, instance, *args, **kwargs):
-    calc_paid = False
+    calculate_paid = False
     if instance.pk is None:
-        calc_paid = True
+        calculate_paid = True
     else:
         old = Asset.objects.get(id=instance.pk)
         if (instance.quantity != old.quantity) or (instance.price != old.price):
-            calc_paid = True
-    if calc_paid:
+            calculate_paid = True
+    if calculate_paid:
         instance.paid = round(instance.quantity * float(instance.price), 2)
 
 

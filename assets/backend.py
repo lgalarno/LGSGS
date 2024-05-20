@@ -34,11 +34,12 @@ def ticker_name(symbol):
 
 
 def current_price(s):
-    try:
-        data = yf.Ticker(s).history(period="1d")
-        price = data["Close"].iloc[-1]
-    except:
-        price = 0
+    # try:
+    print(s)
+    data = yf.Ticker(s).history(period="1d")
+    price = data["Close"].iloc[-1]
+    # except:
+    #     price = 0
     return price
 
 
