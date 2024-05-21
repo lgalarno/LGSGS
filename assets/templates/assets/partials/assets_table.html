@@ -21,7 +21,7 @@
                     <td title="{{ a.ticker.name }}">
                         <a href = "{{ a.get_absolute_url }}">{{ a.ticker.symbol }}</a>
                     </td>
-                    <td >
+                    <td style="text-align: center; ">
                         {% if a.trader.logo %} <img title="logo" src="{{ a.trader.logo.url }}" height="20"> {% else %} {{ a.trader.name }} {% endif %}
                     </td>
                     <td>

@@ -147,24 +147,17 @@ class Asset(models.Model):
         """
         send_email.delay(to_email=self.user.email, mail_subject=mail_subject, mail_body=mail_body)
 
-    # def save(self, *args, **kwargs):
-    #     '''
-    #     On save, calculate paid
-    #     '''
-    #     self.paid = round(self.quantity * float(self.price), 2)
-    #     super(Asset, self).save(*args, **kwargs)
-
 
 @receiver(pre_save, sender=Asset)
-def target_reached(sender, instance, *args, **kwargs):
-    calculate_paid = False
+def calculate_paid(sender, instance, *args, **kwargs):
+    do = False
     if instance.pk is None:
-        calculate_paid = True
+        do = True
     else:
         old = Asset.objects.get(id=instance.pk)
         if (instance.quantity != old.quantity) or (instance.price != old.price):
-            calculate_paid = True
-    if calculate_paid:
+            do = True
+    if do:
         instance.paid = round(instance.quantity * float(instance.price), 2)
 
 
