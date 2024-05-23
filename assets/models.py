@@ -29,6 +29,7 @@ class Trader(models.Model):
     logo = models.ImageField(upload_to=upload_location,
                              null=True,
                              blank=True)
+    url = models.URLField(blank=True, null=True)
 
     def __str__(self):
         return self.name

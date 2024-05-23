@@ -5,6 +5,7 @@ from django.db import models
 
 
 class User(AbstractUser):
+    website = models.URLField(blank=True)
     country = models.CharField(max_length=120, blank=True, null=True)
 
     def __str__(self):

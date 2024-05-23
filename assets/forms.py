@@ -10,7 +10,7 @@ from .models import Asset, Ticker, Trader
 class TraderForm(forms.ModelForm):
     class Meta:
         model = Trader
-        fields = ['name', 'logo']
+        fields = ['name', 'logo', 'url']
 
     def clean(self):
         cleaned_data = super().clean()

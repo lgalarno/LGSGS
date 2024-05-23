@@ -48,7 +48,7 @@ def logout_view(request):
 
 class EditProfile(LoginRequiredMixin, UpdateView):
     model = User
-    fields = ['email', 'username', 'first_name', 'last_name', 'country']
+    fields = ['email', 'username', 'first_name', 'last_name', 'country', 'website']
     template_name = 'accounts/edit_profile.html'
     success_message = 'Changes successfully saved'
 
