@@ -8,7 +8,7 @@
                     <th scope="col">#</th>
                     <th scope="col">Price</th>
                     <th scope="col">Paid</th>
-                    <th scope="col">Target</th>
+                    <th scope="col">Target (price)</th>
                     <th scope="col">Current price</th>
                     <th scope="col">Current value</th>
                     <th scope="col">Delta</th>
@@ -48,7 +48,7 @@
                         {{ a.paid }}
                     </td>
                     <td>
-                        {{ a.target }}
+                        {{ a.target }} ({{ a.target_price }})
                     </td>
                     <td>
                         {{ a.current }}

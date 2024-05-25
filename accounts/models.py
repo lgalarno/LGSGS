@@ -5,7 +5,7 @@ from django.db import models
 
 
 class User(AbstractUser):
-    website = models.URLField(blank=True)
+    website = models.URLField(blank=True, verbose_name='External portfolio url')
     country = models.CharField(max_length=120, blank=True, null=True)
 
     def __str__(self):

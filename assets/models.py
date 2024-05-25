@@ -106,16 +106,16 @@ class Asset(models.Model):
         return round(self.paid + self.margin, 2)
 
     @property
+    def target_price(self):
+        return round(float(self.target) / self.quantity, 4)
+
+    @property
     def value(self):
         return round(self.quantity * float(self.current), 2)
 
     @property
     def delta(self):
         return round(self.value - float(self.paid), 2)
-
-    @property
-    def target_reached(self):
-        return self.delta > self.margin
 
     @property
     def target_reached(self):
