@@ -22,17 +22,16 @@
                         <a href = "{{ a.get_absolute_url }}">{{ a.ticker.symbol }}</a>
                     </td>
                     <td style="text-align: center; ">
-                        <a {% if a.trader.url %}
-                                href="{{ a.trader.url }}" target="_blank" title="{{ a.trader.name }} {{ a.trader.url }}"
-                            {% else %}
-                                href="#" title="{{ a.trader.name }}"
-                            {% endif %}"
-                        >
-                            {% if a.trader.logo %}
-                                <img src="{{ a.trader.logo.url }}" height="20"> 
-                            {% else %}
-                                {{ a.trader.name }} 
-                            {% endif %}
+                        {% if a.trader.url %}
+                            <a href="{{ a.trader.url }}" target="_blank" title="{{ a.trader.name }} {{ a.trader.url }}">
+                        {% else %}
+                            <a href="#" title="{{ a.trader.name }}">
+                        {% endif %}"
+                        {% if a.trader.logo %}
+                            <img alt="Trader logo" src="{{ a.trader.logo.url }}" height="20"> 
+                        {% else %}
+                            {{ a.trader.name }} 
+                        {% endif %}
                         </a> 
                     </td>
                     <td>
