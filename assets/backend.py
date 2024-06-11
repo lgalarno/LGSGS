@@ -10,11 +10,18 @@ import yfinance as yf
 
 
 def get_refresh_info() -> dict:
-    pt = PeriodicTask.objects.get(name='update_prices-30-minutes')  # name in celery.py
-    min = 240 - settings.UPDT_INTERVAL
+
+    pt = PeriodicTask.objects.filter(name='update_prices-30-minutes').last()  # name in celery.py
+    if pt:
+        min = 240 - settings.UPDT_INTERVAL
+        last_updated = timezone.now() + relativedelta(minutes=-240),
+        update_at = pt.last_run_at + relativedelta(minutes=-min)
+    else:
+        last_updated = None
+        update_at = None
     return {
-        'last_updated': timezone.now() + relativedelta(minutes=-240),
-        'update_at': pt.last_run_at + relativedelta(minutes=-min)
+        'last_updated': last_updated,
+        'update_at': update_at
     }
 
 
