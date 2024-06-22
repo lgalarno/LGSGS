@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'django_celery_beat',
     # custom app
     "accounts.apps.AccountsConfig",
-    "assets.apps.AssetsConfig"
+    "assets.apps.AssetsConfig",
+    "wallets.apps.WalletsConfig"
 ]
 
 MIDDLEWARE = [

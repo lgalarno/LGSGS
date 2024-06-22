@@ -16,7 +16,6 @@ def ticker_list(request):
 def ticker_create(request):
     form = TickerForm(request.POST or None)
     if request.method == "POST":
-
         if form.is_valid():
             form.save()
             return HttpResponse(status=204, headers={'HX-Trigger': 'tickerListChanged'})

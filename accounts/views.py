@@ -67,3 +67,5 @@ class EditProfile(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return '/account/edit/'
+
+
