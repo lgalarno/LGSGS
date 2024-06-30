@@ -17,8 +17,13 @@ def upload_location(instance, filename):
 
 
 class Ticker(models.Model):
+    TYPE = (
+        ('crypto', 'Crypto'),
+        ('equity', 'Equity'),
+    )
     symbol = models.CharField(max_length=16)
     name = models.CharField(max_length=255, null=True, blank=True)
+    type = models.CharField(max_length=20, choices=TYPE, default=TYPE[0][0])
 
     def __str__(self):
         return self.symbol
@@ -70,8 +75,8 @@ def auto_delete_file_on_change(sender, instance, **kwargs):
 
 class Asset(models.Model):
     user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    ticker = models.ForeignKey(to=Ticker, related_name='ticker', on_delete=models.CASCADE)
-    trader = models.ForeignKey(to=Trader, related_name='trader', on_delete=models.CASCADE, null=True, blank=True)
+    ticker = models.ForeignKey(to=Ticker, related_name='asset', on_delete=models.CASCADE)
+    trader = models.ForeignKey(to=Trader, related_name='asset', on_delete=models.CASCADE, null=True, blank=True)
     date = models.DateField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     quantity = models.FloatField(validators=[MinValueValidator(0.0)])
@@ -87,7 +92,7 @@ class Asset(models.Model):
         ordering = ['trader']
 
     def __str__(self):
-        return f"{self.ticker.symbol}"
+        return f"{self.pk}-{self.ticker.symbol}-{self.date}"
 
     @property
     def get_absolute_url(self):
@@ -103,7 +108,8 @@ class Asset(models.Model):
 
     @property
     def target(self):
-        return round(self.paid + self.margin, 2)
+        return round(self.quantity * float(self.price) + float(self.margin), 2)
+        # return round(self.paid + self.margin, 2)
 
     @property
     def target_price(self):
@@ -115,7 +121,8 @@ class Asset(models.Model):
 
     @property
     def delta(self):
-        return round(self.value - float(self.paid), 2)
+        return round(self.value - self.quantity * float(self.price), 2)
+        # return round(self.value - float(self.paid), 2)
 
     @property
     def target_reached(self):
@@ -149,17 +156,17 @@ class Asset(models.Model):
         send_email.delay(to_email=self.user.email, mail_subject=mail_subject, mail_body=mail_body)
 
 
-@receiver(pre_save, sender=Asset)
-def calculate_paid(sender, instance, *args, **kwargs):
-    do = False
-    if instance.pk is None:
-        do = True
-    else:
-        old = Asset.objects.get(id=instance.pk)
-        if (instance.quantity != old.quantity) or (instance.price != old.price):
-            do = True
-    if do:
-        instance.paid = round(instance.quantity * float(instance.price), 2)
+# @receiver(pre_save, sender=Asset)
+# def calculate_paid(sender, instance, *args, **kwargs):
+#     do = False
+#     if instance.pk is None:
+#         do = True
+#     else:
+#         old = Asset.objects.get(id=instance.pk)
+#         if (instance.quantity != old.quantity) or (instance.price != old.price):
+#             do = True
+#     if do:
+#         instance.paid = round(instance.quantity * float(instance.price), 2)
 
 
 @receiver(post_save, sender=Asset)

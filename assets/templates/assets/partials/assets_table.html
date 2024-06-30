@@ -61,6 +61,13 @@
                         </p>
                     </td>
                     <td>
+                        {% if wallet %}
+                            <a title="sell" 
+                               hx-get="{% url 'wallets:wallets-htmx-api:sell' pk=a.id %}"
+                               hx-target="#wallet_frame">
+                                <i class="bi bi-cash-coin"></i>
+                            </a>
+                        {% endif %}
                         <a href="{{ a.get_update_url }}" title="edit" >
                             <i class="bi bi-pencil"></i>
                         </a>

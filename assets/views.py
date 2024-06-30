@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
@@ -15,20 +14,23 @@ from .models import Asset, Ticker, Trader
 def create_asset(request):
     form = AssetForm(request.POST or None)
     if request.method == 'POST':
-        symbol = request.POST.get('ticker-input')
-        if symbol:
+        # symbol = request.POST.get('ticker-input')
+        ticker_id = request.POST.get('ticker-input')
+        trader_id = request.POST.get('trader-input')
+        if ticker_id and trader_id:
             if form.is_valid():
                 instance = form.save(commit=False)
-                q = Ticker.objects.get(pk=request.POST.get('ticker-input'))
-                instance.ticker = q
-                q = Trader.objects.get(pk=request.POST.get('trader-input'))
-                instance.trader = q
+                ticker = Ticker.objects.get(pk=ticker_id)
+                instance.ticker = ticker
+                trader = Trader.objects.get(pk=trader_id)
+                instance.trader = trader
                 instance.user = request.user
-                instance.current = current_price(symbol)
+                instance.current = current_price(ticker.symbol)
+                instance.paid = round(instance.quantity * float(instance.price), 2)
                 instance.save()
                 messages.success(request, 'Asset created!')
         else:
-            messages.error(request, 'Please enter a valid ticker or create a new one.')
+            messages.error(request, 'Please enter a valid ticker and a symbol.')
 
     context = {
         "title": "new-asset",

@@ -1,0 +1,83 @@
+{% load crispy_forms_tags %}
+<div class="row justify-content-md-center">
+    <div class="col col-lg-6">
+        <h2 style="display: inline;">Purchase from {{ wallet.name }}</h2>
+        <h4 style="display: inline; float: right">{{ wallet.balance }}$</h4>
+    </div>
+</div>
+<div class="row justify-content-md-center">
+    <div class="col col-lg-6 default_form">
+        <form
+              hx-post="{% url 'wallets:wallets-htmx-api:buy' pk=wallet.id %}"
+              hx-trigger="submit"
+              hx-target="#wallet_frame"
+              id="form">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col col-lg-6">
+
+                    <div id="ticker-list"
+                         hx-trigger="load, tickerListChanged from:body"
+                         hx-get="{% url 'assets:assets-htmx-api:ticker-list' %}"
+                         hx-target="this">
+                    </div>
+
+                    <button
+                        hx-get="{% url 'assets:assets-htmx-api:ticker_create' %}"
+                        hx-target="#form-dialog"
+                        hx-trigger="click"
+                        class="btn btn-primary btn-sm float-end"><i class="bi bi-plus-circle"> ticker</i>
+                    </button>
+                </div>
+                <div class="col col-lg-6">
+                    <div id="trader-list"
+                         hx-trigger="load, traderListChanged from:body"
+                         hx-get="{% url 'assets:assets-htmx-api:trader-list' %}"
+                         hx-target="this">
+                    </div>
+
+                    <button
+                        hx-get="{% url 'assets:assets-htmx-api:trader_create' %}"
+                        hx-target="#form-dialog"
+                        hx-trigger="click"
+                        class="btn btn-primary btn-sm float-end"><i class="bi bi-plus-circle"> trader</i>
+                    </button>
+                </div>
+            </div>
+            <br>
+            {% crispy form %}
+            <div class="row">
+                <div class="form-group col-md-3 mb-0">
+                    <div id="div_id_margin" class="mb-3">
+                        <label for="id_margin" class="form-label requiredField">
+                            Margin
+                            <span class="asteriskField">*</span>
+                        </label>
+                        <input type="number" name="margin" step="any" class="numberinput form-control" required="" id="id_margin">
+                    </div>
+                </div>
+                <div class="form-group col-md-9 mb-0">
+                    <div id="div_id_monitor" class="form-check">
+                        <p>&nbsp</p>
+                        <input type="checkbox" name="monitor" class="checkboxinput form-check-input" id="id_monitor" checked="">
+                        <label for="id_monitor" class="form-check-label">Monitor</label>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-secondary" onclick="history.back()"> << Back  </button>
+
+            <a class="btn btn-primary"
+               hx-post="{% url 'wallets:wallets-htmx-api:buy' pk=wallet.id %}"
+               hx-trigger="submit"
+               hx-target="#wallet_frame"
+            >
+                Clear
+            </a>
+            <button type="submit" class="btn btn-primary">Buy</button>
+{#            <a href="{% url 'wallets:wallets' %}" class="btn btn-secondary">#}
+{#                << Back to your wallets#}
+{#            </a>#}
+
+        </form>
+    </div>
+</div>

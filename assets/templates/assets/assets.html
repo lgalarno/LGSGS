@@ -4,6 +4,7 @@
 {% block title %}-{{ title }}{% endblock title %}
 
 {% block content %}
+    <div class="row justify-content-md-center">&nbsp;</div>
     <div class="row justify-content-md-center">
         {% if not asset_list %}
             <div class="col text-center">
@@ -29,7 +30,7 @@
     <a href="{% url 'assets:create_asset' %}" class="btn btn-primary btn-sm float-end" role="button" style="display: inline" title="Create new asset">
         + New asset
     </a>
-
+    <div class="row justify-content-md-center">&nbsp;</div>
 {% endblock %}
 
 {% block js %}

@@ -2,33 +2,26 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/dataTables.bootstrap5.min.css' %}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
-    <link rel="shortcut icon" href="{%  static 'images/favicon.ico' %}">
-    <title>LGSGS{% block title %}{% endblock title %}</title>
-</head>
-
-
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/dataTables.bootstrap5.min.css' %}">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+        <link rel="shortcut icon" href="{%  static 'images/favicon.ico' %}">
+        <title>LGSGS{% block title %}{% endblock title %}</title>
+    </head>
+    
     <body>
         {% include 'navbar.html' %}
 
-        <main role="main">
-            <div class="container-fluid">
-                <br>
-                {% include 'messages_display.html' %}
-
-                {% block content %}
-                {% endblock content %}
-                <br>
-
-            </div>
+        <main role="main" class="container-fluid">
+            {% include 'messages_display.html' %}
+            {% block content %}{% endblock content %}
+            
         </main> <!-- /container -->
 
         {% include 'footer.html' %}
@@ -42,7 +35,7 @@
         <script type="text/javascript" charset="utf8" src="{% static 'js/dataTables/dataTables.bootstrap5.min.js' %}"></script>
         <!--HTMX-->
         <script src="{% static 'js/htmx.min.js' %}"></script>
-
+        
         {% block js %}{% endblock js %}
 
     </body>

@@ -1,5 +1,4 @@
 from django.shortcuts import render, HttpResponse
-from django.utils import timezone
 
 from assets.backend import update_prices, get_refresh_info
 from assets.forms import TickerForm, TraderForm

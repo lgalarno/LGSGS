@@ -1,32 +1,24 @@
 {% load crispy_forms_tags %}
 
-{#<form method="post" class="modal-content" enctype="multipart/form-data">#}
-
 <form class="modal-content"
       hx-post="{% url 'assets:assets-htmx-api:trader_create' %}"
       hx-trigger="submit"
       hx-encoding="multipart/form-data"
       id="form">
-   
     {% csrf_token %}
-        <div class="modal-header">
-            <h4>Add a trader</h4>
-        </div>
+    <div class="modal-header">
+        <h4>Add a trader</h4>
+    </div>
 
-        <div class="modal-body">
-            <div class="form-group mb-0">
-                <div id="div_id_url" class="mb-3">
-                    <div>{{ form_trader|crispy }}</div>
-                </div>
+    <div class="modal-body">
+        <div class="form-group mb-0">
+            <div id="div_id_url" class="mb-3">
+                <div>{{ form_trader|crispy }}</div>
             </div>
         </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary"> add</button>
-{#            <button#}
-{#                hx-post="{% url 'assets:assets-htmx-api:trader_create' %}"#}
-{#                class="btn btn-primary">#}
-{#                add#}
-{#            </button>#}
-        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary"> add</button>
+    </div>
 </form>

@@ -1,0 +1,19 @@
+{% load crispy_forms_tags %}
+
+<div class="row">
+    <div class="col col-md-6" >
+        <h2>Transfer money to/from {{ wallet.name }}</h2>
+        <H3>Balance: {{ wallet.balance }}$</H3>
+        <form
+              hx-post="{% url 'wallets:wallets_htmx-api:transfer' pk=wallet.id %}"
+              hx-trigger="submit"
+              hx-target="#wallet_frame"
+              id="form">
+
+            {% csrf_token %}
+            {{ form|crispy }}
+            <a href="{% url 'wallets:wallets' %}" type="button" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">Transfer</button>
+        </form>
+    </div>
+</div>

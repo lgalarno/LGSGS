@@ -4,6 +4,7 @@
 {% block title %}-{{ title }}{% endblock %}
 
 {% block content %}
+    <div class="row justify-content-md-center">&nbsp;</div>
     <div class="row justify-content-md-center">
         <div class="col-md-6 default_form">
             <h3 class="text-center">{{ asset }}</h3>
@@ -11,7 +12,8 @@
                 {% csrf_token %}
 {#                {{ form|crispy }}#}
                 {% crispy form %}
-                <a href="{% url 'assets:assets' %}"  class="btn btn-secondary"> << Back to your assets </a>
+{#                <a href="{% url 'assets:assets' %}"  class="btn btn-secondary"> << Back to your assets </a>#}
+                <button class="btn btn-secondary" onclick="history.back()"> << Back  </button>
                 <button type="submit" class="btn btn-primary">Save</button>
                 {% if asset.get_delete_url %}
                     <a href="{{ asset.get_delete_url }}"  class="btn btn-danger float-end"> Delete </a>
@@ -19,4 +21,5 @@
             </form>
         </div>
     </div>
+    <div class="row justify-content-md-center">&nbsp;</div>
 {% endblock %}

@@ -24,7 +24,7 @@ class TraderForm(forms.ModelForm):
 class TickerForm(forms.ModelForm):
     class Meta:
         model = Ticker
-        fields = ['symbol', 'name']
+        fields = ['symbol', 'name', 'type']
 
         labels = {
             "symbol": "Ticker/Symbol",

@@ -1,12 +1,12 @@
 /* messages*/
 .success {
-  color: green;
+    color: green;
 }
 .warning {
-  color: Blue;
+    color: Blue;
 }
 .error {
-  color: red;
+    color: red;
 }
 
 footer{
@@ -14,94 +14,137 @@ footer{
     width: 100vw;
     bottom: 0;
     overflow: hidden;
-/*    background-color: #333;
-    color:white;*/
     clear: both;
+    color: black;
 }
 
-/* dataTable*/
-/*table.dataTable>thead .sorting:before, table.dataTable>thead .sorting_asc:before, table.dataTable>thead .sorting_desc:before, table.dataTable>thead .sorting_asc_disabled:before, table.dataTable>thead .sorting_desc_disabled:before {*/
-/*    right: 0em;*/
-/*    content: url('images/sort_asc.png') !important;*/
-/*}*/
-/*table.dataTable>thead .sorting:after, table.dataTable>thead .sorting_asc:after, table.dataTable>thead .sorting_desc:after, table.dataTable>thead .sorting_asc_disabled:after, table.dataTable>thead .sorting_desc_disabled:after {*/
-/*    right: 0em;*/
-/*    content: url('images/sort_desc.png') !important;*/
-/*}*/
 table.dataTable .not_monitored {
-  background: #f2f2f2;
+    background: #f2f2f2;
 }
 
 /* General customizations */
 
-footer {
-  /*background-color: #f2f2f2;*/
-  color: black;
-}
 a {
     color: #666666;
-    text-decoration: none;
+    text-decoration: underline;
 }
 a:hover {
     color: #000000;
+    cursor:pointer;
 }
 
 .lga {
-  border-top: 3px solid #ff8033;
-  box-shadow: 0 2px 2px 0 rgb(0, 0, 0, 0.15);
+    border-top: 3px solid #ff8033;
+    box-shadow: 0 2px 2px 0 rgb(0, 0, 0, 0.15);
 }
 
 hr.lga {
-  border-top: 1px solid #ff8033;
-  box-shadow:0px 1px 4px #ff8033;
-  opacity: 0.5;
+    border-top: 1px solid #ff8033;
+    box-shadow:0px 1px 4px #ff8033;
+    opacity: 0.5;
 }
 
 .default_form {
-  /*max-width: 400px;*/
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #f2f2f2;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f2f2f2;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
 .login_form {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #f2f2f2;
-  border: 1px solid #ff8033;;
-  border-radius: 5px;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f2f2f2;
+    border: 1px solid #ff8033;;
+    border-radius: 5px;
 }
 
 .login_form h2 {
-  text-align: center;
+    text-align: center;
 }
 
 .login_form form {
-  margin-top: 20px;
+    margin-top: 20px;
 }
 
 .login_form form label {
-  display: block;
-  margin-bottom: 5px;
+    display: block;
+    margin-bottom: 5px;
 }
 .login_form form input[type="text"],
 .login_form form input[type="email"],
 .login_form form input[type="password"] {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
 }
 .login_form form button {
-  width: 100%;
-  padding: 10px;
-  /*background-color: #4caf50;*/
-  /*color: white;*/
-  /*border: none;*/
-  cursor: pointer;
+    width: 100%;
+    padding: 10px;
+    cursor: pointer;
 }
-/*.login_form form button:hover {*/
-/*  background-color: #45a049;*/
-/*}*/
+
+/* Sidebar */
+.sidebar {
+    position: relative;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100; /* Behind the navbar */
+    padding: 0 0 0; /* Height of navbar */
+    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+}
+.sidebar-sticky {
+    position: relative;
+    height: calc(100vh - 48px);
+    overflow-x: hidden;
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+}
+.sidebar .nav {
+    flex-direction: column;
+}
+
+.sidebar .nav-link {
+    font-weight: 500;
+    color: #333;
+}
+.sidebar .nav-link.active {
+    color: #007bff;
+}
+.sidebar .nav-link:hover {
+    cursor:pointer;
+    color: #727272;
+}
+.sidebar-heading {
+    text-transform: uppercase;
+}
+
+/* walletnavbar */
+.walletnavbar .navbar-nav {
+    list-style-type: none;
+    flex-direction: row;
+}
+
+.walletnavbar .nav-item {
+    float: left;
+    display: flex;
+}
+
+.walletnavbar .nav-link {
+    display: block;
+    color: #333;
+    text-align: center;
+    padding: 14px 16px;
+    /*text-decoration: underline;*/
+}
+
+.walletnavbar .nav-link.active {
+    color: #007bff;
+    text-decoration: #333;
+}
+
+.walletnavbar .nav-link:hover {
+    color: #727272;
+}

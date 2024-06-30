@@ -1,0 +1,61 @@
+{% if wallet %}
+    <div class="row">
+        <div class="col col-lg-12">
+            <h2 style="display: inline;">{{ wallet.name }}</h2>
+            <h4 style="float: right">balance: {{ wallet.balance }}$</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col col-lg-12">
+            <nav class="walletnavbar">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           hx-get="{% url 'wallets:wallets_htmx-api:transfer' pk=wallet.id %}"
+                           hx-target="#wallet_frame">
+                        Transfer money</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           hx-get="{% url 'wallets:wallets-htmx-api:buy' pk=wallet.id %}"
+                           hx-target="#wallet_frame">
+                            Buy asset</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link"  href="{% url 'wallets:delete-wallets' pk=wallet.pk %}" onclick="return confirm('Are you sure? All the transactions done with this wallet will be erased.')" title="delete">
+                            delete
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <div id="assets_frame" class="container-fluid">
+        <hr>
+        {% if asset_list %}
+            <h4>Assets</h4>
+            {% include 'assets/partials/assets_table.html' %}
+        {% else %}
+            <p>This wallet has no assets</p>
+        {% endif %}
+    </div>
+    {% if profit_list %}
+        <div id="profits_frame" class="container-fluid">
+            <div class="col col-lg-12">
+                <h4>Profits</h4>
+                {% include 'wallets/partials/profit-list.html' %}
+            </div>
+        </div>
+{#        <div class="row">#}
+{#             <div class="col col-lg-12">#}
+{#                <h4 style="float: right">profits: {{ total_profits }}$</h4>#}
+{#            </div>#}
+{#        </div>#}
+    {% endif %}
+{% else %}
+    <div class="row">
+        <div class="col col-lg-12">
+            <p>Total balance: {{ total_balance }}$</p>
+        </div>
+    </div>
+{% endif %}

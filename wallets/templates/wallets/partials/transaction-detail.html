@@ -1,0 +1,57 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h4>Transaction</h4>
+    </div>
+
+    <div class="modal-body">
+        <div class="table-responsive">
+            <table class="table">
+                <tr>
+                    <td class="width: 100px;" >
+                        {% if transaction.trader.logo %}
+                            <img alt="Trader logo" src="{{ transaction.trader.logo.url }}" height="20">
+                        {% else %}
+                            {{ transaction.trader.name }}
+                        {% endif %}
+                    </td>
+                    <td class="width: 100px;"></td>
+                    <td class="width: 100px;"></td>
+                    <td class="width: 100px;">
+                        {{ transaction.date }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {{ transaction.type }}
+                      <td>
+                        {{ transaction.quantity }}
+                    </td>
+                    <td>
+                        {{ transaction.ticker.symbol }}
+                    </td>
+                    <td>at {{ transaction.price }}$</td>
+                </tr>
+                <tr>
+                    <td>
+                        fees: {{ transaction.fees }}
+                        {% if transaction.ticker.type == 'crypto' %}
+                            {{ transaction.ticker.symbol }}
+                        {% else %}
+                            $
+                        {% endif %}
+                    <td>
+                        change: {{ transaction.change }}$
+                    </td>
+                    <td>
+                        <strong>Total: </strong>
+                        {{ transaction.brut }}$
+                    </td>
+                    <td></td>
+                </tr>
+             </table>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    </div>
+</div>

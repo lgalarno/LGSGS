@@ -1,0 +1,123 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h4>Transactions</h4>
+    </div>
+
+    <div class="modal-body">
+        <div class="table-responsive">
+            <table class="table">
+                <tr>
+                    <td style="width: 100px;" >
+                        {% if purchased.trader.logo %}
+                            <img alt="Trader logo" src="{{ purchased.trader.logo.url }}" height="20">
+                        {% else %}
+                            {{ purchased.trader.name }}
+                        {% endif %}
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr style="background: #ccffff;">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        Purchase
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {{ purchased.quantity }}
+                    </td>
+                    <td>
+                        {{ purchased.ticker.symbol }}
+                    </td>
+                    <td>
+                        at {{ purchased.price }}$
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        fees: {{ purchased.fees }}
+                        {% if purchased.ticker.type == 'crypto' %}
+                            {{ purchased.ticker.symbol }}
+                        {% else %}
+                            $
+                        {% endif %}
+                    <td>
+                        change: {{ purchased.change }}$
+                    </td>
+                    <td></td>
+                    <td>
+                        {{ purchased.date }}
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td style="text-align: right;">
+                        <strong>Cost: </strong>
+                    </td>
+                    <td>
+                        <strong>{{ purchased.brut }}$</strong>
+                    </td>
+                </tr>
+                <tr style="background: #ccffff;">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>Sell</td>
+                </tr>
+                <tr>
+                    <td>
+                        {{ sold.quantity }}
+                    </td>
+                    <td>
+                        {{ sold.ticker.symbol }}
+                    </td>
+                    <td>
+                        at {{ sold.price }}$
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        fees: {{ sold.fees }}$
+                    </td>
+                    <td>
+                        change: {{ sold.change }}$
+                    </td>
+                    <td></td>
+                    <td>
+                        {{ sold.date }}
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td style="text-align: right;">
+                        <strong>Revenue: </strong>
+                    </td>
+                    <td>
+                        <strong>{{ sold.revenue }}$</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td  style="text-align: right;">
+                        <strong>Profit</strong>
+                    </td>
+                    <td >
+                        <strong>{{ profit }}$</strong>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    </div>
+</div>

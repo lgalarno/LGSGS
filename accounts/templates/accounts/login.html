@@ -2,6 +2,7 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+    <div class="row justify-content-md-center">&nbsp;</div>
     <div class="row justify-content-md-center">
         <div class="col-4 login_form">
             {% if not request.user.is_authenticated %}
@@ -19,4 +20,5 @@
             {% endif %}
         </div>
     </div>
+    <div class="row justify-content-md-center">&nbsp;</div>
 {% endblock %}
