@@ -13,25 +13,30 @@ htmx.onLoad(function() {
         order: [],
         processing: true,
         deferRender: true,
-        // initComplete: function () {
-        //         this.api()
-        //             .columns('.head')
-        //             .every(function () {
-        //                 let column = this;
-        //                 let select = $('<select><option value=""></option></select>')
-        //                     .appendTo($("#table_assets thead tr:eq(1) th").eq(column.index()).empty())
-        //                     .on('change', function () {
-        //                         var val = $.fn.dataTable.util.escapeRegex($(this).val());
-        //                         column.search(val ? '^' + val + '$' : '', true, false).draw();
-        //                     });
-        //                 column
-        //                     .data()
-        //                     .unique()
-        //                     .sort()
-        //                     .each(function (d, j) {
-        //                         select.append('<option value="' + d + '">' + d + '</option>');
-        //                     });
-        //             });
-        //     }
+        bDestroy: true
     });
+
+    $('#table_profits').DataTable({
+        columnDefs: [
+            { orderable: false,
+                targets: -1 }
+            ],
+        searching: false,
+        bPaginate: true,
+        info: false,
+        order: [],
+        processing: true,
+        deferRender: true,
+        bDestroy: true
+    });
+    document.body.addEventListener('htmx:afterRequest', function(evt) {
+        table_assetsDataTable.ajax.reload(function() {
+            htmx.process('#table_assets');
+        }, false)
+        table_profitsDataTable.ajax.reload(function() {
+            htmx.process('#table_profits');
+        }, false)
+});
+
+
  })

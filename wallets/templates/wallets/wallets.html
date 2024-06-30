@@ -22,7 +22,8 @@
                             <li class="nav-item">
                                 <a class="nav-link"
                                    hx-get="{% url 'wallets:wallets-htmx-api:wallet_detail' pk=w.id %}"
-                                   hx-target="#wallet_frame">
+                                   hx-target="#wallet_frame"
+                                >
                                     {{ w.name }}
                                 </a>
                             </li>
@@ -36,11 +37,9 @@
             <div id="modal-form" class="modal fade">
                 <div id="form-dialog" class="modal-dialog" hx-target="this"></div>
             </div>
-            <br>
             <div id="wallet_frame" class="container-fluid">
                 {% include 'wallets/partials/wallet-detail.html' %}
             </div>
-
             <br>
         </div>
     </div>

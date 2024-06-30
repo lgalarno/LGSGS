@@ -30,17 +30,20 @@
             </nav>
         </div>
     </div>
-    <div id="assets_frame" class="container-fluid">
-        <hr>
-        {% if asset_list %}
-            <h4>Assets</h4>
-            {% include 'assets/partials/assets_table.html' %}
-        {% else %}
-            <p>This wallet has no assets</p>
-        {% endif %}
+    <div class="row" id="assets_frame">
+        <div class="col col-lg-12">
+            <hr>
+            {% if asset_list %}
+                <h4>Assets</h4>
+                {% include 'assets/partials/assets_table.html' %}
+            {% else %}
+                <p>This wallet has no assets</p>
+            {% endif %}
+        </div>
     </div>
+
     {% if profit_list %}
-        <div id="profits_frame" class="container-fluid">
+        <div id="profits_frame" class="row mt-4">
             <div class="col col-lg-12">
                 <h4>Profits</h4>
                 {% include 'wallets/partials/profit-list.html' %}

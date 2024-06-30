@@ -36,7 +36,6 @@
                     </td>
                     <td>
                         <a> {{ p.transaction_sold.price }}$ ({{ p.transaction_sold.date }} )</a>
-
                     </td>
                     <td >
                         {{ p.profit }}$
@@ -45,7 +44,12 @@
                 </tr>
             {% endfor %}
                 <tr>
-                    <td colspan=4 />
+{#                    <td colspan=4 />#}
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+
                     <td  style="text-align: right;"><strong>Total</strong></td>
                     <td ><strong>{{ total_profits }}$</strong></td>
                     <td></td>
