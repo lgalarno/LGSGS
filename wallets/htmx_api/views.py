@@ -71,7 +71,6 @@ def transfer(request, pk):
 
 
 def buy(request, pk):
-    print('buy')
     wallet = get_object_or_404(Wallet, pk=pk)
     context = {
         "title": "buy",
@@ -110,7 +109,7 @@ def buy(request, pk):
                         quantity=quantity,
                         price=instance.price,
                         current=current_price(ticker.symbol),  # get the current price
-                        paid=cost,
+                        # paid=round(instance.quantity * float(instance.price), 2),
                         margin=Decimal(request.POST.get('margin')),  # margin not in TransactionForm
                         monitor=monitor
                     )
@@ -134,7 +133,6 @@ def buy(request, pk):
 
 
 def sell(request, pk):
-    print('sell')
     asset = get_object_or_404(Asset, pk=pk)
     wallet = asset.transaction.wallet
     context = {
@@ -147,7 +145,6 @@ def sell(request, pk):
                            )
 
     if request.method == 'POST':
-        print(form.errors)
         if form.is_valid():
             instance = form.save(commit=False)
             quantity_sold = float(request.POST.get('quantity'))
@@ -169,7 +166,7 @@ def sell(request, pk):
                     profit = revenue - asset.transaction.brut
                     asset.delete()
                 else:
-                    profit = revenue - round(float(asset.price) * instance.quantity, 2) - asset.transaction.change
+                    profit = revenue - round(float(asset.price) * instance.quantity, 2) - float(asset.transaction.change)
                     asset.quantity = asset_left
                     asset.save()
                 instance.save()

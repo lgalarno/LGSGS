@@ -82,7 +82,7 @@ class Asset(models.Model):
     quantity = models.FloatField(validators=[MinValueValidator(0.0)])
     price = models.DecimalField(max_digits=14, decimal_places=6, validators=[MinValueValidator(0.0)])
     current = models.DecimalField(max_digits=14, decimal_places=6, validators=[MinValueValidator(0.0)], default=0)
-    paid = models.DecimalField(max_digits=9, decimal_places=2, default=0)
+    # paid = models.DecimalField(max_digits=9, decimal_places=2, default=0)
     margin = models.DecimalField(max_digits=9, decimal_places=2, validators=[MinValueValidator(0.0)], default=0)
     timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     monitor = models.BooleanField(default=True)
@@ -116,13 +116,16 @@ class Asset(models.Model):
         return round(float(self.target) / self.quantity, 4)
 
     @property
+    def paid(self):
+        return round(self.quantity * float(self.price), 2)
+
+    @property
     def value(self):
         return round(self.quantity * float(self.current), 2)
 
     @property
     def delta(self):
-        return round(self.value - self.quantity * float(self.price), 2)
-        # return round(self.value - float(self.paid), 2)
+        return round(self.value - float(self.paid), 2)
 
     @property
     def target_reached(self):

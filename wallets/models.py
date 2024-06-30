@@ -49,11 +49,11 @@ class Transaction(models.Model):
     trader = models.ForeignKey(to=Trader, related_name='transaction', on_delete=models.CASCADE, null=True, blank=True)
     date = models.DateField(default=timezone.now)
     description = models.TextField(null=True, blank=True)
-    price = models.DecimalField(max_digits=14, decimal_places=6, validators=[MinValueValidator(0.0)])
+    price = models.DecimalField(max_digits=14, decimal_places=8, validators=[MinValueValidator(0.0)])
     quantity = models.FloatField(validators=[MinValueValidator(0.0)])
     currency = models.CharField(max_length=4, choices=CURRENCY, default=TYPE[0][0])
-    change = models.DecimalField(max_digits=14, decimal_places=6, validators=[MinValueValidator(0.0)], default=0)
-    fees = models.DecimalField(max_digits=14, decimal_places=6, validators=[MinValueValidator(0.0)], default=0)
+    change = models.DecimalField(max_digits=14, decimal_places=2, validators=[MinValueValidator(0.0)], default=0)
+    fees = models.DecimalField(max_digits=14, decimal_places=8, validators=[MinValueValidator(0.0)], default=0)
     timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
 
     class Meta:
