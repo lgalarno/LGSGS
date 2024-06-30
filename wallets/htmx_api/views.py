@@ -153,6 +153,7 @@ def sell(request, pk):
             else:
                 revenue = round(
                     (instance.quantity * float(instance.price) + float(instance.change) - float(instance.fees)), 2)
+                profit = revenue - round(float(asset.price) * instance.quantity, 2) - float(asset.transaction.change)
                 # update Transaction instance
                 instance.type = 'sell'
                 instance.ticker = asset.ticker
@@ -163,10 +164,8 @@ def sell(request, pk):
                 # update asset quantity
                 asset_left = asset.quantity - instance.quantity
                 if asset_left == 0:
-                    profit = revenue - asset.transaction.brut
                     asset.delete()
                 else:
-                    profit = revenue - round(float(asset.price) * instance.quantity, 2) - float(asset.transaction.change)
                     asset.quantity = asset_left
                     asset.save()
                 instance.save()
