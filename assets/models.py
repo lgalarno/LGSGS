@@ -107,6 +107,10 @@ class Asset(models.Model):
         return reverse('assets:delete-asset', kwargs={'pk': self.pk})
 
     @property
+    def has_transaction(self):
+        return hasattr(self, 'transaction') and self.transaction is not None
+
+    @property
     def target(self):
         return round(self.quantity * float(self.price) + float(self.margin), 2)
         # return round(self.paid + self.margin, 2)

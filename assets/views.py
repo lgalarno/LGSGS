@@ -78,7 +78,13 @@ class AssetDeleteView(LoginRequiredMixin, DeleteView):
 class AssetUpdateView(LoginRequiredMixin, UpdateView):
     model = Asset
     form_class = AssetUpdateForm
-    success_url = reverse_lazy('assets:assets')
+
+    def get_success_url(self):
+        if self.object.has_transaction:
+            success_url = reverse_lazy('wallets:wallets')
+        else:
+            success_url = reverse_lazy('assets:assets')
+        return success_url
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data()
