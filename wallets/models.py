@@ -77,6 +77,11 @@ class Transaction(models.Model):
         return round(
                 (self.quantity * float(self.price) + float(self.change) - float(self.fees)), 2)
 
+    def paid(self, quantity=None):
+        if quantity is None:
+            quantity = self.quantity
+        return quantity * float(self.price)
+
 
 class Profit(models.Model):
     transaction_bought = models.ForeignKey(to=Transaction, related_name='bought', on_delete=models.CASCADE)

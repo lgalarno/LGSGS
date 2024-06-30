@@ -118,7 +118,7 @@ def buy(request, pk):
                     wallet.balance = round(float(wallet.balance) - cost, 2)
                     wallet.save()
                     # complete instance info
-                    instance.type = 'buy'
+                    instance.type = 'purchase'
                     instance.asset = a
                     # instance.wallet = wallet
                     instance.save()
@@ -196,11 +196,11 @@ def profit_detail(request):
     purchased = get_object_or_404(Transaction, pk=pk)
     pk = request.GET.get('sold')
     sold = get_object_or_404(Transaction, pk=pk)
-    profit = sold.revenue - purchased.brut
+    profit = sold.paid(quantity=sold.quantity) - purchased.paid(quantity=sold.quantity)
     context = {
         "title": "transaction",
         'purchased': purchased,
         'sold': sold,
-        'profit': profit
+        'profit': round(profit, 2)
     }
     return render(request, 'wallets/partials/profit-detail.html', context)

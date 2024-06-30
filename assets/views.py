@@ -44,7 +44,7 @@ class AssetListView(LoginRequiredMixin, ListView):
     template_name = 'assets/assets.html'
 
     def get_queryset(self):
-        qs = Asset.objects.filter(user=self.request.user)
+        qs = Asset.objects.filter(user=self.request.user).filter(transaction=None)  # show only old way
         update_prices(qs)
         return qs
 
