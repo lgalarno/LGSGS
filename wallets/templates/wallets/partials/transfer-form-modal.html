@@ -1,0 +1,25 @@
+{% load crispy_forms_tags %}
+
+<form class="modal-content"
+      hx-post="{% url 'wallets:wallets_htmx-api:transfer' pk=wallet.id %}"
+      hx-trigger="submit"
+      hx-target="#wallet_frame"
+      id="form">
+
+    {% csrf_token %}
+    <div class="modal-header">
+        <h4>Transfer money</h4>
+    </div>
+
+    <div class="modal-body">
+        <div class="form-group mb-0">
+            <div id="div_id_url" class="mb-3">
+                <div>{{ form|crispy }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Transfer</button>
+    </div>
+</form>

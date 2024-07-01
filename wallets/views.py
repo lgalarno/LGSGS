@@ -8,7 +8,7 @@ from decimal import Decimal
 
 from wallets.models import Wallet, Profit
 from assets.models import Asset
-
+from assets.backend import get_refresh_info
 # Create your views here.
 
 
@@ -20,13 +20,11 @@ def wallets(request):
         profits = Profit.objects.filter(transaction_bought__wallet=current_wallet)
         total_profits = Decimal(profits.aggregate(Sum('profit', default=0))['profit__sum']
                                 ).quantize(Decimal("1.00"))
-        print(total_profits)
         u = request.user
         total_balance = u.total_balance
     else:
         current_wallet = None
         assets = None
-        profits = None
         total_balance = 0
         total_profits = 0
 
@@ -34,13 +32,13 @@ def wallets(request):
                'total_balance': total_balance,
                'wallet': current_wallet,
                'asset_list': assets,
-               'profit_list': profits,
-               'total_profits': total_profits
+               # 'profit_list': profits,
+               'total_profits': total_profits,
+               **get_refresh_info()
                }
     return render(request, 'wallets/wallets.html', context)
 
 
-#TODO in change / edit view?
 class WalletDeleteView(LoginRequiredMixin, DeleteView):
     model = Wallet
     success_url = reverse_lazy('wallets:wallets')

@@ -2,7 +2,7 @@ htmx.onLoad(function() {
     /////////////////////////////////////////////////////////////
     // DataTable
     /////////////////////////////////////////////////////////////
-    $('#table_assets').DataTable({
+    $('#table_list').DataTable({
         columnDefs: [
             { orderable: false,
                 targets: -1 }
@@ -16,7 +16,7 @@ htmx.onLoad(function() {
         bDestroy: true
     });
 
-    $('#table_profits').DataTable({
+    $('#table_pages').DataTable({
         columnDefs: [
             { orderable: false,
                 targets: -1 }
@@ -30,12 +30,13 @@ htmx.onLoad(function() {
         bDestroy: true
     });
     document.body.addEventListener('htmx:afterRequest', function(evt) {
-        table_assetsDataTable.ajax.reload(function() {
-            htmx.process('#table_assets');
+        table_listDataTable.ajax.reload(function() {
+            htmx.process('#table_list');
+            htmx.process('#table_pages');
         }, false)
-        table_profitsDataTable.ajax.reload(function() {
-            htmx.process('#table_profits');
-        }, false)
+        // table_pagesDataTable.ajax.reload(function() {
+        //     htmx.process('#table_pages');
+        // }, false)
 });
 
 

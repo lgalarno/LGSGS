@@ -16,21 +16,20 @@
         <div class="row justify-content-md-center" id="assets_table_htmx">
             {% include 'assets/partials/assets_table.html' %}
         </div>
-        <small  style="display: inline" >
-            <i >Last updated: {{ last_updated }}</i>
-            ; 
-            <i>Next price update at {{ update_at }}</i>
-            <button class="btn btn-secondary btn-sm"
-                hx-get="{% url 'assets:assets-htmx-api:asset-list' %}"
-                hx-target="#assets_table_htmx" title="refresh">
-                <i class="bi bi-arrow-clockwise"></i>
-            </button>
-        </small>
+{#        <small  style="display: inline" >#}
+{#            <i >Last updated: {{ last_updated }}</i>#}
+{#            ; #}
+{#            <i>Next price update at {{ update_at }}</i>#}
+{#            <button class="btn btn-secondary btn-sm"#}
+{#                hx-get="{% url 'assets:assets-htmx-api:asset-list' %}"#}
+{#                hx-target="#assets_table_htmx" title="refresh">#}
+{#                <i class="bi bi-arrow-clockwise"></i>#}
+{#            </button>#}
+{#        </small>#}
     {% endif %}
-    <a href="{% url 'assets:create_asset' %}" class="btn btn-primary btn-sm float-end" role="button" style="display: inline" title="Create new asset">
+    <a href="{% url 'assets:create_asset' %}" class="btn btn-primary btn-sm float-end mb-4" role="button" style="display: inline" title="Create new asset">
         + New asset
     </a>
-    <div class="row justify-content-md-center">&nbsp;</div>
 {% endblock %}
 
 {% block js %}

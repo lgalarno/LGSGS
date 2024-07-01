@@ -1,0 +1,65 @@
+<h4>Transactions</h4>
+<div class="table-responsive">
+    <table class="table" id="table_pages">
+        <thead>
+            <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Trader</th>
+                <th scope="col">Type</th>
+                <th scope="col">Symbol</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Price</th>
+                <th scope="col">Change</th>
+                <th scope="col">Fees</th>
+                <th scope="col">Currency</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for t in transaction_list %}
+            <tr >
+                <td>
+                    <a hx-get="{{ t.get_absolute_url }}"
+                       hx-target="#form-dialog-lg"
+                       aria-label="transaction"
+                       style="text-decoration: underline;"
+                    >{{ t.date }}</a>
+                 </td>
+                <td style="text-align: center; ">
+                    {% if t.trader.logo %}
+                        <img alt="Trader logo" src="{{ t.trader.logo.url }}" height="20">
+                    {% else %}
+                        {{ t.trader.name }}
+                    {% endif %}
+                </td>
+                <td>
+                    {{ t.type|title }}
+                </td>
+                <td>
+                    {{ t.ticker.symbol }}
+                </td>
+                <td>
+                    {{ t.quantity }}
+                </td>
+                <td >
+                    {{ t.price }}$
+                </td>
+                <td>
+                    {{ t.change }}$
+                </td>
+                <td>
+                    {{ t.fees }}
+                    {% if t.ticker.type == 'crypto' and t.type == 'buy' %}
+                        {{ t.ticker.symbol }}
+                    {% else %}
+                        $
+                    {% endif %}
+                </td>
+                <td>
+                    {{ t.currency|upper }}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+     </table>
+
+</div>

@@ -1,0 +1,28 @@
+<h4>Transfers</h4>
+<div class="table-responsive">
+    <table class="table" id="table_pages">
+        <thead>
+            <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Type</th>
+                <th scope="col">Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for t in transfer_list %}
+            <tr >
+                <td>
+                    {{ t.date }}
+                 </td>
+                <td>
+                    {{ t.type|title }}
+                </td>
+                <td>
+                    {{ t.amount }}$
+                 </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+     </table>
+
+</div>

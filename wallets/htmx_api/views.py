@@ -5,9 +5,9 @@ from django.utils import timezone
 from decimal import Decimal
 
 from wallets.forms import WalletForm, TransferForm, TransactionForm
-from wallets.models import Wallet, Profit, Transaction
+from wallets.models import Wallet, Profit, Transaction, Transfer
 
-from assets.backend import current_price
+from assets.backend import current_price, get_refresh_info
 from assets.models import Ticker, Trader, Asset
 
 
@@ -28,6 +28,23 @@ def wallet_create(request):
         'form_wallet': form,
     }
     return render(request, 'wallets/partials/wallet-form.html', context)
+
+
+def wallet_update(request, pk):
+    wallet = get_object_or_404(Wallet, pk=pk)
+    form = WalletForm(request.POST or None, instance=wallet)
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            response = HttpResponse()
+            response["HX-Redirect"] = reverse("wallets:wallets")
+            return response
+    context = {
+        "title": "update-wallet",
+        'wallet': wallet,
+        'form_wallet': form,
+    }
+    return render(request, 'wallets/partials/wallet-update-form.html', context)
 
 
 def wallet_detail(request, pk):
@@ -67,7 +84,7 @@ def transfer(request, pk):
             context["wallet"] = w
             return render(request, 'wallets/partials/wallet-detail.html', context)
     context["form"] = form
-    return render(request, 'wallets/partials/transfer-form.html', context)
+    return render(request, 'wallets/partials/transfer-form-modal.html', context)
 
 
 def buy(request, pk):
@@ -85,10 +102,9 @@ def buy(request, pk):
                 instance = form.save(commit=False)
                 ticker = Ticker.objects.get(pk=ticker_id)
                 # check if wallet has enough money.
-                cost = round(
-                        (instance.quantity * float(instance.price) + float(instance.change)), 2)
+                cost = Decimal(instance.quantity * float(instance.price) + float(instance.change)).quantize(Decimal("1.00"))
                 if ticker.type == 'equity':
-                    cost = round(cost + float(instance.fees), 2)   # may be fees in $ for equities
+                    cost = Decimal(cost + float(instance.fees)).quantize(Decimal("1.00"))  # may be fees in $ for equities
                     quantity = instance.quantity
                 else:
                     quantity = instance.quantity - float(instance.fees)  # fees for crypto are in crypto
@@ -109,18 +125,16 @@ def buy(request, pk):
                         quantity=quantity,
                         price=instance.price,
                         current=current_price(ticker.symbol),  # get the current price
-                        # paid=round(instance.quantity * float(instance.price), 2),
                         margin=Decimal(request.POST.get('margin')),  # margin not in TransactionForm
                         monitor=monitor
                     )
                     a.save()
                     # update wallet balance
-                    wallet.balance = round(float(wallet.balance) - cost, 2)
+                    wallet.balance = wallet.balance - cost
                     wallet.save()
                     # complete instance info
-                    instance.type = 'purchase'
+                    instance.type = 'buy'
                     instance.asset = a
-                    # instance.wallet = wallet
                     instance.save()
                     response = HttpResponse()
                     response["HX-Redirect"] = reverse("wallets:wallets")
@@ -151,9 +165,8 @@ def sell(request, pk):
             if quantity_sold > asset.quantity:
                 form.add_error(None, "Not enough units to sell.")
             else:
-                revenue = round(
-                    (instance.quantity * float(instance.price) + float(instance.change) - float(instance.fees)), 2)
-                profit = revenue - round(float(asset.price) * instance.quantity, 2) - float(asset.transaction.change)
+                revenue = Decimal(instance.quantity * float(instance.price) + float(instance.change) - float(instance.fees)).quantize(Decimal("1.00"))
+                profit = revenue - Decimal(float(asset.price) * instance.quantity - float(asset.transaction.change)).quantize(Decimal("1.00"))
                 # update Transaction instance
                 instance.type = 'sell'
                 instance.ticker = asset.ticker
@@ -191,6 +204,50 @@ def transaction_detail(request, pk):
     return render(request, 'wallets/partials/transaction-detail.html', context)
 
 
+def transaction_list(request, pk):
+    wallet = get_object_or_404(Wallet, pk=pk)
+    transactions = Transaction.objects.filter(wallet=wallet)
+    context = {
+        "title": "transaction-list",
+        'transaction_list': transactions
+    }
+    return render(request, 'wallets/partials/transaction-list.html', context)
+
+
+def asset_list(request, pk):
+    wallet = get_object_or_404(Wallet, pk=pk)
+    assets = Asset.objects.filter(transaction__wallet=wallet)
+    context = {
+        "title": "asset-list",
+        'asset_list': assets,
+        **get_refresh_info()
+    }
+    return render(request, 'assets/partials/assets_table.html', context)
+
+
+def transfer_list(request, pk):
+    wallet = get_object_or_404(Wallet, pk=pk)
+    transfers = Transfer.objects.filter(wallet=wallet)
+    context = {
+        "title": "asset-list",
+        'transfer_list': transfers,
+    }
+    return render(request, 'wallets/partials/transfer-list.html', context)
+
+
+def profit_list(request, pk):
+    wallet = get_object_or_404(Wallet, pk=pk)
+    profits = Profit.objects.filter(transaction_bought__wallet=wallet)
+    #total_profits = Decimal(profits.aggregate(Sum('profit', default=0))['profit__sum']
+    #                        ).quantize(Decimal("1.00"))
+    context = {
+        "title": "asset-list",
+        'profit_list': profits,
+        #'total_profits': total_profits,
+    }
+    return render(request, 'wallets/partials/profit-list.html', context)
+
+
 def profit_detail(request):
     pk = request.GET.get('purchased')
     purchased = get_object_or_404(Transaction, pk=pk)
@@ -201,6 +258,8 @@ def profit_detail(request):
         "title": "transaction",
         'purchased': purchased,
         'sold': sold,
-        'profit': round(profit, 2)
+        'profit': Decimal(profit).quantize(Decimal("1.00"))
     }
     return render(request, 'wallets/partials/profit-detail.html', context)
+
+

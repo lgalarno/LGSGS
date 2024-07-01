@@ -4,6 +4,8 @@ from django.db import models
 from django.shortcuts import reverse
 from django.utils import timezone
 
+from decimal import Decimal
+
 from assets.models import Ticker, Trader, Asset
 
 # Create your models here.
@@ -35,7 +37,7 @@ class Transfer(models.Model):
 
 class Transaction(models.Model):
     TYPE = (
-        ('purchase', 'Purchase'),
+        ('buy', 'Buy'),
         ('sell', 'Sell'),
     )
     CURRENCY = (
@@ -57,7 +59,7 @@ class Transaction(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
 
     class Meta:
-        ordering = ['trader']
+        ordering = ['date']
 
     def __str__(self):
         return f"{self.date}-{self.type}-{self.ticker.symbol}"
@@ -70,12 +72,11 @@ class Transaction(models.Model):
         brut = self.quantity * float(self.price) + float(self.change)
         if self.ticker.type == 'equity':
             brut = brut + float(self.fees)
-        return round(brut, 2)
+        return Decimal(brut).quantize(Decimal("1.00"))
 
     @property
     def revenue(self):
-        return round(
-                (self.quantity * float(self.price) + float(self.change) - float(self.fees)), 2)
+        return Decimal((self.quantity * float(self.price) + float(self.change) - float(self.fees))).quantize(Decimal("1.00"))
 
     def paid(self, quantity=None):
         if quantity is None:

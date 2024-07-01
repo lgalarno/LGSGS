@@ -2,7 +2,12 @@
     <div class="row">
         <div class="col col-lg-12">
             <h2 style="display: inline;">{{ wallet.name }}</h2>
-            <h4 style="float: right">balance: {{ wallet.balance }}$</h4>
+            <h4 style="float: right">balance: <strong>{{ wallet.balance }}$</strong></h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col col-lg-12">
+            <h4 style="float: right">profits: <strong>{{ total_profits }}$</strong></h4>
         </div>
     </div>
     <div class="row">
@@ -12,25 +17,59 @@
                     <li class="nav-item">
                         <a class="nav-link"
                            hx-get="{% url 'wallets:wallets_htmx-api:transfer' pk=wallet.id %}"
-                           hx-target="#wallet_frame">
+                           hx-target="#form-dialog">
                         Transfer money</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link"
                            hx-get="{% url 'wallets:wallets-htmx-api:buy' pk=wallet.id %}"
-                           hx-target="#wallet_frame">
+                           hx-target="#htmx_frame">
                             Buy asset</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link"  href="{% url 'wallets:delete-wallets' pk=wallet.pk %}" onclick="return confirm('Are you sure? All the transactions done with this wallet will be erased.')" title="delete">
-                            delete
+                        <a class="nav-link"
+                           hx-get="{% url 'wallets:wallets-htmx-api:asset-list' pk=wallet.id %}"
+                           hx-target="#htmx_frame">
+                            Assets</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           hx-get="{% url 'wallets:wallets-htmx-api:profit-list' pk=wallet.id %}"
+                           hx-target="#htmx_frame">
+                            Profits</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           hx-get="{% url 'wallets:wallets-htmx-api:transaction-list' pk=wallet.id %}"
+                           hx-target="#htmx_frame">
+                            Transaction history</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           hx-get="{% url 'wallets:wallets-htmx-api:transfer-list' pk=wallet.id %}"
+                           hx-target="#htmx_frame">
+                            Transfer history</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           hx-get="{% url 'wallets:wallets-htmx-api:wallet_update' pk=wallet.id %}"
+                           hx-target="#form-dialog"
+                        >
+                            Edit wallet
                         </a>
                     </li>
                 </ul>
             </nav>
         </div>
     </div>
-    <div class="row" id="assets_frame">
+    <div id="htmx_frame" class="container-fluid mt-2">
+        {% if asset_list %}
+            {% include 'assets/partials/assets_table.html' %}
+        {% else %}
+            <p>This wallet has no assets</p>
+        {% endif %}
+    </div>
+    {% comment %}<div class="row" id="assets_frame">
         <div class="col col-lg-12">
             <hr>
             {% if asset_list %}
@@ -49,12 +88,17 @@
                 {% include 'wallets/partials/profit-list.html' %}
             </div>
         </div>
-{#        <div class="row">#}
-{#             <div class="col col-lg-12">#}
-{#                <h4 style="float: right">profits: {{ total_profits }}$</h4>#}
-{#            </div>#}
-{#        </div>#}
     {% endif %}
+
+    {% if transaction_list %}
+        <div id="profits_frame" class="row mt-4">
+            <div class="col col-lg-12">
+                <h4>Transactions</h4>
+                {% include 'wallets/partials/transaction-list.html' %}
+            </div>
+        </div>
+    {% endif %}{% endcomment %}
+
 {% else %}
     <div class="row">
         <div class="col col-lg-12">

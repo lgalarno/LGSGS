@@ -9,7 +9,8 @@
                 <p>You need to <a href="{% url "accounts:login" %}">log in</a> to view your dashboard!</p>
                 <p>Need an account? Please <a href={% url 'accounts:register' %}>Register</a></p>
             {% else %}
-                <a class="btn btn-primary" type="button" href="{% url 'assets:assets' %}">Go to your assets</a>
+                <a class="btn btn-primary" type="button" href="{% url 'wallets:wallets' %}">Go to your wallets</a>
+                <a class="btn btn-primary" type="button" href="{% url 'assets:assets' %}">View your assets (old site)</a>
             {% endif %}
         </div>
     </div>

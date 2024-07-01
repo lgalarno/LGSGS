@@ -1,59 +1,58 @@
-    <div class="table-responsive">
-        <table class="table" id="table_profits">
-            <thead>
-                <tr>
-                    <th scope="col">Symbol</th>
-                    <th scope="col">Trader</th>
-                    <th scope="col">Quantity sold</th>
-                    <th scope="col">Purchased price (date)</th>
-                    <th scope="col">Sold price (date)</th>
-                    <th>Profit</th>
-                    <th scope="col"></th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for p in profit_list %}
-                <tr >
-                    <td>
-                        <a hx-get="{% url 'wallets:wallets-htmx-api:profit' %}?purchased={{ p.transaction_bought.pk }}&sold={{ p.transaction_sold.pk }}"
-                           hx-target="#form-dialog"
-                           aria-label="detail"
-                           style="text-decoration: underline;"
-                        >{{ p.transaction_bought.ticker.symbol }}</a>
-                     </td>
-                    <td style="text-align: center; ">
-                        {% if p.transaction_bought.trader.logo %}
-                            <img alt="Trader logo" src="{{ p.transaction_bought.trader.logo.url }}" height="20">
-                        {% else %}
-                            {{ p.transaction_bought.trader.name }}
-                        {% endif %}
-                    </td>
-                    <td>
-                        {{ p.transaction_sold.quantity }}
-                    </td>
-                    <td>
-                        {{ p.transaction_bought.price }}$ ({{ p.transaction_bought.date }} )
-                    </td>
-                    <td>
-                        <a> {{ p.transaction_sold.price }}$ ({{ p.transaction_sold.date }} )</a>
-                    </td>
-                    <td >
-                        {{ p.profit }}$
-                    </td>
-                    <td></td>
-                </tr>
-            {% endfor %}
-                <tr>
-{#                    <td colspan=4 />#}
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-
-                    <td  style="text-align: right;"><strong>Total</strong></td>
-                    <td ><strong>{{ total_profits }}$</strong></td>
-                    <td></td>
-                </tr>
-            </tbody>
-         </table>
-    </div>
+<h4>Profits</h4>
+<div class="table-responsive">
+    <table class="table" id="table_list">
+        <thead>
+            <tr>
+                <th scope="col">Symbol</th>
+                <th scope="col">Trader</th>
+                <th scope="col">Quantity sold</th>
+                <th scope="col">Purchased price (date)</th>
+                <th scope="col">Sold price (date)</th>
+                <th>Profit</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for p in profit_list %}
+            <tr >
+                <td>
+                    <a hx-get="{% url 'wallets:wallets-htmx-api:profit' %}?purchased={{ p.transaction_bought.pk }}&sold={{ p.transaction_sold.pk }}"
+                       hx-target="#form-dialog-lg"
+                       aria-label="detail"
+                       style="text-decoration: underline;"
+                    >{{ p.transaction_bought.ticker.symbol }}</a>
+                 </td>
+                <td style="text-align: center; ">
+                    {% if p.transaction_bought.trader.logo %}
+                        <img alt="Trader logo" src="{{ p.transaction_bought.trader.logo.url }}" height="20">
+                    {% else %}
+                        {{ p.transaction_bought.trader.name }}
+                    {% endif %}
+                </td>
+                <td>
+                    {{ p.transaction_sold.quantity }}
+                </td>
+                <td>
+                    {{ p.transaction_bought.price }}$ ({{ p.transaction_bought.date }} )
+                </td>
+                <td>
+                    <a> {{ p.transaction_sold.price }}$ ({{ p.transaction_sold.date }} )</a>
+                </td>
+                <td >
+                    {{ p.profit }}$
+                </td>
+                <td></td>
+            </tr>
+        {% endfor %}
+{#            <tr>#}
+{#                <td></td>#}
+{#                <td></td>#}
+{#                <td></td>#}
+{#                <td></td>#}
+{#                <td  style="text-align: right;"><strong>Total</strong></td>#}
+{#                <td ><strong>{{ total_profits }}$</strong></td>#}
+{#                <td></td>#}
+{#            </tr>#}
+        </tbody>
+     </table>
+</div>

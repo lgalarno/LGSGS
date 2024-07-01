@@ -5,6 +5,8 @@ from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from django.shortcuts import reverse
 
+from decimal import Decimal
+
 import os
 
 from assets.tasks import send_email
@@ -64,7 +66,6 @@ def auto_delete_file_on_change(sender, instance, **kwargs):
         old_logo = Trader.objects.get(pk=instance.pk).logo
     except Trader.DoesNotExist:
         return False
-    # TODO make it better...
     new_logo = instance.logo
     if not bool(old_logo):
         return False
@@ -112,24 +113,23 @@ class Asset(models.Model):
 
     @property
     def target(self):
-        return round(self.quantity * float(self.price) + float(self.margin), 2)
-        # return round(self.paid + self.margin, 2)
+        return Decimal(self.quantity * float(self.price) + float(self.margin)).quantize(Decimal("1.00"))
 
     @property
     def target_price(self):
-        return round(float(self.target) / self.quantity, 4)
+        return Decimal(float(self.target) / self.quantity).quantize(Decimal("1.000000"))
 
     @property
     def paid(self):
-        return round(self.quantity * float(self.price), 2)
+        return Decimal(self.quantity * float(self.price)).quantize(Decimal("1.00"))
 
     @property
     def value(self):
-        return round(self.quantity * float(self.current), 2)
+        return Decimal(self.quantity * float(self.current)).quantize(Decimal("1.00"))
 
     @property
     def delta(self):
-        return round(self.value - float(self.paid), 2)
+        return self.value - self.paid  # Decimal(self.value - float(self.paid)).quantize(Decimal("1.00"))
 
     @property
     def target_reached(self):
@@ -173,7 +173,7 @@ class Asset(models.Model):
 #         if (instance.quantity != old.quantity) or (instance.price != old.price):
 #             do = True
 #     if do:
-#         instance.paid = round(instance.quantity * float(instance.price), 2)
+#         instance.paid = Decimal(instance.quantity * float(instance.price)).quantize(Decimal("1.00"))
 
 
 @receiver(post_save, sender=Asset)

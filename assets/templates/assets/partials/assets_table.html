@@ -1,5 +1,6 @@
-    <div class="table-responsive">
-        <table class="table" id="table_assets">
+<h4>Assets</h4>    
+<div class="table-responsive">
+        <table class="table" id="table_list">
             <thead>
                 <tr>
                     <th scope="col">Symbol</th>
@@ -64,8 +65,8 @@
                         {% if wallet %}
                             <a title="sell" 
                                hx-get="{% url 'wallets:wallets-htmx-api:sell' pk=a.id %}"
-                               hx-target="#wallet_frame">
-                                <i class="bi bi-cash-coin"></i>
+                               hx-target="#htmx_frame">
+                                <i class="bi bi-bank"></i>
                             </a>
                         {% endif %}
                         <a href="{{ a.get_update_url }}" title="edit" >
@@ -80,4 +81,13 @@
             </tbody>
          </table>
     </div>
-
+    <small  style="display: inline" >
+        <i >Last updated: {{ last_updated }}</i>
+        ; 
+        <i>Next price update at {{ update_at }}</i>
+        <button class="btn btn-secondary btn-sm"
+            hx-get="{% url 'assets:assets-htmx-api:asset-list' %}"
+            hx-target="#assets_table_htmx" title="refresh">
+            <i class="bi bi-arrow-clockwise"></i>
+        </button>
+    </small>

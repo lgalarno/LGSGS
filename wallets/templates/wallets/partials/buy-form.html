@@ -1,12 +1,13 @@
 {% load crispy_forms_tags %}
-<div class="row justify-content-md-center">
-    <div class="col col-lg-6">
-        <h2 style="display: inline;">Purchase from {{ wallet.name }}</h2>
-        <h4 style="display: inline; float: right">{{ wallet.balance }}$</h4>
-    </div>
-</div>
+{#<div class="row justify-content-md-center">#}
+{#    <div class="col col-lg-6">#}
+{#        <h2 style="display: inline;">Purchase</h2>#}
+{#        <h4 style="display: inline; float: right">{{ wallet.balance }}$</h4>#}
+{#    </div>#}
+{#</div>#}
 <div class="row justify-content-md-center">
     <div class="col col-lg-6 default_form">
+        <h2>Purchase</h2>
         <form
               hx-post="{% url 'wallets:wallets-htmx-api:buy' pk=wallet.id %}"
               hx-trigger="submit"
@@ -64,7 +65,7 @@
                     </div>
                 </div>
             </div>
-            <button class="btn btn-secondary" onclick="history.back()"> << Back  </button>
+            <a href="{% url 'wallets:wallets' %}" type="button" class="btn btn-secondary">Cancel</a>
 
             <a class="btn btn-primary"
                hx-post="{% url 'wallets:wallets-htmx-api:buy' pk=wallet.id %}"

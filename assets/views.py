@@ -26,7 +26,6 @@ def create_asset(request):
                 instance.trader = trader
                 instance.user = request.user
                 instance.current = current_price(ticker.symbol)
-                # instance.paid = round(instance.quantity * float(instance.price), 2)
                 instance.save()
                 messages.success(request, 'Asset created!')
         else:

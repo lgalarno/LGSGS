@@ -1,9 +1,8 @@
 {% load crispy_forms_tags %}
 
-<div class="row">
-    <div class="col col-md-6" >
-        <h2>Transfer money to/from {{ wallet.name }}</h2>
-        <H3>Balance: {{ wallet.balance }}$</H3>
+<div class="row justify-content-md-center">
+    <div class="col col-lg-6 default_form">
+        <h2>Transfer money</h2>
         <form
               hx-post="{% url 'wallets:wallets_htmx-api:transfer' pk=wallet.id %}"
               hx-trigger="submit"

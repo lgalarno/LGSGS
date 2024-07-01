@@ -31,7 +31,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>
+                    <td colspan="2">
                         fees: {{ purchased.fees }}
                         {% if purchased.ticker.type == 'crypto' %}
                             {{ purchased.ticker.symbol }}
@@ -41,7 +41,6 @@
                     <td>
                         change: {{ purchased.change }}$
                     </td>
-                    <td></td>
                     <td>
                         {{ purchased.date }}
                     </td>
@@ -67,13 +66,12 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>
+                    <td colspan="2">
                         fees: {{ sold.fees }}$
                     </td>
                     <td>
                         change: {{ sold.change }}$
                     </td>
-                    <td></td>
                     <td>
                         {{ sold.date }}
                     </td>
