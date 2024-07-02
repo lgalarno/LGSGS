@@ -24,6 +24,8 @@ class Wallet(models.Model):
 class Transfer(models.Model):
     TYPE = (
         ('deposit', 'Deposit'),
+        ('interest', 'Interest'),
+        ('dividends', 'Dividends'),
         ('withdrawal', 'Withdrawal'),
     )
     wallet = models.ForeignKey(to=Wallet, on_delete=models.CASCADE)

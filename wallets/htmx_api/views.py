@@ -53,7 +53,6 @@ def wallet_detail(request, pk):
     profits = Profit.objects.filter(transaction_bought__wallet=wallet)
     total_profits = Decimal(profits.aggregate(Sum('profit', default=0))['profit__sum']
                             ).quantize(Decimal("1.00"))
-    print(total_profits)
     wallet.lastviewed = timezone.now()
     wallet.save()
     context = {
@@ -76,9 +75,10 @@ def transfer(request, pk):
     if request.method == "POST":
         if form.is_valid():
             instance = form.save(commit=False)
+            if instance.type == 'withdrawal':
+                instance.amount = -instance.amount
             w = instance.wallet
-            b = w.balance
-            w.balance = b + instance.amount
+            w.balance = w.balance + instance.amount
             w.save()
             instance.save()
             context["wallet"] = w

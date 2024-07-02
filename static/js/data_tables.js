@@ -22,7 +22,7 @@ htmx.onLoad(function() {
                 targets: -1 }
             ],
         searching: false,
-        bPaginate: true,
+        bPaginate: false,
         info: false,
         order: [],
         processing: true,
