@@ -33,6 +33,9 @@ class Transfer(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField()
 
+    class Meta:
+        ordering = ['date']
+
     def __str__(self):
         return f"{str(self.wallet.name)}-{str(self.amount)}$"
 

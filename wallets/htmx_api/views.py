@@ -75,14 +75,14 @@ def transfer(request, pk):
     if request.method == "POST":
         if form.is_valid():
             instance = form.save(commit=False)
-            if instance.type == 'withdrawal':
-                instance.amount = -instance.amount
             w = instance.wallet
             w.balance = w.balance + instance.amount
             w.save()
             instance.save()
             context["wallet"] = w
-            return render(request, 'wallets/partials/wallet-detail.html', context)
+            response = HttpResponse()
+            response["HX-Redirect"] = reverse("wallets:wallets")
+            return response
     context["form"] = form
     return render(request, 'wallets/partials/transfer-form-modal.html', context)
 
