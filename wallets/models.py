@@ -95,8 +95,5 @@ class Profit(models.Model):
     profit = models.DecimalField(max_digits=14, decimal_places=2, validators=[MinValueValidator(0.0)])
     timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
 
-    class Meta:
-        ordering = ['-date']
-
     def __str__(self):
         return f"{self.transaction_sold.date}-{self.transaction_sold.ticker.symbol}-{self.transaction_sold.wallet.name}"

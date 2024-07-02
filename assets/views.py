@@ -66,7 +66,13 @@ class AssetDetailView(DetailView):
 
 class AssetDeleteView(LoginRequiredMixin, DeleteView):
     model = Asset
-    success_url = reverse_lazy('assets:assets')
+
+    def get_success_url(self):
+        if self.object.has_transaction:
+            success_url = reverse_lazy('wallets:wallets')
+        else:
+            success_url = reverse_lazy('assets:assets')
+        return success_url
 
     def get(self, *args, **kwargs):
         self.object = self.get_object()

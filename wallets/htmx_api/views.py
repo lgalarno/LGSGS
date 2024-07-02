@@ -237,7 +237,7 @@ def transfer_list(request, pk):
 
 def profit_list(request, pk):
     wallet = get_object_or_404(Wallet, pk=pk)
-    profits = Profit.objects.filter(transaction_bought__wallet=wallet)
+    profits = Profit.objects.filter(transaction_bought__wallet=wallet).order_by('-transaction_sold__date')
     #total_profits = Decimal(profits.aggregate(Sum('profit', default=0))['profit__sum']
     #                        ).quantize(Decimal("1.00"))
     context = {
