@@ -11,7 +11,7 @@
         <form
               hx-post="{% url 'wallets:wallets-htmx-api:buy' pk=wallet.id %}"
               hx-trigger="submit"
-              hx-target="#wallet_frame"
+              hx-target="#htmx_frame"
               id="form">
             {% csrf_token %}
             <div class="row">
@@ -70,7 +70,7 @@
             <a class="btn btn-primary"
                hx-post="{% url 'wallets:wallets-htmx-api:buy' pk=wallet.id %}"
                hx-trigger="submit"
-               hx-target="#wallet_frame"
+               hx-target="#htmx_frame"
             >
                 Clear
             </a>
