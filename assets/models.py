@@ -83,14 +83,13 @@ class Asset(models.Model):
     quantity = models.FloatField(validators=[MinValueValidator(0.0)])
     price = models.DecimalField(max_digits=14, decimal_places=6, validators=[MinValueValidator(0.0)])
     current = models.DecimalField(max_digits=14, decimal_places=6, validators=[MinValueValidator(0.0)], default=0)
-    # paid = models.DecimalField(max_digits=9, decimal_places=2, default=0)
     margin = models.DecimalField(max_digits=9, decimal_places=2, validators=[MinValueValidator(0.0)], default=0)
     timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     monitor = models.BooleanField(default=True)
     emailed = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ['trader']
+        ordering = ['trader', '-date']
 
     def __str__(self):
         return f"{self.pk}-{self.ticker.symbol}-{self.date}"

@@ -34,7 +34,7 @@ class Transfer(models.Model):
     date = models.DateField()
 
     class Meta:
-        ordering = ['date']
+        ordering = ['-date']
 
     def __str__(self):
         return f"{str(self.wallet.name)}-{str(self.amount)}$"
@@ -64,7 +64,7 @@ class Transaction(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
 
     class Meta:
-        ordering = ['date']
+        ordering = ['-date']
 
     def __str__(self):
         return f"{self.date}-{self.type}-{self.ticker.symbol}"
@@ -94,6 +94,9 @@ class Profit(models.Model):
     transaction_sold = models.ForeignKey(to=Transaction, related_name='sold', on_delete=models.CASCADE)
     profit = models.DecimalField(max_digits=14, decimal_places=2, validators=[MinValueValidator(0.0)])
     timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+
+    class Meta:
+        ordering = ['-date']
 
     def __str__(self):
         return f"{self.transaction_sold.date}-{self.transaction_sold.ticker.symbol}-{self.transaction_sold.wallet.name}"
