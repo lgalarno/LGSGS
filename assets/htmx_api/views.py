@@ -47,7 +47,7 @@ def trader_create(request):
 
 
 def asset_list(request):
-    qs = Asset.objects.filter(user=request.user)
+    qs = Asset.objects.filter(user=request.user).filter(transaction=None)  # show only old way
     update_prices(qs)
     context = {
         'asset_list': qs,

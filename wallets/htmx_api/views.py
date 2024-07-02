@@ -105,10 +105,10 @@ def buy(request, pk):
                 # check if wallet has enough money.
                 cost = Decimal(instance.quantity * float(instance.price) + float(instance.change)).quantize(Decimal("1.00"))
                 if ticker.type == 'equity':
-                    cost = Decimal(cost + float(instance.fees)).quantize(Decimal("1.00"))  # may be fees in $ for equities
+                    cost = cost + instance.fees  # may be fees in $ for equities
                     quantity = instance.quantity
                 else:
-                    quantity = instance.quantity - float(instance.fees)  # fees for crypto are in crypto
+                    quantity = instance.quantity - instance.fees  # fees for crypto are in crypto
                 if cost > wallet.balance:
                     form.add_error(None, "Not enough money in the wallet.")
                 else:
@@ -220,6 +220,7 @@ def asset_list(request, pk):
     assets = Asset.objects.filter(transaction__wallet=wallet)
     context = {
         "title": "asset-list",
+        'wallet': wallet,
         'asset_list': assets,
         **get_refresh_info()
     }
