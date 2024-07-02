@@ -60,7 +60,8 @@ def wallet_detail(request, pk):
         'wallet': wallet,
         'asset_list': assets,
         'profit_list': profits,
-        'total_profits': total_profits
+        'total_profits': total_profits,
+        **get_refresh_info()
     }
     return render(request, 'wallets/partials/wallet-detail.html', context)
 
