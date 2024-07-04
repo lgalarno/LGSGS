@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, UpdateView, DeleteView, DetailView
 
@@ -76,6 +76,7 @@ class AssetDeleteView(LoginRequiredMixin, DeleteView):
 
     def get(self, *args, **kwargs):
         self.object = self.get_object()
+        self.get_success_url()
         self.object.delete()
         return redirect(self.get_success_url())
 

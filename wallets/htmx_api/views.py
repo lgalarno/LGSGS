@@ -108,7 +108,7 @@ def buy(request, pk):
                     cost = cost + instance.fees  # may be fees in $ for equities
                     quantity = instance.quantity
                 else:
-                    quantity = instance.quantity - instance.fees  # fees for crypto are in crypto
+                    quantity = instance.quantity - float(instance.fees)  # fees for crypto are in crypto
                 if cost > wallet.balance:
                     form.add_error(None, "Not enough money in the wallet.")
                 else:
