@@ -16,7 +16,7 @@ class WalletForm(forms.ModelForm):
 class TransferForm(forms.ModelForm):
     class Meta:
         model = Transfer
-        fields = ['type', 'amount', 'date', 'wallet']
+        fields = ['type', 'amount', 'description', 'date', 'wallet']
 
         labels = {
             "date": "Date transferred",
@@ -24,6 +24,7 @@ class TransferForm(forms.ModelForm):
         widgets = {
             'date': forms.DateInput(attrs={"type": "date"}),
             'wallet': forms.HiddenInput(),
+            'description': forms.Textarea(attrs={'rows': 3}),
         }
 
     def __init__(self, *args, **kwargs):

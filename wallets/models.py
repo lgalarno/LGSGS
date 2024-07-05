@@ -31,6 +31,7 @@ class Transfer(models.Model):
     wallet = models.ForeignKey(to=Wallet, on_delete=models.CASCADE)
     type = models.CharField(max_length=20, choices=TYPE, default=TYPE[0][0])
     amount = models.DecimalField(max_digits=10, decimal_places=2)
+    description = models.TextField(null=True, blank=True)
     date = models.DateField()
 
     class Meta:
