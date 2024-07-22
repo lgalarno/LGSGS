@@ -103,13 +103,8 @@ def buy(request, pk):
                 instance = form.save(commit=False)
                 ticker = Ticker.objects.get(pk=ticker_id)
                 # check if wallet has enough money.
-                if ticker.type == 'crypto':  # fees in crypto
-                    cost = Decimal(
-                        (instance.quantity + instance.fees) * float(instance.price) + float(instance.change)).quantize(
-                        Decimal("1.00"))
-                else:
-                    cost = Decimal(
-                        instance.quantity * float(instance.price) + float(instance.fees) + float(instance.change)).quantize(
+                cost = Decimal(
+                        instance.quantity * float(instance.price) + float(instance.change)).quantize(
                         Decimal("1.00"))
                 if ticker.type == 'equity':  # # fees per transaction
                     cost = cost + instance.fees  # may be fees in $ for equities
