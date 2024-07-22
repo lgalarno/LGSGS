@@ -7,7 +7,7 @@ from decimal import Decimal
 from wallets.forms import WalletForm, TransferForm, TransactionForm
 from wallets.models import Wallet, Profit, Transaction, Transfer
 
-from assets.backend import current_price, get_refresh_info
+from assets.backend import current_price, get_refresh_info, update_prices
 from assets.models import Ticker, Trader, Asset
 
 
@@ -220,6 +220,7 @@ def transaction_list(request, pk):
 def asset_list(request, pk):
     wallet = get_object_or_404(Wallet, pk=pk)
     assets = Asset.objects.filter(transaction__wallet=wallet)
+    update_prices(assets)
     context = {
         "title": "asset-list",
         'wallet': wallet,
