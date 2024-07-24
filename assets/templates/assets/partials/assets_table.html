@@ -1,28 +1,28 @@
 <h4>Assets</h4>    
 <div class="table-responsive">
-        <table class="table" id="table_list">
-            <thead>
-                <tr>
-                    <th scope="col">Symbol</th>
-                    <th scope="col">Trader</th>
-                    <th scope="col">Purchased</th>
-                    <th scope="col">#</th>
-                    <th scope="col">Price</th>
-                    <th scope="col">Paid</th>
-                    <th scope="col">Target (price)</th>
-                    <th scope="col">Current price</th>
-                    <th scope="col">Current value</th>
-                    <th scope="col">Delta</th>
-                    <th scope="col"></th>
-                </tr>
-            </thead>
+        <table class="table" id="table_list2">
+{#            <thead>#}
+{#                <tr>#}
+{#                    <th scope="col">Symbol</th>#}
+{#                    <th scope="col">Trader</th>#}
+{#                    <th scope="col">Purchased</th>#}
+{#                    <th scope="col">#</th>#}
+{#                    <th scope="col">Price</th>#}
+{#                    <th scope="col">Paid</th>#}
+{#                    <th scope="col">Target (price)</th>#}
+{#                    <th scope="col">Current price</th>#}
+{#                    <th scope="col">Current value</th>#}
+{#                    <th scope="col">Delta</th>#}
+{#                    <th scope="col"></th>#}
+{#                </tr>#}
+{#            </thead>#}
+        {#            <thead>#}
             <tbody>
             {% for a in asset_list %}
-                <tr {% if not a.monitor %} class="not_monitored" {% endif %}>
+                <tr {% if not a.monitor %} class="not_monitored" {% endif %} style="border-top: 2px solid black;">
                     <td title="{{ a.ticker.name }}">
-                        <a href = "{{ a.get_absolute_url }}">{{ a.ticker.symbol }}</a>
-                    </td>
-                    <td style="text-align: center; ">
+                        
+
                         {% if a.trader.url %}
                             <a href="{{ a.trader.url }}" target="_blank" title="{{ a.trader.name }} {{ a.trader.url }}">
                         {% else %}
@@ -34,34 +34,37 @@
                             {{ a.trader.name }} 
                         {% endif %}
                         </a> 
+                        <a href = "{{ a.get_absolute_url }}">{{ a.ticker.symbol }}</a>
                     </td>
-                    <td>
+                    <td style="text-align:right">
+                        Price: {{ a.price }}$
+                    </td>
+                    <td style="text-align:right">
+                        Total paid: {{ a.paid }}$
+                    </td>                
+                    <td style="text-align:right">
+                        Qty: {{ a.quantity }}
+                    </td>
+                    <td style="text-align:right">
                         {{ a.date }}
                     </td>
+                </tr>
+                <tr style="border-bottom: 2px solid black;">
                     <td>
-                        {{ a.quantity }}
+                        Target (total - price) {{ a.target }}$ - {{ a.target_price }}$
+                    </td>                
+                    <td style="text-align:right">
+                        Current price: {{ a.current }}$
                     </td>
-                    <td>
-                        {{ a.price }}
-                    </td>
-                    <td>
-                        {{ a.paid }}
-                    </td>
-                    <td>
-                        {{ a.target }} ({{ a.target_price }})
-                    </td>
-                    <td>
-                        {{ a.current }}
-                    </td>
-                    <td >
-                        {{ a.value }}
-                    </td>
-                    <td>
+                    <td style="text-align:right">
+                        Current value: {{ a.value }}$
+                    </td >
+                    <td style="text-align:right">
                         <p class="{{ a.delta_alert }}">
-                            {{ a.delta }}
+                            Delta: {{ a.delta }}
                         </p>
                     </td>
-                    <td>
+                    <td style="text-align:right">
                         {% if wallet %}
                             <a title="sell"
                                hx-get="{% url 'wallets:wallets-htmx-api:sell' pk=a.id %}"
