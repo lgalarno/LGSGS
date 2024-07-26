@@ -8,19 +8,20 @@ from decimal import Decimal
 
 from wallets.models import Wallet, Profit
 from assets.models import Asset
-from assets.backend import get_refresh_info
+from assets.backend import get_refresh_info, update_prices
 # Create your views here.
 
 
 def wallets(request):
-    user_wallets = Wallet.objects.filter(user=request.user)
+    u = request.user
+    user_wallets = Wallet.objects.filter(user=u)
     if user_wallets:
         current_wallet = user_wallets.order_by("lastviewed").last()
         assets = Asset.objects.filter(transaction__wallet=current_wallet)
         profits = Profit.objects.filter(transaction_bought__wallet=current_wallet)
         total_profits = Decimal(profits.aggregate(Sum('profit', default=0))['profit__sum']
                                 ).quantize(Decimal("1.00"))
-        u = request.user
+        update_prices(assets)
         total_balance = u.total_balance
     else:
         current_wallet = None
