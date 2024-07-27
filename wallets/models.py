@@ -81,8 +81,28 @@ class Transaction(models.Model):
         return Decimal(brut).quantize(Decimal("1.00"))
 
     @property
-    def revenue(self):
-        return Decimal((self.quantity * float(self.price) + float(self.change) - float(self.fees))).quantize(Decimal("1.00"))
+    def total_paid(self):
+        if self.type == 'buy':
+            return Decimal((self.quantity * float(self.price) + float(self.change)
+                            + float(self.fees))).quantize(Decimal("1.00"))
+        else:
+            return 0
+
+    @property
+    def total_revenue(self):
+        if self.type == 'sell':
+            return Decimal((self.quantity * float(self.price) + float(self.change)
+                            - float(self.fees))).quantize(Decimal("1.00"))
+        else:
+            return 0
+
+    @property
+    def value_per_share(self):
+        if self.type == 'buy':
+            return Decimal(((float(self.fees) + float(self.change)) / self.quantity) + float(self.price)).quantize(
+                        Decimal("1.00"))
+        else:
+            return 0
 
     def paid(self, quantity=None):
         if quantity is None:

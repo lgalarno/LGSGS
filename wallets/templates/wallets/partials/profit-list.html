@@ -16,7 +16,8 @@
         {% for p in profit_list %}
             <tr >
                 <td>
-                    <a hx-get="{% url 'wallets:wallets-htmx-api:profit' %}?purchased={{ p.transaction_bought.pk }}&sold={{ p.transaction_sold.pk }}"
+                    <a hx-get="{% url 'wallets:wallets-htmx-api:profit' pk=p.pk%}"
+{#                       hx-get="{% url 'wallets:wallets-htmx-api:profit' %}?purchased={{ p.transaction_bought.pk }}&sold={{ p.transaction_sold.pk }}"#}
                        hx-target="#form-dialog-lg"
                        aria-label="detail"
                        style="text-decoration: underline;"

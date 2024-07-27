@@ -168,15 +168,12 @@ def sell(request, pk):
             if quantity_sold > asset.quantity:
                 form.add_error(None, "Not enough units to sell.")
             else:
-                revenue = Decimal(instance.quantity * float(instance.price) + float(instance.change) - float(instance.fees)).quantize(Decimal("1.00"))
-                profit = revenue - Decimal(float(asset.price) * instance.quantity - float(asset.transaction.change)).quantize(Decimal("1.00"))
+                # revenue = Decimal(instance.quantity * float(instance.price) + float(instance.change) - float(instance.fees)).quantize(Decimal("1.00"))
+                # profit = revenue - Decimal(float(asset.price) * instance.quantity - float(asset.transaction.change)).quantize(Decimal("1.00"))
                 # update Transaction instance
                 instance.type = 'sell'
                 instance.ticker = asset.ticker
                 instance.trader = asset.trader
-                # update wallet balance
-                wallet.balance += Decimal(revenue)
-                wallet.save()
                 # update asset quantity
                 asset_left = asset.quantity - instance.quantity
                 if asset_left == 0:
@@ -184,7 +181,17 @@ def sell(request, pk):
                 else:
                     asset.quantity = asset_left
                     asset.save()
+
                 instance.save()
+                print(instance.total_revenue)
+                # update wallet balance
+                wallet.balance += Decimal(instance.total_revenue)
+                wallet.save()
+                paid = Decimal(instance.quantity * float(asset.transaction.value_per_share)).quantize(
+                        Decimal("1.00"))
+                revenue = instance.total_revenue
+                profit = revenue - paid
+                print(f'paid {paid}$ and sold {revenue}$. Profit: {profit}')
                 p = Profit(
                     transaction_bought=asset.transaction,
                     transaction_sold=instance,
@@ -253,17 +260,18 @@ def profit_list(request, pk):
     return render(request, 'wallets/partials/profit-list.html', context)
 
 
-def profit_detail(request):
-    pk = request.GET.get('purchased')
-    purchased = get_object_or_404(Transaction, pk=pk)
-    pk = request.GET.get('sold')
-    sold = get_object_or_404(Transaction, pk=pk)
-    profit = sold.paid(quantity=sold.quantity) - purchased.paid(quantity=sold.quantity)
+def profit_detail(request, pk):
+    profit_q = Profit.objects.get(pk=pk)
+    # pk = request.GET.get('purchased')
+    # purchased = get_object_or_404(Transaction, pk=pk)
+    # pk = request.GET.get('sold')
+    # sold = get_object_or_404(Transaction, pk=pk)
+
     context = {
         "title": "transaction",
-        'purchased': purchased,
-        'sold': sold,
-        'profit': Decimal(profit).quantize(Decimal("1.00"))
+        'purchased': profit_q.transaction_bought,
+        'sold': profit_q.transaction_sold,
+        'profit': profit_q.profit
     }
     return render(request, 'wallets/partials/profit-detail.html', context)
 
