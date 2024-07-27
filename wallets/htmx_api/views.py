@@ -264,14 +264,15 @@ def profit_detail(request, pk):
     profit_q = Profit.objects.get(pk=pk)
     purchased = profit_q.transaction_bought
     sold = profit_q.transaction_sold
-    marginal_profit = (Decimal(float(sold.total_revenue) - sold.quantity * float(purchased.value_per_share)).quantize(Decimal("1.00")))
+    marginal_cost = Decimal(sold.quantity * float(purchased.value_per_share)).quantize(Decimal("1.00"))
+    marginal_profit = Decimal(sold.total_revenue - marginal_cost).quantize(Decimal("1.00"))
 
     context = {
         "title": "transaction",
         'purchased': purchased,
         'sold': sold,
+        'marginal_cost': marginal_cost,
         'marginal_profit': marginal_profit
     }
     return render(request, 'wallets/partials/profit-detail.html', context)
-
 

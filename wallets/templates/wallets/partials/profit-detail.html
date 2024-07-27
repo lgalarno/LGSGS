@@ -1,23 +1,19 @@
 <div class="modal-content">
     <div class="modal-header">
+
         <h4>Transactions</h4>
+            <div class="float-end">
+            {% if purchased.trader.logo %}
+                <img alt="Trader logo" src="{{ purchased.trader.logo.url }}" height="20">
+            {% endif %}
+             {{ purchased.trader.name }}
+        </div>
     </div>
 
     <div class="modal-body">
         <div class="table-responsive">
             <table class="table">
-                <tr>
-                    <td style="width: 100px;" >
-                        {% if purchased.trader.logo %}
-                            <img alt="Trader logo" src="{{ purchased.trader.logo.url }}" height="20">
-                        {% endif %}
-                        {{ purchased.trader.name }}
-                    </td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr style="background: #ffe0b3;">
+                 <tr style="background: #ffe0b3;">
                     <td></td>
                     <td></td>
                     <td></td>
@@ -46,12 +42,17 @@
                     </td>
                 </tr>
                 <tr>
-                    <td></td>
-                    <td colspan="2" style="text-align: right;">
+                    <td style="text-align: right;">
                         <strong>Total cost: </strong>
                     </td>
                     <td>
                         <strong>{{ purchased.brut }}$</strong>
+                    </td>
+                    <td style="text-align: right;">
+                        <strong>Marginal cost for {{ sold.quantity }} units:</strong>
+                    </td>
+                    <td>
+                        <strong>{{ marginal_cost }}$</strong>
                     </td>
                 </tr>
                 <tr style="background: #ffe0b3;">
