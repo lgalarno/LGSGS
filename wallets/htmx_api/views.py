@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.db.models import Sum
 from django.shortcuts import render, HttpResponse, redirect, reverse, get_object_or_404
 from django.utils import timezone
@@ -176,28 +177,41 @@ def sell(request, pk):
                 instance.trader = asset.trader
                 # update asset quantity
                 asset_left = asset.quantity - instance.quantity
-                if asset_left == 0:
-                    asset.delete()
-                else:
-                    asset.quantity = asset_left
-                    asset.save()
-
-                instance.save()
-                print(instance.total_revenue)
-                # update wallet balance
-                wallet.balance += Decimal(instance.total_revenue)
-                wallet.save()
                 paid = Decimal(instance.quantity * float(asset.transaction.value_per_share)).quantize(
-                        Decimal("1.00"))
+                    Decimal("1.00"))
                 revenue = instance.total_revenue
                 profit = revenue - paid
-                print(f'paid {paid}$ and sold {revenue}$. Profit: {profit}')
-                p = Profit(
-                    transaction_bought=asset.transaction,
-                    transaction_sold=instance,
-                    profit=profit
-                )
-                p.save()
+                try:  # catch error before asset and wallet update
+                    instance.save()
+                    p = Profit(
+                        transaction_bought=asset.transaction,
+                        transaction_sold=instance,
+                        profit=profit
+                    )
+                    p.save()
+                    # update asset_left
+                    if asset_left == 0:
+                        asset.delete()
+                    else:
+                        asset.quantity = asset_left
+                        asset.save()
+                    # update wallet balance
+                    wallet.balance += instance.total_revenue
+                    wallet.save()
+                except:
+                    print('error')
+                    # if error and instance was saved, delete instance
+                    # error while saving Profit
+
+                    if instance.pk:
+                        print('bbb')
+                        instance.delete()
+                    messages.error(request, "Something went wrong")
+                    response = HttpResponse()
+                    response["HX-Redirect"] = reverse("wallets:wallets")
+                    return response
+
+
             response = HttpResponse()
             response["HX-Redirect"] = reverse("wallets:wallets")
             return response
