@@ -160,7 +160,7 @@ MEDIA_ROOT = config.get('MEDIA_ROOT', BASE_DIR / '..' / "media")
 # LOGIN/LOGOUT REDIRECT
 ######################################################################
 LOGOUT_REDIRECT_URL = '/'
-LOGIN_REDIRECT_URL = '/assets/'
+LOGIN_REDIRECT_URL = '/wallets/'
 LOGIN_URL = '/account/login/'
 
 ######################################################################
