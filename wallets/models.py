@@ -97,12 +97,15 @@ class Transaction(models.Model):
             return 0
 
     @property
-    def value_per_share(self):
+    def price_per_share(self):
         if self.type == 'buy':
-            return (float(self.fees) + float(self.change)) / self.quantity + float(self.price)
-        else:
-            return 0
+            if self.ticker.type =='crypto':
+                return self.paid / (self.quantity - float(self.fees))  # (float(self.fees) + float(self.change)) / self.quantity + float(self.price)
+            elif self.ticker.type == 'equity':
+                return (float(self.fees) + float(self.change)) / self.quantity + float(self.price)
+        return 0
 
+    @property
     def paid(self, quantity=None):
         if quantity is None:
             quantity = self.quantity
@@ -120,7 +123,7 @@ class Profit(models.Model):
 
     @property
     def marginal_cost(self):
-        return Decimal(self.transaction_sold.quantity * float(self.transaction_bought.value_per_share)).quantize(Decimal("1.00"))
+        return Decimal(self.transaction_sold.quantity * float(self.transaction_bought.price_per_share)).quantize(Decimal("1.00"))
 
     @property
     def marginal_profit(self):

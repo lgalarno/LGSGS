@@ -55,6 +55,12 @@
                            hx-target="#htmx_frame">
                             Transfer history</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           hx-get="{% url 'wallets:wallets-htmx-api:update'%}"
+                           hx-target="#htmx_frame">
+                            Update</a>
+                    </li>
 {#                    <li class="nav-item">#}
 {#                        <a class="nav-link"#}
 {#                           hx-get="{% url 'wallets:wallets-htmx-api:wallet_update' pk=wallet.id %}"#}

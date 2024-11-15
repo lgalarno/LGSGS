@@ -283,3 +283,13 @@ def profit_detail(request, pk):
         'marginal_profit': profit_q.marginal_profit
     }
     return render(request, 'wallets/partials/profit-detail.html', context)
+
+
+# hidden function to update all profits when a correction was made to the code
+def update(request):
+    profits = Profit.objects.all()
+    for p in profits:
+        p.profit = p.marginal_profit
+        p.save()
+
+    return HttpResponse('done')

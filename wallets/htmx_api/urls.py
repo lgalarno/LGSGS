@@ -8,6 +8,7 @@ app_name = 'wallets_htmx-api'
 urlpatterns = [
     path('buy/<int:pk>/', login_required(views.buy), name="buy"),
     path('profit/<int:pk>/', login_required(views.profit_detail), name="profit"),
+    path('update/', login_required(views.update), name="update"),
     path('profit-list/<int:pk>/', login_required(views.profit_list), name="profit-list"),
     path('sell/<int:pk>/', login_required(views.sell), name="sell"),
     path('transaction/<int:pk>/', login_required(views.transaction_detail), name="transaction"),
