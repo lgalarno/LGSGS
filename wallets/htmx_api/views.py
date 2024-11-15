@@ -165,8 +165,9 @@ def sell(request, pk):
     if request.method == 'POST':
         if form.is_valid():
             instance = form.save(commit=False)
-            quantity_sold = float(request.POST.get('quantity'))
-            if quantity_sold > asset.quantity:
+            asset_left = asset.quantity - instance.quantity   # update asset quantity
+            # quantity_sold = float(request.POST.get('quantity'))
+            if asset_left < 0:  # quantity_sold > asset.quantity:
                 form.add_error(None, "Not enough units to sell.")
             else:
                 # revenue = Decimal(instance.quantity * float(instance.price) + float(instance.change) - float(instance.fees)).quantize(Decimal("1.00"))
@@ -175,8 +176,7 @@ def sell(request, pk):
                 instance.type = 'sell'
                 instance.ticker = asset.ticker
                 instance.trader = asset.trader
-                # update asset quantity
-                asset_left = asset.quantity - instance.quantity
+
                 paid = Decimal(instance.quantity * float(asset.transaction.value_per_share)).quantize(
                     Decimal("1.00"))
                 revenue = instance.total_revenue
@@ -202,15 +202,12 @@ def sell(request, pk):
                     print('error')
                     # if error and instance was saved, delete instance
                     # error while saving Profit
-
                     if instance.pk:
-                        print('bbb')
                         instance.delete()
                     messages.error(request, "Something went wrong")
                     response = HttpResponse()
                     response["HX-Redirect"] = reverse("wallets:wallets")
                     return response
-
 
             response = HttpResponse()
             response["HX-Redirect"] = reverse("wallets:wallets")
@@ -277,16 +274,12 @@ def profit_list(request, pk):
 def profit_detail(request, pk):
     profit_q = Profit.objects.get(pk=pk)
     purchased = profit_q.transaction_bought
-    sold = profit_q.transaction_sold
-    marginal_cost = Decimal(sold.quantity * float(purchased.value_per_share)).quantize(Decimal("1.00"))
-    marginal_profit = Decimal(sold.total_revenue - marginal_cost).quantize(Decimal("1.00"))
 
     context = {
         "title": "transaction",
         'purchased': purchased,
-        'sold': sold,
-        'marginal_cost': marginal_cost,
-        'marginal_profit': marginal_profit
+        'sold': profit_q.transaction_sold,
+        'marginal_cost': profit_q.marginal_cost,
+        'marginal_profit': profit_q.marginal_profit
     }
     return render(request, 'wallets/partials/profit-detail.html', context)
-

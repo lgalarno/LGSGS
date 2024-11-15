@@ -99,8 +99,7 @@ class Transaction(models.Model):
     @property
     def value_per_share(self):
         if self.type == 'buy':
-            return Decimal(((float(self.fees) + float(self.change)) / self.quantity) + float(self.price)).quantize(
-                        Decimal("1.00"))
+            return (float(self.fees) + float(self.change)) / self.quantity + float(self.price)
         else:
             return 0
 
@@ -118,3 +117,11 @@ class Profit(models.Model):
 
     def __str__(self):
         return f"{self.transaction_sold.date}-{self.transaction_sold.ticker.symbol}-{self.transaction_sold.wallet.name}"
+
+    @property
+    def marginal_cost(self):
+        return Decimal(self.transaction_sold.quantity * float(self.transaction_bought.value_per_share)).quantize(Decimal("1.00"))
+
+    @property
+    def marginal_profit(self):
+        return Decimal(self.transaction_sold.total_revenue - self.marginal_cost).quantize(Decimal("1.00"))
