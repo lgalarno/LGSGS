@@ -177,7 +177,7 @@ def sell(request, pk):
                 instance.ticker = asset.ticker
                 instance.trader = asset.trader
 
-                paid = Decimal(instance.quantity * float(asset.transaction.value_per_share)).quantize(
+                paid = Decimal(instance.quantity * float(asset.transaction.price_per_share)).quantize(
                     Decimal("1.00"))
                 revenue = instance.total_revenue
                 profit = revenue - paid
