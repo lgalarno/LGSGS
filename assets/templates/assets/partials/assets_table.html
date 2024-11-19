@@ -19,7 +19,7 @@
         {#            <thead>#}
             <tbody>
             {% for a in asset_list %}
-                <tr {% if not a.monitor %} class="not_monitored" {% elif a.staking %} class="staking"  {% endif %} style="border-top: 2px solid black;">
+                <tr {% if a.staking %} class="staking" {% elif not a.monitor %} class="not_monitored" {% endif %} style="border-top: 2px solid black;">
                     <td title="{{ a.ticker.name }}">
                         
 
@@ -49,7 +49,7 @@
                         {{ a.date }}
                     </td>
                 </tr>
-                <tr {% if not a.monitor %} class="not_monitored" {% elif a.staking %} class="staking" {% endif %} style="border-bottom: 2px solid black;">
+                <tr {% if a.staking %} class="staking" {% elif not a.monitor %} class="not_monitored" {% endif %} style="border-bottom: 2px solid black;">
                     <td>
                         Target (total - price) {{ a.target }}$ - {{ a.target_price }}$
                     </td>                
