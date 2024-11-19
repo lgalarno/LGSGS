@@ -86,13 +86,14 @@ class Asset(models.Model):
     margin = models.DecimalField(max_digits=9, decimal_places=2, validators=[MinValueValidator(0.0)], default=0)
     timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
     monitor = models.BooleanField(default=True)
+    staking = models.BooleanField(default=False)
     emailed = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['trader', '-date']
 
     def __str__(self):
-        return f"{self.pk}-{self.ticker.symbol}-{self.date}"
+        return f"{self.ticker.symbol}-{self.date}"
 
     @property
     def get_absolute_url(self):

@@ -9,6 +9,9 @@ from assets.models import Asset
 import ccxt
 import yfinance as yf
 
+# import ccxt.async_support as ccxt
+import asyncio
+
 
 def get_refresh_info() -> dict:
     pt = PeriodicTask.objects.filter(name='update_prices-30-minutes').last()  # name in celery.py

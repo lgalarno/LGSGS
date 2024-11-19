@@ -97,8 +97,8 @@ def buy(request, pk):
     }
     form = TransactionForm(request.POST or None, initial={'wallet': wallet})
     if request.method == 'POST':
-        ticker_id = request.POST.get('ticker-input')
-        trader_id = request.POST.get('trader-input')
+        ticker_id = request.POST.get('ticker-input')  # ticker_id not in TransactionForm
+        trader_id = request.POST.get('trader-input')  # trader_id not in TransactionForm
         if ticker_id and trader_id:
             if form.is_valid():
                 instance = form.save(commit=False)
@@ -119,6 +119,7 @@ def buy(request, pk):
                     trader = Trader.objects.get(pk=trader_id)
                     instance.trader = trader
                     monitor = request.POST.get('monitor') == 'on'  # monitor not in TransactionForm
+                    staking = request.POST.get('staking') == 'on'  # staking not in TransactionForm
                     # create an asset.
                     a = Asset(
                         user=request.user,
@@ -130,7 +131,8 @@ def buy(request, pk):
                         price=instance.price,
                         current=current_price(ticker.symbol, ticker.type),  # get the current price
                         margin=Decimal(request.POST.get('margin')),  # margin not in TransactionForm
-                        monitor=monitor
+                        monitor=monitor,
+                        staking=staking
                     )
                     a.save()
                     # update wallet balance

@@ -88,7 +88,7 @@ class AssetForm(forms.ModelForm):
 class AssetUpdateForm(forms.ModelForm):
     class Meta:
         model = Asset
-        fields = ['ticker', 'trader', 'date', 'description', 'quantity', 'price', 'margin', 'monitor', 'emailed']
+        fields = ['ticker', 'trader', 'date', 'description', 'quantity', 'price', 'margin', 'monitor', 'staking', 'emailed']
 
         labels = {
             "ticker": "Ticker/Symbol",
@@ -118,7 +118,8 @@ class AssetUpdateForm(forms.ModelForm):
                 Column('margin', css_class='form-group col-md-3 mb-0')
             ),
             Row(
-                Column('monitor', css_class='form-group col-md-6 mb-0'),
-                Column('emailed', css_class='form-group col-md-6 mb-0')
+                Column('monitor', css_class='form-group col-md-3 mb-0'),
+                Column('staking', css_class='form-group col-md-3 mb-0'),
+                Column('emailed', css_class='form-group col-md-3 mb-0')
             ),
         )

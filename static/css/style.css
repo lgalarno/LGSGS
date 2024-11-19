@@ -18,9 +18,21 @@ footer{
     color: black;
 }
 
-table.dataTable .not_monitored {
+.not_monitored {
     background: #f2f2f2;
 }
+
+.staking {
+    background: #ccffff;
+}
+
+/* basic positioning */
+.legend { list-style: none; }
+.legend li { float: left; margin-right: 10px; }
+.legend span { border: 1px solid #ccc; float: left; width: 12px; height: 12px; margin: 2px; }
+/* your colors */
+.legend .not_monitored { background-color: #f2f2f2; }
+.legend .staking { background-color: #ccffff; }
 
 /* General customizations */
 

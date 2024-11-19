@@ -9,6 +9,9 @@
               hx-target="#htmx_frame"
               id="form">
             {% csrf_token %}
+
+{#            Ticker/Trader forms #}
+
             <div class="row">
                 <div class="col col-lg-6">
 
@@ -41,7 +44,11 @@
                 </div>
             </div>
             <br>
+
+            {# TransactionForm form #}
             {% crispy form %}
+
+            {# Asset form #}
             <div class="row">
                 <div class="form-group col-md-3 mb-0">
                     <div id="div_id_margin" class="mb-3">
@@ -52,11 +59,18 @@
                         <input type="number" name="margin" step="any" class="numberinput form-control" required="" id="id_margin">
                     </div>
                 </div>
-                <div class="form-group col-md-9 mb-0">
+                <div class="form-group col-md-3 mb-0">
                     <div id="div_id_monitor" class="form-check">
                         <p>&nbsp</p>
-                        <input type="checkbox" name="monitor" class="checkboxinput form-check-input" id="id_monitor" checked="">
+                        <input type="checkbox" name="monitor" class="checkboxinput form-check-input" id="id_monitor" checked>
                         <label for="id_monitor" class="form-check-label">Monitor</label>
+                    </div>
+                </div>
+                <div class="form-group col-md-3 mb-0">
+                    <div id="div_id_staking" class="form-check">
+                        <p>&nbsp</p>
+                        <input type="checkbox" name="staking" class="checkboxinput form-check-input" id="id_staking">
+                        <label for="id_staking" class="form-check-label">Staking</label>
                     </div>
                 </div>
             </div>
