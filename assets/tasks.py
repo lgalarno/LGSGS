@@ -21,7 +21,7 @@ def send_email(to_email, mail_subject, mail_body):
     try:
         connection = smtplib.SMTP(host='smtp.office365.com', port=587)
         connection.starttls()
-        connection.login(username,password)
+        connection.login(username, password)
         connection.send_message(mimemsg)
         connection.quit()
         return True

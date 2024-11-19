@@ -108,6 +108,10 @@ class Asset(models.Model):
         return reverse('assets:delete-asset', kwargs={'pk': self.pk})
 
     @property
+    def is_crypto(self):
+        return self.ticker.type == "crypto"
+
+    @property
     def has_transaction(self):
         return hasattr(self, 'transaction') and self.transaction is not None
 

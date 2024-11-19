@@ -9,8 +9,8 @@ from assets.models import Asset
 import ccxt
 import yfinance as yf
 
-# import ccxt.async_support as ccxt
-import asyncio
+
+NDAX_API_KEY = settings.NDAX_API_KEY
 
 
 def get_refresh_info() -> dict:
@@ -35,7 +35,9 @@ def ticker_name(symbol, tickertype):
     """
     #TODO only support ndax tickers. add others based on exchange?
     if tickertype == 'crypto':
-        ndax = ccxt.ndax()
+        ndax = ccxt.ndax({
+            'apiKey': NDAX_API_KEY
+        })
         markets = ndax.load_markets()
         if symbol in list(markets.keys()):
             return markets[symbol].get('base')
@@ -51,16 +53,19 @@ def ticker_name(symbol, tickertype):
     return None
 
 
-def current_price(symbol, tickertype, *args, **kwargs):
+def current_price(symbol, crypto, *args, **kwargs):
     """
     #### only support ndax tickers. add others based on exchange ####
 
-    :param symbol: ticker symbol, tickertype: as of Ticker model: crypto or equity
+    :param symbols: list of ticker symbols, crypto: boolean if crypto, true
     :return: price
     """
     try:
-        if tickertype == 'crypto':
-            ndax = ccxt.ndax()
+        if crypto:
+            ndax = ccxt.ndax({
+                'apiKey': NDAX_API_KEY,
+                'enableRateLimit': False
+            })
             price = ndax.fetch_ticker(symbol).get('last')
         else:
             data = yf.Ticker(symbol).history(period="1d")
@@ -74,7 +79,7 @@ def update_prices(qs=None):
     if not qs:
         qs = Asset.objects.all()
     for asset in qs:
-        cp = current_price(asset.ticker.symbol, asset.ticker.type)
+        cp = current_price(asset.ticker.symbol, asset.is_crypto)
         if not asset.current == cp:
             asset.current = cp
             asset.save()
