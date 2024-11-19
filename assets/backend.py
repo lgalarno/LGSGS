@@ -6,6 +6,7 @@ from django_celery_beat.models import PeriodicTask
 
 from assets.models import Asset
 
+import ccxt
 import yfinance as yf
 
 
@@ -24,25 +25,43 @@ def get_refresh_info() -> dict:
     }
 
 
-def ticker_name(symbol):
+def ticker_name(symbol, tickertype):
     """
-    :param symbol: ticker symbo
+    :param symbol: ticker symbol, tickertype: as of Ticker model: crypto or equity
     :return: if the ticker symbol exists, return its name; otherwise, return None
     """
-    ticker = yf.Ticker(symbol)
-    info = None
-    try:
-        info = ticker.info
-        name = info['shortName']
-        return name
-    except:
-        return None
+    #TODO only support ndax tickers. add others based on exchange?
+    if tickertype == 'crypto':
+        ndax = ccxt.ndax()
+        markets = ndax.load_markets()
+        if symbol in list(markets.keys()):
+            return markets[symbol].get('base')
+    else:
+        ticker = yf.Ticker(symbol)
+        info = None
+        try:
+            info = ticker.info
+            name = info['shortName']
+            return name
+        except:
+            return None
+    return None
 
 
-def current_price(s):
+def current_price(symbol, tickertype, *args, **kwargs):
+    """
+    #### only support ndax tickers. add others based on exchange ####
+
+    :param symbol: ticker symbol, tickertype: as of Ticker model: crypto or equity
+    :return: price
+    """
     try:
-        data = yf.Ticker(s).history(period="1d")
-        price = data["Close"].iloc[-1]
+        if tickertype == 'crypto':
+            ndax = ccxt.ndax()
+            price = ndax.fetch_ticker(symbol).get('last')
+        else:
+            data = yf.Ticker(symbol).history(period="1d")
+            price = data["Close"].iloc[-1]
     except:
         price = 0
     return price
@@ -52,7 +71,7 @@ def update_prices(qs=None):
     if not qs:
         qs = Asset.objects.all()
     for asset in qs:
-        cp = current_price(asset.ticker.symbol)
+        cp = current_price(asset.ticker.symbol, asset.ticker.type)
         if not asset.current == cp:
             asset.current = cp
             asset.save()

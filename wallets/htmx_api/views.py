@@ -128,7 +128,7 @@ def buy(request, pk):
                         description=instance.description,
                         quantity=quantity,
                         price=instance.price,
-                        current=current_price(ticker.symbol),  # get the current price
+                        current=current_price(ticker.symbol, ticker.type),  # get the current price
                         margin=Decimal(request.POST.get('margin')),  # margin not in TransactionForm
                         monitor=monitor
                     )

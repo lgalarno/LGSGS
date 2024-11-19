@@ -36,11 +36,12 @@ class TickerForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
         symbol = cleaned_data.get('symbol').upper()
+        type = cleaned_data.get('type')
         qs = Ticker.objects.filter(symbol=symbol).first()
         if qs:
             self.add_error("symbol", "Symbol already exists")
         else:
-            name = ticker_name(symbol)
+            name = ticker_name(symbol, type)
             if name:
                 self.cleaned_data['name'] = name
                 self.cleaned_data['symbol'] = symbol
