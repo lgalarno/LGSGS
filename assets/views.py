@@ -96,3 +96,8 @@ class AssetUpdateView(LoginRequiredMixin, UpdateView):
         context = super().get_context_data()
         context['title'] = 'update-asset'
         return context
+
+    def get_form_kwargs(self):
+        kwargs = super(AssetUpdateView, self).get_form_kwargs()
+        kwargs['is_crypto'] = self.object.is_crypto
+        return kwargs

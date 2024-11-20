@@ -101,7 +101,11 @@ class AssetUpdateForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        is_crypto = kwargs.pop('is_crypto', None)
+        print(f'is_crypto  {is_crypto}')
         super(AssetUpdateForm, self).__init__(*args, **kwargs)
+        # if not is_crypto:
+        #     self.fields.pop('staking')
         # format the form using crispy_forms FormHelper
         self.helper = FormHelper()
         self.helper.form_tag = False
@@ -123,3 +127,6 @@ class AssetUpdateForm(forms.ModelForm):
                 Column('emailed', css_class='form-group col-md-3 mb-0')
             ),
         )
+        # remove staking filed if is not crypto
+        if not is_crypto:
+            self.helper.layout.fields[3].pop(1)
