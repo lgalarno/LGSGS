@@ -107,44 +107,53 @@ def buy(request, pk):
                 cost = Decimal(
                         instance.quantity * float(instance.price) + float(instance.change)).quantize(
                         Decimal("1.00"))
-                if ticker.type == 'equity':  # # fees per transaction
-                    cost = cost + instance.fees  # may be fees in $ for equities
+                trader = Trader.objects.get(pk=trader_id)
+                if trader.fees_buy == 'money':
+                    cost = cost + instance.fees  # fees in $ adds to
                     quantity = instance.quantity
+                elif trader.fees_buy == 'crypto':
+                    quantity = instance.quantity - float(instance.fees)  # fees in crypto, thus deduct fees from amount
+
+                    # if ticker.type == 'equity':  # # fees per transaction
+                    #     cost = cost + instance.fees  # may be fees in $ for equities
+                    #     quantity = instance.quantity
+                    # else:
+                    #     quantity = instance.quantity - float(instance.fees)  # fees for crypto are in crypto
+                    if cost > wallet.balance:
+                        form.add_error(None, "Not enough money in the wallet.")
+                    else:
+                        instance.ticker = ticker
+                        # trader = Trader.objects.get(pk=trader_id)
+                        instance.trader = trader
+                        monitor = request.POST.get('monitor') == 'on'  # monitor not in TransactionForm
+                        staking = request.POST.get('staking') == 'on'  # staking not in TransactionForm
+                        # create an asset.
+                        a = Asset(
+                            user=request.user,
+                            ticker=ticker,
+                            trader=trader,
+                            date=instance.date,
+                            description=instance.description,
+                            quantity=quantity,
+                            price=instance.price,
+                            current=current_price(ticker.symbol, ticker.type),  # get the current price
+                            margin=Decimal(request.POST.get('margin')),  # margin not in TransactionForm
+                            monitor=monitor,
+                            staking=staking
+                        )
+                        a.save()
+                        # update wallet balance
+                        wallet.balance = wallet.balance - cost
+                        wallet.save()
+                        # complete instance info
+                        instance.type = 'buy'
+                        instance.asset = a
+                        instance.save()
+                        response = HttpResponse()
+                        response["HX-Redirect"] = reverse("wallets:wallets")
+                        return response
                 else:
-                    quantity = instance.quantity - float(instance.fees)  # fees for crypto are in crypto
-                if cost > wallet.balance:
-                    form.add_error(None, "Not enough money in the wallet.")
-                else:
-                    instance.ticker = ticker
-                    trader = Trader.objects.get(pk=trader_id)
-                    instance.trader = trader
-                    monitor = request.POST.get('monitor') == 'on'  # monitor not in TransactionForm
-                    staking = request.POST.get('staking') == 'on'  # staking not in TransactionForm
-                    # create an asset.
-                    a = Asset(
-                        user=request.user,
-                        ticker=ticker,
-                        trader=trader,
-                        date=instance.date,
-                        description=instance.description,
-                        quantity=quantity,
-                        price=instance.price,
-                        current=current_price(ticker.symbol, ticker.type),  # get the current price
-                        margin=Decimal(request.POST.get('margin')),  # margin not in TransactionForm
-                        monitor=monitor,
-                        staking=staking
-                    )
-                    a.save()
-                    # update wallet balance
-                    wallet.balance = wallet.balance - cost
-                    wallet.save()
-                    # complete instance info
-                    instance.type = 'buy'
-                    instance.asset = a
-                    instance.save()
-                    response = HttpResponse()
-                    response["HX-Redirect"] = reverse("wallets:wallets")
-                    return response
+                    form.add_error(None, "Trader improperly configured.")
         else:
             form.add_error(None, "Please enter a valid ticker and a symbol.")
 

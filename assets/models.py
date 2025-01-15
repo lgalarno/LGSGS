@@ -32,11 +32,17 @@ class Ticker(models.Model):
 
 
 class Trader(models.Model):
+    FEES = (
+        ('money', 'Money'),
+        ('crypto', 'Crypto'),
+    )
     name = models.CharField(max_length=255, null=True, blank=True)
     logo = models.ImageField(upload_to=upload_location,
                              null=True,
                              blank=True)
     url = models.URLField(blank=True, null=True)
+    fees_buy = models.CharField(max_length=20, choices=FEES, default=FEES[0][0])
+    fees_sell = models.CharField(max_length=20, choices=FEES, default=FEES[0][0])
 
     def __str__(self):
         return self.name

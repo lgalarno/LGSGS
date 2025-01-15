@@ -91,8 +91,13 @@ class Transaction(models.Model):
     @property
     def total_revenue(self):
         if self.type == 'sell':
-            return Decimal((self.quantity * float(self.price) + float(self.change)
-                            - float(self.fees))).quantize(Decimal("1.00"))
+            if self.trader.fees_sell == 'money':
+                total = Decimal((self.quantity * float(self.price) + float(self.change)
+                                 - float(self.fees))).quantize(Decimal("1.00"))
+            elif self.trader.fees_sell == 'crypto':
+                q = self.quantity - self.fees
+                total = Decimal(q * float(self.price) + float(self.change))
+            return total
         else:
             return 0
 
