@@ -31,6 +31,7 @@ def wallet_create(request):
     return render(request, 'wallets/partials/wallet-form.html', context)
 
 
+# TODO update creates new wallet. To fix.
 def wallet_update(request, pk):
     wallet = get_object_or_404(Wallet, pk=pk)
     form = WalletForm(request.POST or None, instance=wallet)
@@ -111,49 +112,53 @@ def buy(request, pk):
                 if trader.fees_buy == 'money':
                     cost = cost + instance.fees  # fees in $ adds to
                     quantity = instance.quantity
+                    fees_per_unit = Decimal(float(instance.fees) / quantity).quantize(
+                        Decimal("1.000000"))
                 elif trader.fees_buy == 'crypto':
                     quantity = instance.quantity - float(instance.fees)  # fees in crypto, thus deduct fees from amount
-
+                    fees_per_unit = Decimal(float(instance.fees) * float(instance.price) / quantity).quantize(
+                        Decimal("1.000000"))
+                else:
+                    form.add_error(None, "Trader improperly configured.")
                     # if ticker.type == 'equity':  # # fees per transaction
                     #     cost = cost + instance.fees  # may be fees in $ for equities
                     #     quantity = instance.quantity
                     # else:
                     #     quantity = instance.quantity - float(instance.fees)  # fees for crypto are in crypto
-                    if cost > wallet.balance:
-                        form.add_error(None, "Not enough money in the wallet.")
-                    else:
-                        instance.ticker = ticker
-                        # trader = Trader.objects.get(pk=trader_id)
-                        instance.trader = trader
-                        monitor = request.POST.get('monitor') == 'on'  # monitor not in TransactionForm
-                        staking = request.POST.get('staking') == 'on'  # staking not in TransactionForm
-                        # create an asset.
-                        a = Asset(
-                            user=request.user,
-                            ticker=ticker,
-                            trader=trader,
-                            date=instance.date,
-                            description=instance.description,
-                            quantity=quantity,
-                            price=instance.price,
-                            current=current_price(ticker.symbol, ticker.type),  # get the current price
-                            margin=Decimal(request.POST.get('margin')),  # margin not in TransactionForm
-                            monitor=monitor,
-                            staking=staking
-                        )
-                        a.save()
-                        # update wallet balance
-                        wallet.balance = wallet.balance - cost
-                        wallet.save()
-                        # complete instance info
-                        instance.type = 'buy'
-                        instance.asset = a
-                        instance.save()
-                        response = HttpResponse()
-                        response["HX-Redirect"] = reverse("wallets:wallets")
-                        return response
-                else:
-                    form.add_error(None, "Trader improperly configured.")
+                if cost > wallet.balance:
+                    form.add_error(None, "Not enough money in the wallet.")
+                if not form.errors:
+                    instance.ticker = ticker
+                    # trader = Trader.objects.get(pk=trader_id)
+                    instance.trader = trader
+                    monitor = request.POST.get('monitor') == 'on'  # monitor not in TransactionForm
+                    staking = request.POST.get('staking') == 'on'  # staking not in TransactionForm
+                    # create an asset.
+                    a = Asset(
+                        user=request.user,
+                        ticker=ticker,
+                        trader=trader,
+                        date=instance.date,
+                        description=instance.description,
+                        quantity=quantity,
+                        price=instance.price,
+                        fees_per_unit=fees_per_unit,
+                        current=current_price(ticker.symbol, ticker.type),  # get the current price
+                        margin=Decimal(request.POST.get('margin')),  # margin not in TransactionForm
+                        monitor=monitor,
+                        staking=staking
+                    )
+                    a.save()
+                    # update wallet balance
+                    wallet.balance = wallet.balance - cost
+                    wallet.save()
+                    # complete instance info
+                    instance.type = 'buy'
+                    instance.asset = a
+                    instance.save()
+                    response = HttpResponse()
+                    response["HX-Redirect"] = reverse("wallets:wallets")
+                    return response
         else:
             form.add_error(None, "Please enter a valid ticker and a symbol.")
 
@@ -188,8 +193,7 @@ def sell(request, pk):
                 instance.ticker = asset.ticker
                 instance.trader = asset.trader
 
-                paid = Decimal(instance.quantity * float(asset.transaction.price_per_share)).quantize(
-                    Decimal("1.00"))
+                paid = Decimal(instance.quantity * float(asset.transaction.price_per_share)).quantize(Decimal("1.00"))
                 revenue = instance.total_revenue
                 profit = revenue - paid
                 try:  # catch error before asset and wallet update
@@ -201,11 +205,13 @@ def sell(request, pk):
                     )
                     p.save()
                     # update asset_left
+
                     if asset_left == 0:
                         asset.delete()
                     else:
                         asset.quantity = asset_left
                         asset.save()
+
                     # update wallet balance
                     wallet.balance += instance.total_revenue
                     wallet.save()

@@ -104,14 +104,14 @@ class Transaction(models.Model):
     @property
     def price_per_share(self):
         if self.type == 'buy':
-            if self.ticker.type =='crypto':
-                return self.paid / (self.quantity - float(self.fees))  # (float(self.fees) + float(self.change)) / self.quantity + float(self.price)
-            elif self.ticker.type == 'equity':
+            if self.trader.fees_buy == 'crypto':
+                return self.value / (self.quantity - float(self.fees))
+            elif self.trader.fees_buy == 'money':
                 return (float(self.fees) + float(self.change)) / self.quantity + float(self.price)
         return 0
 
     @property
-    def paid(self, quantity=None):
+    def value(self, quantity=None):
         if quantity is None:
             quantity = self.quantity
         return quantity * float(self.price)

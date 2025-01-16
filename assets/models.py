@@ -88,6 +88,7 @@ class Asset(models.Model):
     description = models.TextField(null=True, blank=True)
     quantity = models.FloatField(validators=[MinValueValidator(0.0)])
     price = models.DecimalField(max_digits=14, decimal_places=6, validators=[MinValueValidator(0.0)])
+    fees_per_unit = models.DecimalField(max_digits=14, decimal_places=6, validators=[MinValueValidator(0.0)], default=0)
     current = models.DecimalField(max_digits=14, decimal_places=6, validators=[MinValueValidator(0.0)], default=0)
     margin = models.DecimalField(max_digits=9, decimal_places=2, validators=[MinValueValidator(0.0)], default=0)
     timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
@@ -131,7 +132,7 @@ class Asset(models.Model):
 
     @property
     def paid(self):
-        return Decimal(self.quantity * float(self.price)).quantize(Decimal("1.00"))
+        return Decimal(self.quantity * float(self.price) + self.quantity * float(self.fees_per_unit)).quantize(Decimal("1.00"))
 
     @property
     def value(self):
