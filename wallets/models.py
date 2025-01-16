@@ -116,6 +116,20 @@ class Transaction(models.Model):
             quantity = self.quantity
         return quantity * float(self.price)
 
+    @property
+    def get_fees_type(self, quantity=None):
+        if self.type == 'buy':
+            fees_type = self.trader.fees_buy
+        elif self.type == 'sell':
+            fees_type = self.trader.fees_sell
+        if fees_type == 'crypto':
+            s = self.ticker.symbol
+        elif fees_type == 'money':
+            s = '$'
+        else:
+            s = 'unknown'
+        return s
+
 
 class Profit(models.Model):
     transaction_bought = models.ForeignKey(to=Transaction, related_name='bought', on_delete=models.CASCADE)

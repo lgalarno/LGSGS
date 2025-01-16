@@ -47,12 +47,12 @@
                     {{ t.change }}$
                 </td>
                 <td>
-                    {{ t.fees }}
-                    {% if t.ticker.type == 'crypto' and t.type == 'buy' %}
-                        {{ t.ticker.symbol }}
-                    {% else %}
-                        $
-                    {% endif %}
+                    {{ t.fees }} {{ t.get_fees_type }}
+{#                    {% if t.ticker.type == 'crypto' and t.type == 'buy' %}#}
+{#                        {{ t.ticker.symbol }}#}
+{#                    {% else %}#}
+{#                        $#}
+{#                    {% endif %}#}
                 </td>
                 <td>
                     {{ t.currency|upper }}
