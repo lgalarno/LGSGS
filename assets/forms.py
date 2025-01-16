@@ -93,10 +93,12 @@ class AssetForm(forms.ModelForm):
 class AssetUpdateForm(forms.ModelForm):
     class Meta:
         model = Asset
-        fields = ['ticker', 'trader', 'date', 'description', 'quantity', 'price', 'margin', 'monitor', 'staking', 'emailed']
+        fields = ['ticker', 'trader', 'date', 'description', 'quantity',
+                  'price', 'fees_per_unit', 'margin', 'monitor', 'staking', 'emailed']
 
         labels = {
             "ticker": "Ticker/Symbol",
+            "fees_per_unit": "Fees per unit",
             "date": "Date purchased",
             "margin": "Profit margin",
         }
@@ -107,7 +109,6 @@ class AssetUpdateForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         is_crypto = kwargs.pop('is_crypto', None)
-        print(f'is_crypto  {is_crypto}')
         super(AssetUpdateForm, self).__init__(*args, **kwargs)
         # if not is_crypto:
         #     self.fields.pop('staking')
@@ -116,14 +117,15 @@ class AssetUpdateForm(forms.ModelForm):
         self.helper.form_tag = False
         self.helper.layout = Layout(
             Row(
-                Column('ticker', css_class='form-group col-md-6 mb-0'),
-                Column('trader', css_class='form-group col-md-6 mb-0')
+                Column('ticker', css_class='form-group col-md-4 mb-0'),
+                Column('trader', css_class='form-group col-md-4 mb-0'),
+                Column('date', css_class='form-group col-md-4 mb-0'),
             ),
             'description',
             Row(
-                Column('date', css_class='form-group col-md-3 mb-0'),
                 Column('quantity', css_class='form-group col-md-3 mb-0'),
                 Column('price', css_class='form-group col-md-3 mb-0'),
+                Column('fees_per_unit', css_class='form-group col-md-3 mb-0'),
                 Column('margin', css_class='form-group col-md-3 mb-0')
             ),
             Row(
