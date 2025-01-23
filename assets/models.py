@@ -97,7 +97,7 @@ class Asset(models.Model):
     emailed = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ['trader', '-date']
+        ordering = ['trader', '-monitor', 'staking', '-date']
 
     def __str__(self):
         return f"{self.ticker.symbol}-{self.date}"
