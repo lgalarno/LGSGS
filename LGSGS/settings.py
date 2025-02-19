@@ -137,7 +137,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 FROM_EMAIL = config["FROM_EMAIL"]
 EMAIL_PASSWORD = config["EMAIL_PASSWORD"]
-NDAX_API_KEY = config["EMAIL_PASSWORD"]
+NDAX_API_KEY = config["NDAX_API_KEY"]
+
 ######################################################################
 # CUSTOM USER
 ######################################################################

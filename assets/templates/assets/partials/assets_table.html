@@ -88,14 +88,14 @@
         <i >Last updated: {{ last_updated }}</i>
         ; 
         <i>Next price update at {{ update_at }}</i>
-        <button class="btn btn-secondary btn-sm"
+        <button class="btn btn-success btn-sm"
                 {% if wallet %}
                     hx-get="{% url 'wallets:wallets-htmx-api:asset-list' pk=wallet.id %}"
                 {% else %}
                     hx-get="{% url 'assets:assets-htmx-api:asset-list' %}"
                 {% endif %}
             hx-target="#htmx_frame" title="refresh">
-            <i class="bi bi-arrow-clockwise"></i>
+            refresh now <i class="bi bi-arrow-clockwise"></i>
         </button>
     </small>
     <ul class="legend" style="display: inline; float: right;" >

@@ -51,7 +51,7 @@ class TickerForm(forms.ModelForm):
                 self.cleaned_data['name'] = name
                 self.cleaned_data['symbol'] = symbol
             else:
-                self.add_error("symbol", "Symbol does not exist")
+                self.add_error("symbol", "Symbol does not exist or please, be more specific")
         return cleaned_data
 
 

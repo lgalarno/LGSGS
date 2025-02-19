@@ -33,7 +33,7 @@ def ticker_name(symbol, tickertype):
     :param symbol: ticker symbol, tickertype: as of Ticker model: crypto or equity
     :return: if the ticker symbol exists, return its name; otherwise, return None
     """
-    #TODO only support ndax tickers. add others based on exchange?
+    #TODO only support ndax and Alpha Vantage tickers. Add others based on exchange?
     if tickertype == 'crypto':
         ndax = ccxt.ndax({
             'apiKey': NDAX_API_KEY
@@ -43,7 +43,7 @@ def ticker_name(symbol, tickertype):
             return markets[symbol].get('base')
     else:
         ticker = yf.Ticker(symbol)
-        info = None
+        # info = None
         try:
             info = ticker.info
             name = info['shortName']
