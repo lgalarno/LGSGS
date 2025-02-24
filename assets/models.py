@@ -30,6 +30,14 @@ class Ticker(models.Model):
     def __str__(self):
         return self.symbol
 
+    def get_absolute_url(self):
+        print(self.symbol)
+        if self.type == 'equity':
+            url = f"https://ca.finance.yahoo.com/quote/{self.symbol}/"
+        else:
+            url = reverse("assets:detail-ticker", kwargs={"pk": self.pk})
+        return url
+
 
 class Trader(models.Model):
     FEES = (

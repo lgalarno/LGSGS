@@ -101,3 +101,13 @@ class AssetUpdateView(LoginRequiredMixin, UpdateView):
         kwargs = super(AssetUpdateView, self).get_form_kwargs()
         kwargs['is_crypto'] = self.object.is_crypto
         return kwargs
+
+
+# TODO add details
+class TickerDetailView(DetailView):
+    model = Ticker
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data()
+        context['title'] = 'Ticker-detail'
+        return context

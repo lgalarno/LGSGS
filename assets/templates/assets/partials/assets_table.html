@@ -34,7 +34,7 @@
                             {{ a.trader.name }} 
                         {% endif %}
                         </a> 
-                        <a href = "{{ a.get_absolute_url }}">{{ a.ticker.symbol }}</a>
+                        <a href = "{{ a.ticker.get_absolute_url }}" {% if a.ticker.type == "equity"  %}target="_blank"{% endif %}>{{ a.ticker.symbol }}</a>
                     </td>
                     <td style="text-align:right">
                         Price: {{ a.price }}$
