@@ -31,7 +31,6 @@ class Ticker(models.Model):
         return self.symbol
 
     def get_absolute_url(self):
-        print(self.symbol)
         if self.type == 'equity':
             url = f"https://ca.finance.yahoo.com/quote/{self.symbol}/"
         else:
@@ -110,9 +109,9 @@ class Asset(models.Model):
     def __str__(self):
         return f"{self.ticker.symbol}-{self.date}"
 
-    @property
-    def get_absolute_url(self):
-        return reverse('assets:detail-asset', kwargs={'pk': self.pk})
+    # @property
+    # def get_absolute_url(self):
+    #     return reverse('assets:detail-asset', kwargs={'pk': self.pk})
 
     @property
     def get_update_url(self):
