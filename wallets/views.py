@@ -18,7 +18,7 @@ def wallets(request):
     user_wallets = Wallet.objects.filter(user=u)
     if user_wallets:
         current_wallet = user_wallets.order_by("lastviewed").last()
-        assets = Asset.objects.filter(transaction__wallet=current_wallet)
+        assets = Asset.objects.filter(wallet=current_wallet)
         profits = Profit.objects.filter(transaction_bought__wallet=current_wallet)
         total_profits = Decimal(profits.aggregate(Sum('profit', default=0))['profit__sum']
                                 ).quantize(Decimal("1.00"))

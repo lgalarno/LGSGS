@@ -1,8 +1,10 @@
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, HttpResponse, get_object_or_404
 
 from assets.backend import update_prices, get_refresh_info
 from assets.forms import TickerForm, TraderForm
 from assets.models import Ticker, Asset, Trader
+
+from wallets.models import Wallet
 
 
 def ticker_list(request):
@@ -46,8 +48,9 @@ def trader_create(request):
     return render(request, 'assets/partials/trader-form.html', context)
 
 
-def asset_list(request):
-    qs = Asset.objects.filter(user=request.user).filter(transaction=None)  # show only old way
+def asset_list(request, pk):
+    wallet = get_object_or_404(Wallet, pk=pk)
+    qs = Asset.objects.filter(user=request.user)  # .filter(transaction=None)  # show only old way
     update_prices(qs)
     context = {
         'asset_list': qs,

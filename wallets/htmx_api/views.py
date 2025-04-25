@@ -151,6 +151,7 @@ def buy(request, pk):
                     a.save()
                     # update wallet balance
                     wallet.balance = wallet.balance - cost
+                    wallet.asset.add(a)
                     wallet.save()
                     # complete instance info
                     instance.type = 'buy'
@@ -254,7 +255,7 @@ def transaction_list(request, pk):
 
 def asset_list(request, pk):
     wallet = get_object_or_404(Wallet, pk=pk)
-    assets = Asset.objects.filter(transaction__wallet=wallet)
+    assets = Asset.objects.filter(wallet=wallet)
     update_prices(assets)
     context = {
         "title": "asset-list",
