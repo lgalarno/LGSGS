@@ -8,6 +8,7 @@ from celery import shared_task
 import smtplib
 
 
+# TODO fix because office 365 don't accept smtp login anymore
 @shared_task
 def send_email(to_email, mail_subject, mail_body):
     username = settings.FROM_EMAIL
