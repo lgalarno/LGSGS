@@ -178,7 +178,7 @@ class Asset(models.Model):
 
         This email was sent by LGSGS.
         """
-        # send_email.delay(to_email=self.user.email, mail_subject=mail_subject, mail_body=mail_body)
+        send_email.delay(to_email=self.user.email, mail_subject=mail_subject, mail_body=mail_body)
         return True
 
 

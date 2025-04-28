@@ -20,14 +20,12 @@ def send_email(to_email, mail_subject, mail_body):
     mimemsg['Subject'] = mail_subject
     mimemsg.attach(MIMEText(mail_body, 'plain'))
     try:
-        connection = smtplib.SMTP(host='smtp.office365.com', port=587)
-        connection.starttls()
-        connection.login(username, password)
-        connection.send_message(mimemsg)
-        connection.quit()
+        with smtplib.SMTP('smtp.mail.yahoo.com', 587) as server:
+            server.starttls()
+            server.login(username, password)
+            server.send_message(mimemsg)
         return True
     except Exception as e:
-        connection.quit()
         return e
 
 
