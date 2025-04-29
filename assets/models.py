@@ -109,14 +109,13 @@ class Asset(models.Model):
     def __str__(self):
         return f"{self.ticker.symbol}-{self.date}"
 
-    # @property
-    # def get_absolute_url(self):
-    #     return reverse('assets:detail-asset', kwargs={'pk': self.pk})
-
-    @property
-    def get_update_url(self):
+    def get_absolute_url(self):
         return reverse('assets:update-asset', kwargs={'pk': self.pk})
 
+    # @property
+    # def get_update_url(self):
+    #     return reverse('assets:update-asset', kwargs={'pk': self.pk})
+    #
     @property
     def get_delete_url(self):
         return reverse('assets:delete-asset', kwargs={'pk': self.pk})
@@ -180,19 +179,6 @@ class Asset(models.Model):
         """
         send_email.delay(to_email=self.user.email, mail_subject=mail_subject, mail_body=mail_body)
         return True
-
-
-# @receiver(pre_save, sender=Asset)
-# def calculate_paid(sender, instance, *args, **kwargs):
-#     do = False
-#     if instance.pk is None:
-#         do = True
-#     else:
-#         old = Asset.objects.get(id=instance.pk)
-#         if (instance.quantity != old.quantity) or (instance.price != old.price):
-#             do = True
-#     if do:
-#         instance.paid = Decimal(instance.quantity * float(instance.price)).quantize(Decimal("1.00"))
 
 
 @receiver(post_save, sender=Asset)

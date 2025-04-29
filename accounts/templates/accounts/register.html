@@ -5,6 +5,7 @@
     <div class="row justify-content-md-center">&nbsp;</div>
     <div class="row justify-content-md-center">
         <div class="col-4 login_form">
+            <h2>Welcome to LGSGS</h2>
             {% if not request.user.is_authenticated %}
                 <form method='POST'>{% csrf_token %}
                     {{ form.as_p }}

@@ -18,6 +18,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
+from django.views.generic import RedirectView
 from django.urls import path, include
 from django.views.generic import TemplateView
 
@@ -29,7 +30,8 @@ sitemaps = {
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('', TemplateView.as_view(template_name="index.html"), name="home"),
+    # path('', TemplateView.as_view(template_name="index.html"), name="home"),
+    path('', RedirectView.as_view(pattern_name='wallets:wallets'), name="home"),
     path("robots.txt", TemplateView.as_view(template_name="robots.txt", content_type="text/plain"), ),
     # TODO about page
     path('about/', TemplateView.as_view(template_name="about.html"), name="about"),

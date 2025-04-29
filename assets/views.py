@@ -38,20 +38,20 @@ def create_asset(request):
     return render(request, 'assets/new-asset.html', context)
 
 
-class AssetListView(LoginRequiredMixin, ListView):
-    model = Asset
-    template_name = 'assets/assets.html'
-
-    def get_queryset(self):
-        qs = Asset.objects.filter(user=self.request.user).filter(transaction=None)  # show only old way
-        update_prices(qs)
-        return qs
-
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data()
-        context['title'] = 'assets'
-        context = {**context, **get_refresh_info()}
-        return context
+# class AssetListView(LoginRequiredMixin, ListView):
+#     model = Asset
+#     template_name = 'assets/assets.html'
+#
+#     def get_queryset(self):
+#         qs = Asset.objects.filter(user=self.request.user)  # .filter(transaction=None)  # show only old way
+#         update_prices(qs)
+#         return qs
+#
+#     def get_context_data(self, *args, **kwargs):
+#         context = super().get_context_data()
+#         context['title'] = 'assets'
+#         context = {**context, **get_refresh_info()}
+#         return context
 
 
 # TODO add details
@@ -86,10 +86,11 @@ class AssetUpdateView(LoginRequiredMixin, UpdateView):
     form_class = AssetUpdateForm
 
     def get_success_url(self):
-        if self.object.has_transaction:
-            success_url = reverse_lazy('wallets:wallets')
-        else:
-            success_url = reverse_lazy('assets:assets')
+        success_url = reverse_lazy('wallets:wallets')
+        # if self.object.has_transaction:
+        #     success_url = reverse_lazy('wallets:wallets')
+        # else:
+        #     success_url = reverse_lazy('assets:assets')
         return success_url
 
     def get_context_data(self, *args, **kwargs):
