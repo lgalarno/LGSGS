@@ -4,7 +4,26 @@ from django.utils import timezone
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, Hidden, Field
 
-from .models import Wallet, Transfer, Transaction
+from .models import Wallet, Transfer, Transaction, TradingPlatform
+
+
+class TradingPlatformForm(forms.ModelForm):
+    class Meta:
+        model = TradingPlatform
+        fields = ['name', 'logo', 'url', 'fees_buy', 'fees_sell']
+
+        labels = {
+            "fees_buy": "Fees when buying",
+            "fees_sell": "Fees when selling",
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        name = cleaned_data.get('name')
+        qs = TradingPlatform.objects.filter(name=name).first()
+        if qs:
+            self.add_error("name", "Trader already exists")
+        return cleaned_data
 
 
 class WalletForm(forms.ModelForm):

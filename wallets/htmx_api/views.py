@@ -5,11 +5,31 @@ from django.utils import timezone
 
 from decimal import Decimal
 
-from wallets.forms import WalletForm, TransferForm, TransactionForm
-from wallets.models import Wallet, Profit, Transaction, Transfer
+from wallets.forms import WalletForm, TransferForm, TransactionForm, TradingPlatformForm
+from wallets.models import Wallet, Profit, Transaction, Transfer, TradingPlatform
 
 from assets.backend import current_price, get_refresh_info, update_prices
 from assets.models import Ticker, Trader, Asset
+
+
+def trading_platform_list(request):
+    context = {
+        'traders': TradingPlatform.objects.all(),
+    }
+    return render(request, 'wallets/partials/trading-platform-select.html', context)
+
+
+def trading_platform_create(request):
+    form = TradingPlatformForm(request.POST or None, request.FILES or None)
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            return HttpResponse(status=204, headers={'HX-Trigger': 'traderListChanged'})
+    context = {
+        "title": "new-trader",
+        'form_trader': form,
+    }
+    return render(request, 'wallets/partials/trading-platform-form.html', context)
 
 
 def wallet_create(request):

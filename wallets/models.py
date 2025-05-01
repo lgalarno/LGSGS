@@ -1,19 +1,76 @@
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.dispatch import receiver
 from django.shortcuts import reverse
 from django.utils import timezone
 
 from decimal import Decimal
+
+import os
 
 from assets.models import Ticker, Trader, Asset
 
 # Create your models here.
 
 
+def upload_location(instance, filename):
+    return f"logos/{filename}"
+
+
+class TradingPlatform(models.Model):
+    FEES = (
+        ('money', 'Money'),
+        ('crypto', 'Crypto'),
+    )
+    name = models.CharField(max_length=255, null=True, blank=True)
+    logo = models.ImageField(upload_to=upload_location,
+                             null=True,
+                             blank=True)
+    url = models.URLField(blank=True, null=True)
+    fees_buy = models.CharField(max_length=20, choices=FEES, default=FEES[0][0])
+    fees_sell = models.CharField(max_length=20, choices=FEES, default=FEES[0][0])
+
+    def __str__(self):
+        return self.name
+
+
+@receiver(models.signals.post_delete, sender=Trader)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+    """
+    Deletes file from filesystem
+    when corresponding `Player` object is deleted.
+    """
+    if instance.logo:
+        if os.path.isfile(instance.logo.path):
+            os.remove(instance.logo.path)
+
+
+@receiver(models.signals.pre_save, sender=Trader)
+def auto_delete_file_on_change(sender, instance, **kwargs):
+    """
+    Deletes old file from filesystem
+    when corresponding `Player` object is updated
+    with new file.
+    """
+    if not instance.pk:
+        return False
+    try:
+        old_logo = Trader.objects.get(pk=instance.pk).logo
+    except Trader.DoesNotExist:
+        return False
+    new_logo = instance.logo
+    if not bool(old_logo):
+        return False
+    if not old_logo == new_logo:
+        if os.path.isfile(old_logo.path):
+            os.remove(old_logo.path)
+
+
 class Wallet(models.Model):
     user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    name = models.CharField(max_length=120, blank=True, null=True)
+    name = models.CharField(max_length=120)
+    trader = models.ForeignKey(to=TradingPlatform, related_name='wallet', on_delete=models.CASCADE, null=True, blank=True)
     balance = models.DecimalField(max_digits=10, decimal_places=2)
     asset = models.ManyToManyField(to=Asset, related_name='wallet', blank=True)
     lastviewed = models.DateTimeField(default=timezone.now)
