@@ -4,7 +4,6 @@ from django.shortcuts import render, redirect, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, UpdateView, DeleteView, DetailView
 
-from .backend import update_prices, current_price, get_refresh_info
 from .forms import AssetForm, AssetUpdateForm
 from .models import Asset  #, Ticker, Trader
 

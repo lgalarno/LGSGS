@@ -7,8 +7,6 @@ from django.shortcuts import reverse
 
 from decimal import Decimal
 
-# import os
-
 from assets.tasks import send_email
 
 

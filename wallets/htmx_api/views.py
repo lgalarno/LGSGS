@@ -132,7 +132,6 @@ def wallet_detail(request, pk):
 
 
 def buy(request, pk):
-    print('buy')
     wallet = get_object_or_404(Wallet, pk=pk)
     context = {
         "title": "buy",
@@ -166,8 +165,6 @@ def buy(request, pk):
                 # if cost > wallet.balance:
                 #     form.add_error(None, "Not enough money in the wallet.")
                 if not form.errors:
-                    print('form.is_valid')
-                    print(trader.name)
                     instance.ticker = ticker
                     instance.trading_platform = trader
                     monitor = request.POST.get('monitor') == 'on'  # monitor not in TransactionForm

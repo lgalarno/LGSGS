@@ -9,7 +9,7 @@ from decimal import Decimal
 
 import os
 
-from assets.models import Asset #, Trader, Ticker
+from assets.models import Asset
 
 # Create your models here.
 
@@ -141,9 +141,7 @@ class Transaction(models.Model):
     type = models.CharField(max_length=10, choices=TYPE, default=TYPE[0][0])
     wallet = models.ForeignKey(to=Wallet, on_delete=models.CASCADE)
     asset = models.OneToOneField(to=Asset, related_name='transaction', on_delete=models.SET_NULL, null=True, blank=True)
-    # ticker = models.ForeignKey(to=Ticker, related_name='transaction', on_delete=models.CASCADE)
     ticker = models.ForeignKey(to=Ticker, related_name='transaction', on_delete=models.CASCADE, null=True, blank=True)
-    # trader = models.ForeignKey(to=Trader, related_name='transaction', on_delete=models.CASCADE, null=True, blank=True)
     trading_platform = models.ForeignKey(to=TradingPlatform, related_name='transaction', on_delete=models.CASCADE, null=True, blank=True)
     date = models.DateField(default=timezone.now)
     description = models.TextField(null=True, blank=True)
@@ -212,8 +210,6 @@ class Transaction(models.Model):
 
     @property
     def get_fees_type(self, quantity=None):
-        print('get_fees_type')
-        print(self.trading_platform)
         if self.type == 'buy':
             fees_type = self.trading_platform.fees_buy
         elif self.type == 'sell':

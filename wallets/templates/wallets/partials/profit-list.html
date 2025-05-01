@@ -17,7 +17,6 @@
             <tr >
                 <td>
                     <a hx-get="{% url 'wallets:wallets-htmx-api:profit' pk=p.pk%}"
-{#                       hx-get="{% url 'wallets:wallets-htmx-api:profit' %}?purchased={{ p.transaction_bought.pk }}&sold={{ p.transaction_sold.pk }}"#}
                        hx-target="#form-dialog-lg"
                        aria-label="detail"
                        style="text-decoration: underline;"
@@ -45,15 +44,6 @@
                 <td></td>
             </tr>
         {% endfor %}
-{#            <tr>#}
-{#                <td></td>#}
-{#                <td></td>#}
-{#                <td></td>#}
-{#                <td></td>#}
-{#                <td  style="text-align: right;"><strong>Total</strong></td>#}
-{#                <td ><strong>{{ total_profits }}$</strong></td>#}
-{#                <td></td>#}
-{#            </tr>#}
         </tbody>
      </table>
 </div>

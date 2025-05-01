@@ -33,10 +33,5 @@ def send_email(to_email, mail_subject, mail_body):
 def update_prices_task():
     from assets.backend import update_prices
     update_prices()
-    # for asset in qs:
-    #     asset.current = current_price(asset.ticker.symbol)
-    #     if asset.target_reached and not asset.emailed:
-    #         compose_email(asset=asset)
-    #         asset.emailed = True
-    #     asset.save()
+
 

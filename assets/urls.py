@@ -11,5 +11,4 @@ urlpatterns = [
     # path('detail/<int:pk>/', TickerDetailView.as_view(), name="detail-ticker"),
     path('update/<int:pk>/', AssetUpdateView.as_view(), name="update-asset"),
     path('delete/<int:pk>/', AssetDeleteView.as_view(), name="delete-asset"),
-    path('htmx-api/', include('assets.htmx_api.urls', namespace="assets-htmx-api")),
 ]
