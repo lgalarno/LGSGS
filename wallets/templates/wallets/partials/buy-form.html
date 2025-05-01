@@ -13,8 +13,7 @@
 {#            Ticker/Trader forms #}
 
             <div class="row">
-                <div class="col col-lg-6">
-
+                <div class="col">
                     <div id="ticker-list"
                          hx-trigger="load, tickerListChanged from:body, change from:#trader-input"
                          hx-get="{% url 'assets:assets-htmx-api:ticker-list' %}"
@@ -22,33 +21,31 @@
                     </div>
 
                     <button
-                        hx-get="{% url 'assets:assets-htmx-api:ticker_create' %}"
+                        hx-get="{% url 'wallets:wallets-htmx-api:ticker_create' %}"
                         hx-target="#form-dialog"
                         hx-trigger="click"
                         class="btn btn-primary btn-sm float-end"><i class="bi bi-plus-circle"> ticker</i>
                     </button>
                 </div>
-                <div class="col col-lg-6">
-                    <div id="trader-list"
-                         hx-trigger="load, traderListChanged from:body"
-                         hx-get="{% url 'assets:assets-htmx-api:trader-list' %}"
-                         hx-target="this">
-                    </div>
-
-                    <button
-                        hx-get="{% url 'assets:assets-htmx-api:trader_create' %}"
-                        hx-target="#form-dialog"
-                        hx-trigger="click"
-                        class="btn btn-primary btn-sm float-end"><i class="bi bi-plus-circle"> trader</i>
-                    </button>
-                </div>
+{#                <div class="col col-lg-6">#}
+{#                    <div id="trader-list"#}
+{#                         hx-trigger="load, traderListChanged from:body"#}
+{#                         hx-get="{% url 'wallets:wallets_htmx-api:ticker-list' %}"#}
+{#                         hx-target="this">#}
+{#                    </div>#}
+{##}
+{#                    <button#}
+{#                        hx-get="{% url 'assets:assets-htmx-api:trader_create' %}"#}
+{#                        hx-target="#form-dialog"#}
+{#                        hx-trigger="click"#}
+{#                        class="btn btn-primary btn-sm float-end"><i class="bi bi-plus-circle"> trader</i>#}
+{#                    </button>#}
+{#                </div>#}
             </div>
             <br>
 
-            {# TransactionForm form #}
             {% crispy form %}
 
-            {# Asset form #}
             <div class="row">
                 <div class="form-group col-md-3 mb-0">
                     <div id="div_id_margin" class="mb-3">

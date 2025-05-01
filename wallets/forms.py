@@ -4,13 +4,15 @@ from django.utils import timezone
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, Hidden, Field
 
-from .models import Wallet, Transfer, Transaction, TradingPlatform
+from .models import Wallet, Transfer, Transaction, TradingPlatform, Ticker_new
+
+from assets.backend import ticker_name
 
 
 class TradingPlatformForm(forms.ModelForm):
     class Meta:
         model = TradingPlatform
-        fields = ['name', 'logo', 'url', 'fees_buy', 'fees_sell']
+        fields = ['name', 'type', 'logo', 'url', 'fees_buy', 'fees_sell']
 
         labels = {
             "fees_buy": "Fees when buying",
@@ -23,6 +25,35 @@ class TradingPlatformForm(forms.ModelForm):
         qs = TradingPlatform.objects.filter(name=name).first()
         if qs:
             self.add_error("name", "Trader already exists")
+        return cleaned_data
+
+
+class TickerForm(forms.ModelForm):
+    class Meta:
+        model = Ticker_new
+        fields = ['symbol', 'name', 'type']
+
+        labels = {
+            "symbol": "Ticker/Symbol",
+        }
+        widgets = {
+            'name': forms.HiddenInput(),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        symbol = cleaned_data.get('symbol').upper()
+        type = cleaned_data.get('type')
+        qs = Ticker_new.objects.filter(symbol=symbol).first()
+        if qs:
+            self.add_error("symbol", "Symbol already exists")
+        else:
+            name = ticker_name(symbol, type)
+            if name:
+                self.cleaned_data['name'] = name
+                self.cleaned_data['symbol'] = symbol
+            else:
+                self.add_error("symbol", "Symbol does not exist or please, be more specific")
         return cleaned_data
 
 
@@ -49,7 +80,6 @@ class TransferForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['date'].initial = timezone.now()
-        # self.fields['wallet']. = timezone.now()
 
     def clean(self):
         cleaned_data = super().clean()

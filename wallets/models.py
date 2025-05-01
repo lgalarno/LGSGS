@@ -9,7 +9,7 @@ from decimal import Decimal
 
 import os
 
-from assets.models import Ticker, Trader, Asset
+from assets.models import Asset, Trader, Ticker
 
 # Create your models here.
 
@@ -23,7 +23,13 @@ class TradingPlatform(models.Model):
         ('money', 'Money'),
         ('crypto', 'Crypto'),
     )
+    TYPE = (
+        ('crypto', 'Crypto'),
+        ('equity', 'Equity'),
+    )
+
     name = models.CharField(max_length=255, null=True, blank=True)
+    type = models.CharField(max_length=20, choices=TYPE, default=TYPE[0][0])
     logo = models.ImageField(upload_to=upload_location,
                              null=True,
                              blank=True)
@@ -35,7 +41,7 @@ class TradingPlatform(models.Model):
         return self.name
 
 
-@receiver(models.signals.post_delete, sender=Trader)
+@receiver(models.signals.post_delete, sender=TradingPlatform)
 def auto_delete_file_on_delete(sender, instance, **kwargs):
     """
     Deletes file from filesystem
@@ -46,7 +52,7 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
             os.remove(instance.logo.path)
 
 
-@receiver(models.signals.pre_save, sender=Trader)
+@receiver(models.signals.pre_save, sender=TradingPlatform)
 def auto_delete_file_on_change(sender, instance, **kwargs):
     """
     Deletes old file from filesystem
@@ -56,8 +62,8 @@ def auto_delete_file_on_change(sender, instance, **kwargs):
     if not instance.pk:
         return False
     try:
-        old_logo = Trader.objects.get(pk=instance.pk).logo
-    except Trader.DoesNotExist:
+        old_logo = TradingPlatform.objects.get(pk=instance.pk).logo
+    except TradingPlatform.DoesNotExist:
         return False
     new_logo = instance.logo
     if not bool(old_logo):
@@ -65,6 +71,26 @@ def auto_delete_file_on_change(sender, instance, **kwargs):
     if not old_logo == new_logo:
         if os.path.isfile(old_logo.path):
             os.remove(old_logo.path)
+
+
+class Ticker_new(models.Model):
+    TYPE = (
+        ('crypto', 'Crypto'),
+        ('equity', 'Equity'),
+    )
+    symbol = models.CharField(max_length=16)
+    name = models.CharField(max_length=255, null=True, blank=True)
+    type = models.CharField(max_length=20, choices=TYPE, default=TYPE[0][0])
+
+    def __str__(self):
+        return self.symbol
+
+    def get_absolute_url(self):
+        if self.type == 'equity':
+            url = f"https://ca.finance.yahoo.com/quote/{self.symbol}/"
+        else:
+            url = reverse("assets:detail-ticker", kwargs={"pk": self.pk})
+        return url
 
 
 class Wallet(models.Model):
@@ -112,12 +138,14 @@ class Transaction(models.Model):
     wallet = models.ForeignKey(to=Wallet, on_delete=models.CASCADE)
     asset = models.OneToOneField(to=Asset, related_name='transaction', on_delete=models.SET_NULL, null=True, blank=True)
     ticker = models.ForeignKey(to=Ticker, related_name='transaction', on_delete=models.CASCADE)
+    ticker_new = models.ForeignKey(to=Ticker_new, related_name='transaction', on_delete=models.CASCADE, null=True, blank=True)
     trader = models.ForeignKey(to=Trader, related_name='transaction', on_delete=models.CASCADE, null=True, blank=True)
+    trading_platform = models.ForeignKey(to=TradingPlatform, related_name='transaction', on_delete=models.CASCADE, null=True, blank=True)
     date = models.DateField(default=timezone.now)
     description = models.TextField(null=True, blank=True)
     price = models.DecimalField(max_digits=14, decimal_places=8, validators=[MinValueValidator(0.0)])
     quantity = models.FloatField(validators=[MinValueValidator(0.0)])
-    currency = models.CharField(max_length=4, choices=CURRENCY, default=TYPE[0][0])
+    currency = models.CharField(max_length=4, choices=CURRENCY, default=CURRENCY[0][0])
     change = models.DecimalField(max_digits=14, decimal_places=2, validators=[MinValueValidator(0.0)], default=0)
     fees = models.DecimalField(max_digits=14, decimal_places=8, validators=[MinValueValidator(0.0)], default=0)
     timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
