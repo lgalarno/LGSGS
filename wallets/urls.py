@@ -9,6 +9,6 @@ app_name = 'wallets'
 urlpatterns = [
     path('', login_required(views.wallets), name="wallets"),
     path('delete-wallet/<int:pk>/', WalletDeleteView.as_view(), name="delete-wallets"),
-    path('detail/<int:pk>/', TickerDetailView.as_view(), name="detail-ticker"),
+    path('ticker-detail/<int:pk>/', TickerDetailView.as_view(), name="detail-ticker"),
     path('htmx-api/', include('wallets.htmx_api.urls', namespace="wallets-htmx-api")),
 ]

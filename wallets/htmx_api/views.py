@@ -12,9 +12,10 @@ from assets.backend import current_price, get_refresh_info, update_prices
 from assets.models import Asset
 
 
-def ticker_list(request):
+def ticker_list(request, pk):
+    wallet = get_object_or_404(Wallet, pk=pk)
     context = {
-        'tickers': Ticker.objects.all(),
+        'tickers': Ticker.objects.filter(type=wallet.trader.type),
     }
     return render(request, 'wallets/partials/ticker-select.html', context)
 

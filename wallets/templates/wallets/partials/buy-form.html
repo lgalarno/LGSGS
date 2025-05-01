@@ -16,7 +16,7 @@
                 <div class="col">
                     <div id="ticker-list"
                          hx-trigger="load, tickerListChanged from:body, change from:#trader-input"
-                         hx-get="{% url 'wallets:wallets-htmx-api:ticker-list' %}"
+                         hx-get="{% url 'wallets:wallets-htmx-api:ticker-list' pk=wallet.id %}"
                          hx-target="this">
                     </div>
 

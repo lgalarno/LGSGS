@@ -1,5 +1,4 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib import messages
 from django.db.models import Sum
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
@@ -10,6 +9,7 @@ from decimal import Decimal
 from wallets.models import Wallet, Profit, Ticker
 from assets.models import Asset
 from assets.backend import get_refresh_info, update_prices
+
 # Create your views here.
 
 
