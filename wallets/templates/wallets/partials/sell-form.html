@@ -1,7 +1,7 @@
 {% load crispy_forms_tags %}
 <div class="row justify-content-md-center">
     <div class="col col-lg-6 default_form">
-        <h2 style="display: inline;">Sell {{ asset.ticker.symbol }}</h2>
+        <h2 style="display: inline;">Sell {{ asset.transaction.ticker.symbol }}</h2>
         <h4>You have {{ asset.quantity }} units.</h4>
         <form
               hx-post="{% url 'wallets:wallets-htmx-api:sell' pk=asset.id %}"

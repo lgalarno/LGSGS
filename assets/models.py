@@ -14,6 +14,7 @@ from assets.tasks import send_email
 
 
 def upload_location(instance, filename):
+    # keep for compatibility with migrations
     return f"logos/{filename}"
 
 #

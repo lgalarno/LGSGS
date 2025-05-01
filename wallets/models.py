@@ -183,10 +183,10 @@ class Transaction(models.Model):
     @property
     def total_revenue(self):
         if self.type == 'sell':
-            if self.trader.fees_sell == 'money':
+            if self.trading_platform.fees_sell == 'money':
                 total = Decimal((self.quantity * float(self.price) + float(self.change)
                                  - float(self.fees))).quantize(Decimal("1.00"))
-            elif self.trader.fees_sell == 'crypto':
+            elif self.trading_platform.fees_sell == 'crypto':
                 q = self.quantity - self.fees
                 total = Decimal(q * float(self.price) + float(self.change))
             return total
@@ -196,9 +196,9 @@ class Transaction(models.Model):
     @property
     def price_per_share(self):
         if self.type == 'buy':
-            if self.trader.fees_buy == 'crypto':
+            if self.trading_platform.fees_buy == 'crypto':
                 return self.value / (self.quantity - float(self.fees))
-            elif self.trader.fees_buy == 'money':
+            elif self.trading_platform.fees_buy == 'money':
                 return (float(self.fees) + float(self.change)) / self.quantity + float(self.price)
         return 0
 
@@ -214,6 +214,8 @@ class Transaction(models.Model):
             fees_type = self.trading_platform.fees_buy
         elif self.type == 'sell':
             fees_type = self.trading_platform.fees_sell
+        else:
+            fees_type = None
         if fees_type == 'crypto':
             s = self.ticker.symbol
         elif fees_type == 'money':

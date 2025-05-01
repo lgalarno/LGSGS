@@ -142,7 +142,6 @@ def buy(request, pk):
         ticker_id = request.POST.get('ticker-input')  # ticker_id not in TransactionForm
         if ticker_id:
             if form.is_valid():
-                print('form.is_valid')
                 instance = form.save(commit=False)
                 ticker = Ticker.objects.get(pk=ticker_id)
                 # check if wallet has enough money.
@@ -150,7 +149,6 @@ def buy(request, pk):
                         instance.quantity * float(instance.price) + float(instance.change)).quantize(
                         Decimal("1.00"))
                 trader = TradingPlatform.objects.get(pk=wallet.trader.pk)
-                print(trader)
                 if wallet.trader.fees_buy == 'money':
                     cost = cost + instance.fees  # fees in $ adds to
                     quantity = instance.quantity
@@ -229,9 +227,10 @@ def sell(request, pk):
                 # profit = revenue - Decimal(float(asset.price) * instance.quantity - float(asset.transaction.change)).quantize(Decimal("1.00"))
                 # update Transaction instance
                 instance.type = 'sell'
-                # instance.ticker = asset.ticker
-                # instance.trader = asset.trader
-
+                obj = Ticker.objects.get(pk=asset.transaction.ticker.pk)
+                instance.ticker = obj
+                obj = TradingPlatform.objects.get(pk=asset.transaction.trading_platform.pk)
+                instance.trading_platform = obj
                 paid = Decimal(instance.quantity * float(asset.transaction.price_per_share)).quantize(Decimal("1.00"))
                 revenue = instance.total_revenue
                 profit = revenue - paid
@@ -255,7 +254,6 @@ def sell(request, pk):
                     # wallet.balance += instance.total_revenue
                     wallet.save()
                 except:
-                    print('error')
                     # if error and instance was saved, delete instance
                     # error while saving Profit
                     if instance.pk:
