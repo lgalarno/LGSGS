@@ -7,13 +7,28 @@
     
     {% csrf_token %}
     <div class="modal-header">
-        <h4>Create a wallet</h4>
+        <h4>Update {{ wallet.name }}</h4>
     </div>
 
     <div class="modal-body">
         <div class="form-group mb-0">
-            <div id="div_id_url" class="mb-3">
-                <div>{{ form_wallet|crispy }}</div>
+            {{ form_wallet|crispy }}
+            <br>
+             <div class="row">
+                <div class="col">
+                    <div id="trader-list"
+                         hx-trigger="load, traderListChanged from:body"
+                         hx-get="{% url 'wallets:wallets-htmx-api:trading-platform-list' %}"
+                         hx-target="this">
+                    </div>
+
+                    <button
+                        hx-get="{% url 'wallets:wallets-htmx-api:trading_platform_create' %}"
+                        hx-target="#form-dialog-lg"
+                        hx-trigger="click"
+                        class="btn btn-primary btn-sm float-end"><i class="bi bi-plus-circle"> trader</i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>

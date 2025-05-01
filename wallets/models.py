@@ -104,6 +104,10 @@ class Wallet(models.Model):
     def __str__(self):
         return f"{str(self.user)}-{self.name}"  # str(self.user)
 
+    @property
+    def is_crypto(self):
+        return self.trader.type == "crypto"
+
 
 class Transfer(models.Model):
     TYPE = (
