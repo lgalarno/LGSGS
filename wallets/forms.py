@@ -4,7 +4,7 @@ from django.utils import timezone
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, Hidden, Field
 
-from .models import Wallet, Transfer, Transaction, TradingPlatform, Ticker_new
+from .models import Wallet, Transfer, Transaction, TradingPlatform, Ticker
 
 from assets.backend import ticker_name
 
@@ -30,7 +30,7 @@ class TradingPlatformForm(forms.ModelForm):
 
 class TickerForm(forms.ModelForm):
     class Meta:
-        model = Ticker_new
+        model = Ticker
         fields = ['symbol', 'name', 'type']
 
         labels = {
@@ -44,7 +44,7 @@ class TickerForm(forms.ModelForm):
         cleaned_data = super().clean()
         symbol = cleaned_data.get('symbol').upper()
         type = cleaned_data.get('type')
-        qs = Ticker_new.objects.filter(symbol=symbol).first()
+        qs = Ticker.objects.filter(symbol=symbol).first()
         if qs:
             self.add_error("symbol", "Symbol already exists")
         else:

@@ -1,15 +1,15 @@
 from django.contrib import messages
 from django.db.models import Sum
-from django.shortcuts import render, HttpResponse, redirect, reverse, get_object_or_404
+from django.shortcuts import render, HttpResponse, reverse, get_object_or_404
 from django.utils import timezone
 
 from decimal import Decimal
 
 from wallets.forms import WalletForm, TransferForm, TransactionForm, TradingPlatformForm, TickerForm
-from wallets.models import Wallet, Profit, Transaction, Transfer, TradingPlatform, Ticker_new
+from wallets.models import Wallet, Profit, Transaction, Transfer, TradingPlatform, Ticker
 
 from assets.backend import current_price, get_refresh_info, update_prices
-from assets.models import Asset, Ticker, Trader
+from assets.models import Asset
 
 
 def ticker_list(request):
@@ -345,44 +345,44 @@ def profit_detail(request, pk):
 
 # hidden function to update all profits when a correction was made to the code
 def update(request):
-    traders = Trader.objects.all()
-    for t in traders:
-        obj = TradingPlatform(
-            name=t.name,
-            logo=t.logo,
-            url=t.url,
-            fees_buy=t.fees_buy,
-            fees_sell=t.fees_sell
-        )
-        if 'Disnat' in t.name:
-            obj.type = 'equity'
-        else:
-            obj.type = 'crypto'
-        obj.save()
-    trading_platforms = TradingPlatform.objects.all()
-    wallets = Wallet.objects.all()
-    for wallet in wallets:
-        if 'Disnat' in wallet.name:
-            wallet.trader = trading_platforms.get(name='Disnat')
-        elif 'Ndax' in wallet.name:
-            wallet.trader = trading_platforms.get(name='Ndax')
-        elif 'Coinbase' in wallet.name:
-            wallet.trader = trading_platforms.get(name='Coinbase')
-        wallet.save()
-
-    tickers = Ticker.objects.all()
-    for ticker in tickers:
-        obj = Ticker_new(
-            symbol=ticker.symbol,
-            name=ticker.name,
-            type=ticker.type,
-        )
-        obj.save()
-    tickers = Ticker_new.objects.all()
-    transactions = Transaction.objects.all()
-    for transaction in transactions:
-        transaction.ticker_new = tickers.get(name=transaction.ticker.name)
-        transaction.trading_platform = trading_platforms.get(name=transaction.trader.name)
-        transaction.save()
+    # traders = Trader.objects.all()
+    # for t in traders:
+    #     obj = TradingPlatform(
+    #         name=t.name,
+    #         logo=t.logo,
+    #         url=t.url,
+    #         fees_buy=t.fees_buy,
+    #         fees_sell=t.fees_sell
+    #     )
+    #     if 'Disnat' in t.name:
+    #         obj.type = 'equity'
+    #     else:
+    #         obj.type = 'crypto'
+    #     obj.save()
+    # trading_platforms = TradingPlatform.objects.all()
+    # wallets = Wallet.objects.all()
+    # for wallet in wallets:
+    #     if 'Disnat' in wallet.name:
+    #         wallet.trader = trading_platforms.get(name='Disnat')
+    #     elif 'Ndax' in wallet.name:
+    #         wallet.trader = trading_platforms.get(name='Ndax')
+    #     elif 'Coinbase' in wallet.name:
+    #         wallet.trader = trading_platforms.get(name='Coinbase')
+    #     wallet.save()
+    #
+    # tickers = Ticker.objects.all()
+    # for ticker in tickers:
+    #     obj = Ticker_new(
+    #         symbol=ticker.symbol,
+    #         name=ticker.name,
+    #         type=ticker.type,
+    #     )
+    #     obj.save()
+    # tickers = Ticker_new.objects.all()
+    # transactions = Transaction.objects.all()
+    # for transaction in transactions:
+    #     transaction.ticker_new = tickers.get(name=transaction.ticker.name)
+    #     transaction.trading_platform = trading_platforms.get(name=transaction.trader.name)
+    #     transaction.save()
 
     return HttpResponse('done')

@@ -9,7 +9,7 @@ from decimal import Decimal
 
 import os
 
-from assets.models import Asset, Trader, Ticker
+from assets.models import Asset #, Trader, Ticker
 
 # Create your models here.
 
@@ -73,7 +73,7 @@ def auto_delete_file_on_change(sender, instance, **kwargs):
             os.remove(old_logo.path)
 
 
-class Ticker_new(models.Model):
+class Ticker(models.Model):
     TYPE = (
         ('crypto', 'Crypto'),
         ('equity', 'Equity'),
@@ -89,7 +89,7 @@ class Ticker_new(models.Model):
         if self.type == 'equity':
             url = f"https://ca.finance.yahoo.com/quote/{self.symbol}/"
         else:
-            url = reverse("assets:detail-ticker", kwargs={"pk": self.pk})
+            url = reverse("wallets:detail-ticker", kwargs={"pk": self.pk})
         return url
 
 
@@ -137,9 +137,9 @@ class Transaction(models.Model):
     type = models.CharField(max_length=10, choices=TYPE, default=TYPE[0][0])
     wallet = models.ForeignKey(to=Wallet, on_delete=models.CASCADE)
     asset = models.OneToOneField(to=Asset, related_name='transaction', on_delete=models.SET_NULL, null=True, blank=True)
-    ticker = models.ForeignKey(to=Ticker, related_name='transaction', on_delete=models.CASCADE)
-    ticker_new = models.ForeignKey(to=Ticker_new, related_name='transaction', on_delete=models.CASCADE, null=True, blank=True)
-    trader = models.ForeignKey(to=Trader, related_name='transaction', on_delete=models.CASCADE, null=True, blank=True)
+    # ticker = models.ForeignKey(to=Ticker, related_name='transaction', on_delete=models.CASCADE)
+    ticker = models.ForeignKey(to=Ticker, related_name='transaction', on_delete=models.CASCADE, null=True, blank=True)
+    # trader = models.ForeignKey(to=Trader, related_name='transaction', on_delete=models.CASCADE, null=True, blank=True)
     trading_platform = models.ForeignKey(to=TradingPlatform, related_name='transaction', on_delete=models.CASCADE, null=True, blank=True)
     date = models.DateField(default=timezone.now)
     description = models.TextField(null=True, blank=True)
@@ -158,6 +158,10 @@ class Transaction(models.Model):
 
     def get_absolute_url(self):
         return reverse('wallets:wallets-htmx-api:transaction', kwargs={'pk': self.pk})
+
+    @property
+    def is_crypto(self):
+        return self.ticker.type == "crypto"
 
     @property
     def brut(self):
@@ -205,9 +209,9 @@ class Transaction(models.Model):
     @property
     def get_fees_type(self, quantity=None):
         if self.type == 'buy':
-            fees_type = self.trader.fees_buy
+            fees_type = self.trading_platform.fees_buy
         elif self.type == 'sell':
-            fees_type = self.trader.fees_sell
+            fees_type = self.trading_platform.fees_sell
         if fees_type == 'crypto':
             s = self.ticker.symbol
         elif fees_type == 'money':

@@ -79,7 +79,8 @@ def update_prices(qs=None):
     if not qs:
         qs = Asset.objects.all()
     for asset in qs:
-        cp = current_price(asset.ticker.symbol, asset.is_crypto)
+        t = asset.transaction
+        cp = current_price(t.ticker.symbol, t.is_crypto)
         if not asset.current == cp:
             asset.current = cp
             asset.save()

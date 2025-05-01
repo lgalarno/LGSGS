@@ -2,12 +2,20 @@
     <div class="row">
         <div class="col col-lg-12">
             <h4 style="float: right">balance: <strong>{{ wallet.balance }}$</strong></h4>
-            <a style="display: inline;"
-               hx-get="{% url 'wallets:wallets-htmx-api:wallet_update' pk=wallet.id %}"
-               hx-target="#form-dialog"
-            >
-                 <h2 >{{ wallet.name }}</h2>
-            </a>
+            <h2 style="display: inline;" >
+                {% if wallet.trader.logo %}
+                    <a href="{{ wallet.trader.url }}" target="_blank" title="{{ wallet.trader.name }} {{ wallet.trader.url }}">
+                        <img alt="" src="{{ wallet.trader.logo.url }}" height="40">
+                    </a>
+                {% endif %}
+
+                <a style="display: inline;"
+                   hx-get="{% url 'wallets:wallets-htmx-api:wallet_update' pk=wallet.id %}"
+                   hx-target="#form-dialog"
+                >
+                     {{ wallet.name }}
+                </a>
+            </h2>
         </div>
     </div>
     <div class="row">

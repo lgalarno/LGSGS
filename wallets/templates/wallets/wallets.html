@@ -24,6 +24,9 @@
                                    hx-get="{% url 'wallets:wallets-htmx-api:wallet_detail' pk=w.id %}"
                                    hx-target="#wallet_frame"
                                 >
+                                    {% if w.trader.logo %}
+                                        <img alt="" src="{{ w.trader.logo.url }}" height="20">
+                                    {% endif %}
                                     {{ w.name }}
                                 </a>
                             </li>

@@ -4,55 +4,55 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column
 
 from .backend import ticker_name
-from .models import Asset, Ticker, Trader
+from .models import Asset  #, Ticker, Trader
 
-
-class TraderForm(forms.ModelForm):
-    class Meta:
-        model = Trader
-        fields = ['name', 'logo', 'url', 'fees_buy', 'fees_sell']
-
-        labels = {
-            "fees_buy": "Fees when buying",
-            "fees_sell": "Fees when selling",
-        }
-
-    def clean(self):
-        cleaned_data = super().clean()
-        name = cleaned_data.get('name')
-        qs = Trader.objects.filter(name=name).first()
-        if qs:
-            self.add_error("name", "Trader already exists")
-        return cleaned_data
-
-
-class TickerForm(forms.ModelForm):
-    class Meta:
-        model = Ticker
-        fields = ['symbol', 'name', 'type']
-
-        labels = {
-            "symbol": "Ticker/Symbol",
-        }
-        widgets = {
-            'name': forms.HiddenInput(),
-        }
-
-    def clean(self):
-        cleaned_data = super().clean()
-        symbol = cleaned_data.get('symbol').upper()
-        type = cleaned_data.get('type')
-        qs = Ticker.objects.filter(symbol=symbol).first()
-        if qs:
-            self.add_error("symbol", "Symbol already exists")
-        else:
-            name = ticker_name(symbol, type)
-            if name:
-                self.cleaned_data['name'] = name
-                self.cleaned_data['symbol'] = symbol
-            else:
-                self.add_error("symbol", "Symbol does not exist or please, be more specific")
-        return cleaned_data
+#
+# class TraderForm(forms.ModelForm):
+#     class Meta:
+#         model = Trader
+#         fields = ['name', 'logo', 'url', 'fees_buy', 'fees_sell']
+#
+#         labels = {
+#             "fees_buy": "Fees when buying",
+#             "fees_sell": "Fees when selling",
+#         }
+#
+#     def clean(self):
+#         cleaned_data = super().clean()
+#         name = cleaned_data.get('name')
+#         qs = Trader.objects.filter(name=name).first()
+#         if qs:
+#             self.add_error("name", "Trader already exists")
+#         return cleaned_data
+#
+#
+# class TickerForm(forms.ModelForm):
+#     class Meta:
+#         model = Ticker
+#         fields = ['symbol', 'name', 'type']
+#
+#         labels = {
+#             "symbol": "Ticker/Symbol",
+#         }
+#         widgets = {
+#             'name': forms.HiddenInput(),
+#         }
+#
+#     def clean(self):
+#         cleaned_data = super().clean()
+#         symbol = cleaned_data.get('symbol').upper()
+#         type = cleaned_data.get('type')
+#         qs = Ticker.objects.filter(symbol=symbol).first()
+#         if qs:
+#             self.add_error("symbol", "Symbol already exists")
+#         else:
+#             name = ticker_name(symbol, type)
+#             if name:
+#                 self.cleaned_data['name'] = name
+#                 self.cleaned_data['symbol'] = symbol
+#             else:
+#                 self.add_error("symbol", "Symbol does not exist or please, be more specific")
+#         return cleaned_data
 
 
 class AssetForm(forms.ModelForm):
@@ -93,11 +93,11 @@ class AssetForm(forms.ModelForm):
 class AssetUpdateForm(forms.ModelForm):
     class Meta:
         model = Asset
-        fields = ['ticker', 'trader', 'date', 'description', 'quantity',
+        fields = ['date', 'description', 'quantity',
                   'price', 'fees_per_unit', 'margin', 'monitor', 'staking', 'emailed']
 
         labels = {
-            "ticker": "Ticker/Symbol",
+            # "ticker": "Ticker/Symbol",
             "fees_per_unit": "Fees per unit",
             "date": "Date purchased",
             "margin": "Profit margin",
@@ -117,8 +117,8 @@ class AssetUpdateForm(forms.ModelForm):
         self.helper.form_tag = False
         self.helper.layout = Layout(
             Row(
-                Column('ticker', css_class='form-group col-md-4 mb-0'),
-                Column('trader', css_class='form-group col-md-4 mb-0'),
+                # Column('ticker', css_class='form-group col-md-4 mb-0'),
+                # Column('trader', css_class='form-group col-md-4 mb-0'),
                 Column('date', css_class='form-group col-md-4 mb-0'),
             ),
             'description',

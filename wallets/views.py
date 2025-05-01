@@ -3,11 +3,11 @@ from django.contrib import messages
 from django.db.models import Sum
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import DeleteView
+from django.views.generic import DeleteView, DetailView
 
 from decimal import Decimal
 
-from wallets.models import Wallet, Profit
+from wallets.models import Wallet, Profit, Ticker
 from assets.models import Asset
 from assets.backend import get_refresh_info, update_prices
 # Create your views here.
@@ -49,3 +49,13 @@ class WalletDeleteView(LoginRequiredMixin, DeleteView):
         self.object = self.get_object()
         self.object.delete()
         return redirect(self.get_success_url())
+
+
+# TODO add details
+class TickerDetailView(DetailView):
+    model = Ticker
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data()
+        context['title'] = 'Ticker-detail'
+        return context

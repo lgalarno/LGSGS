@@ -1,40 +1,11 @@
 <h4>Assets</h4>    
 <div class="table-responsive">
         <table class="table" id="table_list2">
-{#            <thead>#}
-{#                <tr>#}
-{#                    <th scope="col">Symbol</th>#}
-{#                    <th scope="col">Trader</th>#}
-{#                    <th scope="col">Purchased</th>#}
-{#                    <th scope="col">#</th>#}
-{#                    <th scope="col">Price</th>#}
-{#                    <th scope="col">Paid</th>#}
-{#                    <th scope="col">Target (price)</th>#}
-{#                    <th scope="col">Current price</th>#}
-{#                    <th scope="col">Current value</th>#}
-{#                    <th scope="col">Delta</th>#}
-{#                    <th scope="col"></th>#}
-{#                </tr>#}
-{#            </thead>#}
-        {#            <thead>#}
             <tbody>
             {% for a in asset_list %}
                 <tr {% if a.staking %} class="staking" {% elif not a.monitor %} class="not_monitored" {% endif %} style="border-top: 2px solid black;">
-                    <td title="{{ a.ticker.name }}">
-                        
-
-                        {% if a.trader.url %}
-                            <a href="{{ a.trader.url }}" target="_blank" title="{{ a.trader.name }} {{ a.trader.url }}">
-                        {% else %}
-                            <a href="#" title="{{ a.trader.name }}">
-                        {% endif %}
-                        {% if a.trader.logo %}
-                            <img alt="Trader logo" src="{{ a.trader.logo.url }}" height="20"> 
-                        {% else %}
-                            {{ a.trader.name }} 
-                        {% endif %}
-                        </a> 
-                        <a href = "{{ a.ticker.get_absolute_url }}" {% if a.ticker.type == "equity"  %}target="_blank"{% endif %}>{{ a.ticker.symbol }}</a>
+                    <td title="{{ a.transaction.ticker.name }}">
+                        <a href = "{{ a.transaction.ticker.get_absolute_url }}" {% if a.transaction.ticker.type == "equity"  %}target="_blank"{% endif %}>{{ a.transaction.ticker.symbol }}</a>
                     </td>
                     <td style="text-align:right">
                         Price: {{ a.price }}$

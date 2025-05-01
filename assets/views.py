@@ -6,7 +6,7 @@ from django.views.generic import ListView, UpdateView, DeleteView, DetailView
 
 from .backend import update_prices, current_price, get_refresh_info
 from .forms import AssetForm, AssetUpdateForm
-from .models import Asset, Ticker, Trader
+from .models import Asset  #, Ticker, Trader
 
 # Create your views here.
 
@@ -20,12 +20,12 @@ def create_asset(request):
         if ticker_id and trader_id:
             if form.is_valid():
                 instance = form.save(commit=False)
-                ticker = Ticker.objects.get(pk=ticker_id)
-                instance.ticker = ticker
-                trader = Trader.objects.get(pk=trader_id)
-                instance.trader = trader
+                # ticker = Ticker.objects.get(pk=ticker_id)
+                # instance.ticker = ticker
+                # trader = Trader.objects.get(pk=trader_id)
+                # instance.trader = trader
                 instance.user = request.user
-                instance.current = current_price(ticker.symbol)
+                # instance.current = current_price(ticker.symbol)
                 instance.save()
                 messages.success(request, 'Asset created!')
         else:
@@ -87,10 +87,6 @@ class AssetUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         success_url = reverse_lazy('wallets:wallets')
-        # if self.object.has_transaction:
-        #     success_url = reverse_lazy('wallets:wallets')
-        # else:
-        #     success_url = reverse_lazy('assets:assets')
         return success_url
 
     def get_context_data(self, *args, **kwargs):
@@ -100,15 +96,15 @@ class AssetUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_form_kwargs(self):
         kwargs = super(AssetUpdateView, self).get_form_kwargs()
-        kwargs['is_crypto'] = self.object.is_crypto
+        kwargs['is_crypto'] = self.object.transaction.is_crypto
         return kwargs
 
 
-# TODO add details
-class TickerDetailView(DetailView):
-    model = Ticker
-
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data()
-        context['title'] = 'Ticker-detail'
-        return context
+# # TODO add details
+# class TickerDetailView(DetailView):
+#     model = Ticker
+#
+#     def get_context_data(self, *args, **kwargs):
+#         context = super().get_context_data()
+#         context['title'] = 'Ticker-detail'
+#         return context

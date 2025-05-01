@@ -7,9 +7,10 @@ from django.shortcuts import reverse
 
 from decimal import Decimal
 
-import os
+# import os
 
 from assets.tasks import send_email
+
 
 # Create your models here.
 
@@ -17,80 +18,80 @@ from assets.tasks import send_email
 def upload_location(instance, filename):
     return f"logos/{filename}"
 
-
-class Ticker(models.Model):
-    TYPE = (
-        ('crypto', 'Crypto'),
-        ('equity', 'Equity'),
-    )
-    symbol = models.CharField(max_length=16)
-    name = models.CharField(max_length=255, null=True, blank=True)
-    type = models.CharField(max_length=20, choices=TYPE, default=TYPE[0][0])
-
-    def __str__(self):
-        return self.symbol
-
-    def get_absolute_url(self):
-        if self.type == 'equity':
-            url = f"https://ca.finance.yahoo.com/quote/{self.symbol}/"
-        else:
-            url = reverse("assets:detail-ticker", kwargs={"pk": self.pk})
-        return url
-
-
-class Trader(models.Model):
-    FEES = (
-        ('money', 'Money'),
-        ('crypto', 'Crypto'),
-    )
-    name = models.CharField(max_length=255, null=True, blank=True)
-    logo = models.ImageField(upload_to=upload_location,
-                             null=True,
-                             blank=True)
-    url = models.URLField(blank=True, null=True)
-    fees_buy = models.CharField(max_length=20, choices=FEES, default=FEES[0][0])
-    fees_sell = models.CharField(max_length=20, choices=FEES, default=FEES[0][0])
-
-    def __str__(self):
-        return self.name
-
-
-@receiver(models.signals.post_delete, sender=Trader)
-def auto_delete_file_on_delete(sender, instance, **kwargs):
-    """
-    Deletes file from filesystem
-    when corresponding `Player` object is deleted.
-    """
-    if instance.logo:
-        if os.path.isfile(instance.logo.path):
-            os.remove(instance.logo.path)
-
-
-@receiver(models.signals.pre_save, sender=Trader)
-def auto_delete_file_on_change(sender, instance, **kwargs):
-    """
-    Deletes old file from filesystem
-    when corresponding `Player` object is updated
-    with new file.
-    """
-    if not instance.pk:
-        return False
-    try:
-        old_logo = Trader.objects.get(pk=instance.pk).logo
-    except Trader.DoesNotExist:
-        return False
-    new_logo = instance.logo
-    if not bool(old_logo):
-        return False
-    if not old_logo == new_logo:
-        if os.path.isfile(old_logo.path):
-            os.remove(old_logo.path)
+#
+# class Ticker(models.Model):
+#     TYPE = (
+#         ('crypto', 'Crypto'),
+#         ('equity', 'Equity'),
+#     )
+#     symbol = models.CharField(max_length=16)
+#     name = models.CharField(max_length=255, null=True, blank=True)
+#     type = models.CharField(max_length=20, choices=TYPE, default=TYPE[0][0])
+#
+#     def __str__(self):
+#         return self.symbol
+#
+#     def get_absolute_url(self):
+#         if self.type == 'equity':
+#             url = f"https://ca.finance.yahoo.com/quote/{self.symbol}/"
+#         else:
+#             url = reverse("assets:detail-ticker", kwargs={"pk": self.pk})
+#         return url
+#
+#
+# class Trader(models.Model):
+#     FEES = (
+#         ('money', 'Money'),
+#         ('crypto', 'Crypto'),
+#     )
+#     name = models.CharField(max_length=255, null=True, blank=True)
+#     logo = models.ImageField(upload_to=upload_location,
+#                              null=True,
+#                              blank=True)
+#     url = models.URLField(blank=True, null=True)
+#     fees_buy = models.CharField(max_length=20, choices=FEES, default=FEES[0][0])
+#     fees_sell = models.CharField(max_length=20, choices=FEES, default=FEES[0][0])
+#
+#     def __str__(self):
+#         return self.name
+#
+#
+# @receiver(models.signals.post_delete, sender=Trader)
+# def auto_delete_file_on_delete(sender, instance, **kwargs):
+#     """
+#     Deletes file from filesystem
+#     when corresponding `Player` object is deleted.
+#     """
+#     if instance.logo:
+#         if os.path.isfile(instance.logo.path):
+#             os.remove(instance.logo.path)
+#
+#
+# @receiver(models.signals.pre_save, sender=Trader)
+# def auto_delete_file_on_change(sender, instance, **kwargs):
+#     """
+#     Deletes old file from filesystem
+#     when corresponding `Player` object is updated
+#     with new file.
+#     """
+#     if not instance.pk:
+#         return False
+#     try:
+#         old_logo = Trader.objects.get(pk=instance.pk).logo
+#     except Trader.DoesNotExist:
+#         return False
+#     new_logo = instance.logo
+#     if not bool(old_logo):
+#         return False
+#     if not old_logo == new_logo:
+#         if os.path.isfile(old_logo.path):
+#             os.remove(old_logo.path)
 
 
 class Asset(models.Model):
     user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    ticker = models.ForeignKey(to=Ticker, related_name='asset', on_delete=models.CASCADE)
-    trader = models.ForeignKey(to=Trader, related_name='asset', on_delete=models.CASCADE, null=True, blank=True)
+    # ticker = models.ForeignKey(to=Ticker, related_name='asset', on_delete=models.CASCADE)
+    # trader = models.ForeignKey(to=Trader, related_name='asset', on_delete=models.CASCADE, null=True, blank=True)
     date = models.DateField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     quantity = models.FloatField(validators=[MinValueValidator(0.0)])
@@ -104,25 +105,17 @@ class Asset(models.Model):
     emailed = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ['trader', '-monitor', 'staking', '-date']
+        ordering = ['-monitor', 'staking', '-date']
 
     def __str__(self):
-        return f"{self.ticker.symbol}-{self.date}"
+        return f"{self.transaction.ticker.symbol}-{self.date}"
 
     def get_absolute_url(self):
         return reverse('assets:update-asset', kwargs={'pk': self.pk})
 
-    # @property
-    # def get_update_url(self):
-    #     return reverse('assets:update-asset', kwargs={'pk': self.pk})
-    #
     @property
     def get_delete_url(self):
         return reverse('assets:delete-asset', kwargs={'pk': self.pk})
-
-    @property
-    def is_crypto(self):
-        return self.ticker.type == "crypto"
 
     @property
     def has_transaction(self):
