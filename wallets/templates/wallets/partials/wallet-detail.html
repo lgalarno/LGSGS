@@ -1,7 +1,8 @@
 {% if wallet %}
     <div class="row">
         <div class="col col-lg-12">
-            <h4 style="float: right">balance: <strong>{{ wallet.balance }}$</strong></h4>
+{#            <h4 style="float: right">balance: <strong>{{ wallet.balance }}$</strong></h4>#}
+            <h4 style="float: right">profits: <strong>{{ total_profits }}$</strong></h4>
             <h2 style="display: inline;" >
                 {% if wallet.trader.logo %}
                     <a href="{{ wallet.trader.url }}" target="_blank" title="{{ wallet.trader.name }} {{ wallet.trader.url }}">
@@ -18,21 +19,21 @@
             </h2>
         </div>
     </div>
-    <div class="row">
-        <div class="col col-lg-12">
-            <h4 style="float: right">profits: <strong>{{ total_profits }}$</strong></h4>
-        </div>
-    </div>
+{#    <div class="row">#}
+{#        <div class="col col-lg-12">#}
+{#            <h4 style="float: right">profits: <strong>{{ total_profits }}$</strong></h4>#}
+{#        </div>#}
+{#    </div>#}
     <div class="row">
         <div class="col col-lg-12">
             <nav class="walletnavbar">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link"
-                           hx-get="{% url 'wallets:wallets_htmx-api:transfer' pk=wallet.id %}"
-                           hx-target="#form-dialog">
-                        Transfer money</a>
-                    </li>
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link"#}
+{#                           hx-get="{% url 'wallets:wallets_htmx-api:transfer' pk=wallet.id %}"#}
+{#                           hx-target="#form-dialog">#}
+{#                        Transfer money</a>#}
+{#                    </li>#}
                     <li class="nav-item">
                         <a class="nav-link"
                            hx-get="{% url 'wallets:wallets-htmx-api:buy' pk=wallet.id %}"
@@ -57,12 +58,12 @@
                            hx-target="#htmx_frame">
                             Transaction history</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link"
-                           hx-get="{% url 'wallets:wallets-htmx-api:transfer-list' pk=wallet.id %}"
-                           hx-target="#htmx_frame">
-                            Transfer history</a>
-                    </li>
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link"#}
+{#                           hx-get="{% url 'wallets:wallets-htmx-api:transfer-list' pk=wallet.id %}"#}
+{#                           hx-target="#htmx_frame">#}
+{#                            Transfer history</a>#}
+{#                    </li>#}
                     <li class="nav-item">
                         <a class="nav-link"
                            hx-get="{% url 'wallets:wallets-htmx-api:update'%}"

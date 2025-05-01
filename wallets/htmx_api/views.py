@@ -5,8 +5,8 @@ from django.utils import timezone
 
 from decimal import Decimal
 
-from wallets.forms import WalletForm, TransferForm, TransactionForm, TradingPlatformForm, TickerForm
-from wallets.models import Wallet, Profit, Transaction, Transfer, TradingPlatform, Ticker
+from wallets.forms import WalletForm, TransactionForm, TradingPlatformForm, TickerForm  # , TransferForm
+from wallets.models import Wallet, Profit, Transaction, TradingPlatform, Ticker  # , Transfer,
 
 from assets.backend import current_price, get_refresh_info, update_prices
 from assets.models import Asset
@@ -58,7 +58,7 @@ def wallet_create(request):
     if request.method == "POST":
         if form.is_valid():
             instance = form.save(commit=False)
-            instance.balance = 0
+            # instance.balance = 0
             instance.user = request.user
             instance.lastviewed = timezone.now()
             instance.save()
@@ -109,29 +109,30 @@ def wallet_detail(request, pk):
     return render(request, 'wallets/partials/wallet-detail.html', context)
 
 
-def transfer(request, pk):
-    wallet = get_object_or_404(Wallet, pk=pk)
-    form = TransferForm(request.POST or None, initial={'wallet': wallet})
-    context = {
-        "title": "transfer",
-        'wallet': wallet
-    }
-    if request.method == "POST":
-        if form.is_valid():
-            instance = form.save(commit=False)
-            w = instance.wallet
-            w.balance = w.balance + instance.amount
-            w.save()
-            instance.save()
-            context["wallet"] = w
-            response = HttpResponse()
-            response["HX-Redirect"] = reverse("wallets:wallets")
-            return response
-    context["form"] = form
-    return render(request, 'wallets/partials/transfer-form-modal.html', context)
+# def transfer(request, pk):
+#     wallet = get_object_or_404(Wallet, pk=pk)
+#     form = TransferForm(request.POST or None, initial={'wallet': wallet})
+#     context = {
+#         "title": "transfer",
+#         'wallet': wallet
+#     }
+#     if request.method == "POST":
+#         if form.is_valid():
+#             instance = form.save(commit=False)
+#             w = instance.wallet
+#             w.balance = w.balance + instance.amount
+#             w.save()
+#             instance.save()
+#             context["wallet"] = w
+#             response = HttpResponse()
+#             response["HX-Redirect"] = reverse("wallets:wallets")
+#             return response
+#     context["form"] = form
+#     return render(request, 'wallets/partials/transfer-form-modal.html', context)
 
 
 def buy(request, pk):
+    print('buy')
     wallet = get_object_or_404(Wallet, pk=pk)
     context = {
         "title": "buy",
@@ -140,45 +141,42 @@ def buy(request, pk):
     form = TransactionForm(request.POST or None, initial={'wallet': wallet})
     if request.method == 'POST':
         ticker_id = request.POST.get('ticker-input')  # ticker_id not in TransactionForm
-        trader_id = request.POST.get('trader-input')  # trader_id not in TransactionForm
-        if ticker_id and trader_id:
+        if ticker_id:
             if form.is_valid():
+                print('form.is_valid')
                 instance = form.save(commit=False)
                 ticker = Ticker.objects.get(pk=ticker_id)
                 # check if wallet has enough money.
                 cost = Decimal(
                         instance.quantity * float(instance.price) + float(instance.change)).quantize(
                         Decimal("1.00"))
-                trader = TradingPlatform.objects.get(pk=trader_id)
-                if trader.fees_buy == 'money':
+                trader = TradingPlatform.objects.get(pk=wallet.trader.pk)
+                print(trader)
+                if wallet.trader.fees_buy == 'money':
                     cost = cost + instance.fees  # fees in $ adds to
                     quantity = instance.quantity
                     fees_per_unit = Decimal(float(instance.fees) / quantity).quantize(
                         Decimal("1.000000"))
-                elif trader.fees_buy == 'crypto':
+                elif wallet.trader.fees_buy == 'crypto':
                     quantity = instance.quantity - float(instance.fees)  # fees in crypto, thus deduct fees from amount
                     fees_per_unit = Decimal(float(instance.fees) * float(instance.price) / quantity).quantize(
                         Decimal("1.000000"))
                 else:
                     form.add_error(None, "Trader improperly configured.")
-                    # if ticker.type == 'equity':  # # fees per transaction
-                    #     cost = cost + instance.fees  # may be fees in $ for equities
-                    #     quantity = instance.quantity
-                    # else:
-                    #     quantity = instance.quantity - float(instance.fees)  # fees for crypto are in crypto
-                if cost > wallet.balance:
-                    form.add_error(None, "Not enough money in the wallet.")
+                # if cost > wallet.balance:
+                #     form.add_error(None, "Not enough money in the wallet.")
                 if not form.errors:
+                    print('form.is_valid')
+                    print(trader.name)
                     instance.ticker = ticker
-                    # trader = Trader.objects.get(pk=trader_id)
-                    instance.trader = trader
+                    instance.trading_platform = trader
                     monitor = request.POST.get('monitor') == 'on'  # monitor not in TransactionForm
                     staking = request.POST.get('staking') == 'on'  # staking not in TransactionForm
                     # create an asset.
                     a = Asset(
                         user=request.user,
-                        ticker=ticker,
-                        trader=trader,
+                        # ticker=ticker,
+                        # trader=wallet.trader,
                         date=instance.date,
                         description=instance.description,
                         quantity=quantity,
@@ -190,10 +188,12 @@ def buy(request, pk):
                         staking=staking
                     )
                     a.save()
+
                     # update wallet balance
-                    wallet.balance = wallet.balance - cost
+                    # wallet.balance = wallet.balance - cost
                     wallet.asset.add(a)
                     wallet.save()
+
                     # complete instance info
                     instance.type = 'buy'
                     instance.asset = a
@@ -232,8 +232,8 @@ def sell(request, pk):
                 # profit = revenue - Decimal(float(asset.price) * instance.quantity - float(asset.transaction.change)).quantize(Decimal("1.00"))
                 # update Transaction instance
                 instance.type = 'sell'
-                instance.ticker = asset.ticker
-                instance.trader = asset.trader
+                # instance.ticker = asset.ticker
+                # instance.trader = asset.trader
 
                 paid = Decimal(instance.quantity * float(asset.transaction.price_per_share)).quantize(Decimal("1.00"))
                 revenue = instance.total_revenue
@@ -246,8 +246,8 @@ def sell(request, pk):
                         profit=profit
                     )
                     p.save()
-                    # update asset_left
 
+                    # update asset_left
                     if asset_left == 0:
                         asset.delete()
                     else:
@@ -255,7 +255,7 @@ def sell(request, pk):
                         asset.save()
 
                     # update wallet balance
-                    wallet.balance += instance.total_revenue
+                    # wallet.balance += instance.total_revenue
                     wallet.save()
                 except:
                     print('error')
@@ -307,14 +307,14 @@ def asset_list(request, pk):
     return render(request, 'assets/partials/assets_table.html', context)
 
 
-def transfer_list(request, pk):
-    wallet = get_object_or_404(Wallet, pk=pk)
-    transfers = Transfer.objects.filter(wallet=wallet)
-    context = {
-        "title": "asset-list",
-        'transfer_list': transfers,
-    }
-    return render(request, 'wallets/partials/transfer-list.html', context)
+# def transfer_list(request, pk):
+#     wallet = get_object_or_404(Wallet, pk=pk)
+#     transfers = Transfer.objects.filter(wallet=wallet)
+#     context = {
+#         "title": "asset-list",
+#         'transfer_list': transfers,
+#     }
+#     return render(request, 'wallets/partials/transfer-list.html', context)
 
 
 def profit_list(request, pk):

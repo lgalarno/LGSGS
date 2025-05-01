@@ -4,7 +4,7 @@ from django.utils import timezone
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, Hidden, Field
 
-from .models import Wallet, Transfer, Transaction, TradingPlatform, Ticker
+from .models import Wallet, Transaction, TradingPlatform, Ticker  #, Transfer
 
 from assets.backend import ticker_name
 
@@ -62,35 +62,35 @@ class WalletForm(forms.ModelForm):
         model = Wallet
         fields = ['name']
 
-
-class TransferForm(forms.ModelForm):
-    class Meta:
-        model = Transfer
-        fields = ['type', 'amount', 'description', 'date', 'wallet']
-
-        labels = {
-            "date": "Date transferred",
-        }
-        widgets = {
-            'date': forms.DateInput(attrs={"type": "date"}),
-            'wallet': forms.HiddenInput(),
-            'description': forms.Textarea(attrs={'rows': 3}),
-        }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['date'].initial = timezone.now()
-
-    def clean(self):
-        cleaned_data = super().clean()
-        amount = cleaned_data['amount']
-        if cleaned_data.get('type') == 'withdrawal':
-            w = cleaned_data['wallet']
-            if amount > w.balance:
-                self.add_error("amount", "Not enough money in the wallet to withdraw this amount.")
-            else:
-                cleaned_data['amount'] = -amount
-        return cleaned_data
+#
+# class TransferForm(forms.ModelForm):
+#     class Meta:
+#         model = Transfer
+#         fields = ['type', 'amount', 'description', 'date', 'wallet']
+#
+#         labels = {
+#             "date": "Date transferred",
+#         }
+#         widgets = {
+#             'date': forms.DateInput(attrs={"type": "date"}),
+#             'wallet': forms.HiddenInput(),
+#             'description': forms.Textarea(attrs={'rows': 3}),
+#         }
+#
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         self.fields['date'].initial = timezone.now()
+#
+#     def clean(self):
+#         cleaned_data = super().clean()
+#         amount = cleaned_data['amount']
+#         if cleaned_data.get('type') == 'withdrawal':
+#             w = cleaned_data['wallet']
+#             if amount > w.balance:
+#                 self.add_error("amount", "Not enough money in the wallet to withdraw this amount.")
+#             else:
+#                 cleaned_data['amount'] = -amount
+#         return cleaned_data
 
 
 class TransactionForm(forms.ModelForm):

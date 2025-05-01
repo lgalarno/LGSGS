@@ -156,7 +156,7 @@ class Asset(models.Model):
         return a
 
     def compose_email(self):
-        symbol = self.ticker.symbol
+        symbol = self.transaction.ticker.symbol
         mail_subject = f'Profit margin reached for {symbol}'
         mail_body = f"""
         Dear {self.user.username}, 
@@ -176,7 +176,7 @@ class Asset(models.Model):
 
 @receiver(post_save, sender=Asset)
 def target_reached(sender, instance, created, *args, **kwargs):
-    if instance.monitor and not instance.emailed:
+    if instance.monitor and not instance.emailed and not created:
         if instance.target_reached:
             instance.compose_email()
             instance.emailed = True

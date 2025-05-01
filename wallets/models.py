@@ -212,6 +212,8 @@ class Transaction(models.Model):
 
     @property
     def get_fees_type(self, quantity=None):
+        print('get_fees_type')
+        print(self.trading_platform)
         if self.type == 'buy':
             fees_type = self.trading_platform.fees_buy
         elif self.type == 'sell':
