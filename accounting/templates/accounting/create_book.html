@@ -1,0 +1,23 @@
+    <div class="col col-lg-6 default_form">
+        <h2>Create an accounting book</h2>
+        <form
+              hx-post="{% url 'accounting:create_book' pk=wallet.id %}"
+              hx-trigger="submit"
+              hx-target="#wallet_frame"
+              id="form">
+
+            {% csrf_token %}
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label" for="patientIDs">Select a book type</label>
+                <div class="col-sm-8">
+                    <select name="book_type" class="form-control" id="book_type" required >
+                        <option value="Disnat" {% if book_type == 'Disnat' %}selected{% endif %}>Disnat</option>
+                        <option value="Crypto" {% if book_type == 'Crypto' %}selected{% endif %}>Crypto</option>
+                    </select>
+                </div>
+            </div>
+            <a href="{% url 'wallets:wallets' %}" type="button" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">Create</button>
+        </form>
+    </div>
+</div>

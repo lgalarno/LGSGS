@@ -70,6 +70,14 @@
                            hx-target="#htmx_frame">
                             Update</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link"
+                            hx-target="#htmx_frame"
+                            hx-swap="innerHTML"
+                            hx-get="{% url 'accounting:book' pk=wallet.id %}">
+                            View the accounting book
+                        </a>
+                    </li>
 {#                    <li class="nav-item">#}
 {#                        <a class="nav-link"#}
 {#                           hx-get="{% url 'wallets:wallets-htmx-api:wallet_update' pk=wallet.id %}"#}

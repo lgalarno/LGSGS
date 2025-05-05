@@ -37,6 +37,7 @@ urlpatterns = [
     path('about/', TemplateView.as_view(template_name="about.html"), name="about"),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='sitemap'),
     path('account/', include('accounts.urls', namespace="accounts")),
+    path('accounting/', include('accounting.urls', namespace="accounting")),
     path('assets/', include('assets.urls', namespace="assets")),
     path('wallets/', include('wallets.urls', namespace="wallets")),
 ]

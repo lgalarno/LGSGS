@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     # custom app
     "accounts.apps.AccountsConfig",
     "assets.apps.AssetsConfig",
-    "wallets.apps.WalletsConfig"
+    "wallets.apps.WalletsConfig",
+    "accounting.apps.AccountingConfig"
 ]
 
 MIDDLEWARE = [
@@ -138,6 +139,16 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 FROM_EMAIL = config["FROM_EMAIL"]
 EMAIL_PASSWORD = config["EMAIL_PASSWORD"]
 NDAX_API_KEY = config["NDAX_API_KEY"]
+
+DISNAT_HEADERS = ["Date de transaction", "Date de règlement", "Type de transaction", "Classe d'actif",
+           "Symbole", "Description", "Marché", "Quantité", "Prix", "Devise du prix", "Commission payée",
+           "Montant de l'opération", "Devise du compte", "Id"]
+
+CRYPTO_HEADERS = ["Date de transaction", "Date de règlement", "Type de transaction", "Classe d'actif",
+           "Symbole", "Description", "Marché", "Quantité", "Prix", "Devise du prix", "Commission payée",
+           "Montant de l'opération", "Devise du compte", "Id"]
+
+
 ######################################################################
 # CUSTOM USER
 ######################################################################

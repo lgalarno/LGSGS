@@ -1,12 +1,12 @@
 /* messages*/
 .success {
-    color: green;
-}
-.warning {
-    color: Blue;
+    color: #5cb85c ;
 }
 .error {
-    color: red;
+    color: #d9534f ;
+}
+.warning {
+    color: #f0ad4e  ;
 }
 
 footer{
@@ -18,21 +18,13 @@ footer{
     color: black;
 }
 
-.not_monitored {
-    background: #f2f2f2;
-}
-
-.staking {
-    background: #ccffff;
-}
-
 /* basic positioning */
 .legend { list-style: none; }
 .legend li { float: left; margin-right: 10px; }
 .legend span { border: 1px solid #ccc; float: left; width: 12px; height: 12px; margin: 2px; }
 /* your colors */
-.legend .not_monitored { background-color: #f2f2f2; }
-.legend .staking { background-color: #ccffff; }
+.legend .not_monitored { background-color: #E0E0E0; }
+.legend .staking { background-color: #0dcaf0; }
 
 /* General customizations */
 

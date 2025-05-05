@@ -1,0 +1,82 @@
+<div class="row mb-4" style="border-style: solid; border-width: 1px; border-radius: 10px; padding: 10px;">
+    <h5>Date range</h5>
+    <div class="col-sm-5">
+        <div class="form-group">
+            <input name="start" type="date" class="form-control" required placeholder="yyyy-mm-dd" value="{{ mindate_filter|date:'Y-m-d' }}" min="{{ mindate|date:'Y-m-d' }}"/>
+            <small class="form-text text-muted">The start date for the query.</small>
+        </div>
+    </div>
+    <div class="col-sm-5">
+        <div class="form-group">
+            <input name="end" type="date" class="form-control" required placeholder="yyyy-mm-dd" value="{{ maxdate_filter|date:'Y-m-d' }}" max="{{ maxdate|date:'Y-m-d'  }}" />
+            <small class="form-text text-muted">The end date for the query.</small>
+        </div>
+    </div>
+    <div class="col-sm-2">
+        <button type="submit" name="task" value='refresh' class="btn btn-primary">Refresh <i class="bi bi-arrow-clockwise"></i></button>
+    </div>
+</div>
+
+<div class="table-responsive">
+     {{ book|safe }}
+</div>
+
+{#<div class="table-responsive">#}
+{#    <table class="table table-striped" id="table_book">#}
+{#        <thead>#}
+{#            <tr>#}
+{#                {% for h in headers %}#}
+{#                    <th scope="col">{{ h }}</th>#}
+{#                {% endfor%}#}
+{#             </tr>#}
+{#        </thead>#}
+{#        <tbody>#}
+{#        {% for b in book %}#}
+{#            <tr >#}
+{#                <td>#}
+{#                    {{ b.date_de_transaction }}#}
+{#                 </td>#}
+{#                <td>#}
+{#                    {{ b.date_de_reglement }}#}
+{#                 </td>#}
+{#                <td>#}
+{#                    {{ b.type_de_transaction }}#}
+{#                 </td>#}
+{#                <td>#}
+{#                    {{ b.classe_d_actif }}#}
+{#                 </td>#}
+{#                <td>#}
+{#                    {{ b.symbole.symbol }}#}
+{#                 </td>#}
+{#                <td>#}
+{#                    {{ b.description }}#}
+{#                 </td>#}
+{#                <td>#}
+{#                    {{ b.marche }}#}
+{#                 </td>#}
+{#                 <td>#}
+{#                    {{ b.quantite }}#}
+{#                 </td>#}
+{#                <td>#}
+{#                    {{ b.prix }}#}
+{#                 </td>#}
+{#                 <td>#}
+{#                    {{ b.devise_du_prix }}#}
+{#                 </td>#}
+{#                 <td>#}
+{#                    {{ b.commission_payee }}#}
+{#                 </td>#}
+{#                 <td>#}
+{#                    {{ b.montant_de_l_operation }}#}
+{#                 </td>#}
+{#                 <td>#}
+{#                    {{ b.devise_du_compte }}#}
+{#                 </td>#}
+{#                  <td>#}
+{#                    {{ b.numero_id }}#}
+{#                 </td>#}
+{#            </tr>#}
+{#        {% endfor %}#}
+{#        </tbody>#}
+{#     </table>#}
+{#</div>#}

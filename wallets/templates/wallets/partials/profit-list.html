@@ -1,15 +1,14 @@
 <h4>Profits</h4>
 <div class="table-responsive">
-    <table class="table" id="table_list">
+    <table class="table" id="table_pages">
         <thead>
             <tr>
                 <th scope="col">Symbol</th>
-                <th scope="col">Trader</th>
+{#                <th scope="col">Trader</th>#}
                 <th scope="col">Quantity sold</th>
                 <th scope="col">Purchased price (date)</th>
                 <th scope="col">Sold price (date)</th>
                 <th>Profit</th>
-                <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
@@ -22,13 +21,13 @@
                        style="text-decoration: underline;"
                     >{{ p.transaction_bought.ticker.symbol }}</a>
                  </td>
-                <td style="text-align: center; ">
-                    {% if p.transaction_bought.trader.logo %}
-                        <img alt="Trader logo" src="{{ p.transaction_bought.trader.logo.url }}" height="20">
-                    {% else %}
-                        {{ p.transaction_bought.trader.name }}
-                    {% endif %}
-                </td>
+{#                <td style="text-align: center; ">#}
+{#                    {% if p.transaction_bought.trading_platform.logo %}#}
+{#                        <img alt="Trader logo" src="{{ p.transaction_bought.trading_platform.logo.url }}" height="20">#}
+{#                    {% else %}#}
+{#                        {{ p.transaction_bought.trading_platform.name }}#}
+{#                    {% endif %}#}
+{#                </td>#}
                 <td>
                     {{ p.transaction_sold.quantity }}
                 </td>
@@ -41,7 +40,6 @@
                 <td >
                     {{ p.profit }}$
                 </td>
-                <td></td>
             </tr>
         {% endfor %}
         </tbody>

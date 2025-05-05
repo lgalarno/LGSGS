@@ -4,7 +4,7 @@
         <thead>
             <tr>
                 <th scope="col">Date</th>
-                <th scope="col">Trader</th>
+{#                <th scope="col">Trader</th>#}
                 <th scope="col">Type</th>
                 <th scope="col">Symbol</th>
                 <th scope="col">Quantity</th>
@@ -24,13 +24,13 @@
                        style="text-decoration: underline;"
                     >{{ t.date }}</a>
                  </td>
-                <td style="text-align: center; ">
-                    {% if t.trader.logo %}
-                        <img alt="Trader logo" src="{{ t.trader.logo.url }}" height="20">
-                    {% else %}
-                        {{ t.trader.name }}
-                    {% endif %}
-                </td>
+{#                <td style="text-align: center; ">#}
+{#                    {% if t.trading_platform.logo %}#}
+{#                        <img alt="Trader logo" src="{{ t.trading_platform.logo.url }}" height="20">#}
+{#                    {% else %}#}
+{#                        {{ t.trading_platform.name }}#}
+{#                    {% endif %}#}
+{#                </td>#}
                 <td>
                     {{ t.type|title }}
                 </td>

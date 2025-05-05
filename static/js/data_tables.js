@@ -2,11 +2,11 @@ htmx.onLoad(function() {
     /////////////////////////////////////////////////////////////
     // DataTable
     /////////////////////////////////////////////////////////////
-    $('#table_list').DataTable({
-        columnDefs: [
-            { orderable: false,
-                targets: -1 }
-            ],
+    $('#table_book').DataTable({
+        // columnDefs: [
+        //     { orderable: false,
+        //         targets: -1 }
+        //     ],
         searching: true,
         bPaginate: true,
         pageLength: 25,
@@ -18,11 +18,27 @@ htmx.onLoad(function() {
         language: {"search": "Filter:"}
     });
 
-    $('#table_pages').DataTable({
+    $('#table_list').DataTable({
         columnDefs: [
             { orderable: false,
                 targets: -1 }
             ],
+        searching: true,
+        // bPaginate: true,
+        // pageLength: 25,
+        info: false,
+        order: [],
+        processing: true,
+        deferRender: true,
+        bDestroy: true,
+        language: {"search": "Filter:"}
+    });
+
+    $('#table_pages').DataTable({
+        // columnDefs: [
+        //     { orderable: false,
+        //         targets: -1 }
+        //     ],
         searching: true,
         bPaginate: true,
         pageLength: 25,

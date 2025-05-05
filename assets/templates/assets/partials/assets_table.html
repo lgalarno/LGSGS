@@ -1,9 +1,9 @@
 <h4>Assets</h4>    
 <div class="table-responsive">
-        <table class="table" id="table_list2">
+        <table class="table" id="">
             <tbody>
             {% for a in asset_list %}
-                <tr {% if a.staking %} class="staking" {% elif not a.monitor %} class="not_monitored" {% endif %} style="border-top: 2px solid black;">
+                <tr {% if a.staking %} class="table-info" {% elif not a.monitor %} class="table-secondary" {% endif %} style="border-top: 2px solid black;">
                     <td title="{{ a.transaction.ticker.name }}">
                         <a href = "{{ a.transaction.ticker.get_absolute_url }}" {% if a.transaction.ticker.type == "equity"  %}target="_blank"{% endif %}>{{ a.transaction.ticker.symbol }}</a>
                     </td>
@@ -20,7 +20,7 @@
                         {{ a.date }}
                     </td>
                 </tr>
-                <tr {% if a.staking %} class="staking" {% elif not a.monitor %} class="not_monitored" {% endif %} style="border-bottom: 2px solid black;">
+                <tr {% if a.staking %} class="table-info" {% elif not a.monitor %} class="table-secondary" {% endif %} style="border-bottom: 2px solid black;">
                     <td>
                         Target (total - price) {{ a.target }}$ - {{ a.target_price }}$
                     </td>                
@@ -71,5 +71,7 @@
     </small>
     <ul class="legend" style="display: inline; float: right;" >
         <li><span class="not_monitored"></span> Not monitored</li>
-        <li><span class="staking"></span> Staking</li>
+        {% if wallet.is_crypto %}
+            <li><span class="staking"></span> Staking</li>
+        {% endif %}
     </ul>
