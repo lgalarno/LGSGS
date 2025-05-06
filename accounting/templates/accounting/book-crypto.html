@@ -1,6 +1,6 @@
 
 <form
-      hx-post="{% url 'accounting:book' pk=wallet.id %}"
+      hx-post="{% url 'accounting:book-crypto' pk=wallet.id %}"
       hx-trigger="submit"
       hx-target="this"
       hx-encoding='multipart/form-data'
@@ -9,14 +9,14 @@
     {% csrf_token %}
     <h4>Tableau du compte</h4>
     {% if book %}
-        {% include 'accounting/partials/disnat-summary-table.html' %}
+        <small>* Noter que les frais sont tous en $</small>
         {% include 'accounting/partials/book-table.html' %}
     {% else %}
-        <p>There are no elements to show.</p>
+        <p>Rien dans la banque de données.</p>
     {% endif %}
     {% include 'accounting/partials/messages_display.html' %}
     <div class="mb-3">
-        <label for="formFile" title="only properly formated csv files are accepted" class="form-label">Upload a csv file</label>
+        <label for="formFile" title="only properly formated csv files are accepted" class="form-label">Télécharger un fichier csv</label>
         <input class="form-control" type="file" id="formFile" name="formFile" accept=".csv">
     </div>
     <button type="submit" name="task" value='upload' class="btn btn-primary">Upload</button>

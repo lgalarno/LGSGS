@@ -38,13 +38,13 @@
                         <a class="nav-link"
                            hx-get="{% url 'wallets:wallets-htmx-api:buy' pk=wallet.id %}"
                            hx-target="#htmx_frame">
-                            Buy asset</a>
+                            Acheter</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link"
                            hx-get="{% url 'wallets:wallets-htmx-api:asset-list' pk=wallet.id %}"
                            hx-target="#htmx_frame">
-                            Assets</a>
+                            Actifs</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link"
@@ -56,7 +56,7 @@
                         <a class="nav-link"
                            hx-get="{% url 'wallets:wallets-htmx-api:transaction-list' pk=wallet.id %}"
                            hx-target="#htmx_frame">
-                            Transaction history</a>
+                            Historique des transactions</a>
                     </li>
 {#                    <li class="nav-item">#}
 {#                        <a class="nav-link"#}
@@ -64,18 +64,18 @@
 {#                           hx-target="#htmx_frame">#}
 {#                            Transfer history</a>#}
 {#                    </li>#}
-                    <li class="nav-item">
-                        <a class="nav-link"
-                           hx-get="{% url 'wallets:wallets-htmx-api:update'%}"
-                           hx-target="#htmx_frame">
-                            Update</a>
-                    </li>
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link"#}
+{#                           hx-get="{% url 'wallets:wallets-htmx-api:update'%}"#}
+{#                           hx-target="#htmx_frame">#}
+{#                            Update</a>#}
+{#                    </li>#}
                     <li class="nav-item">
                         <a class="nav-link"
                             hx-target="#htmx_frame"
                             hx-swap="innerHTML"
                             hx-get="{{ wallet.book_url }}">
-                            View the accounting book
+                            Voir le tableau du compte
                         </a>
                     </li>
 {#                    <li class="nav-item">#}

@@ -39,8 +39,8 @@ def csv_to_book(file, wallet=None, headers=None, last_stored_element_date=None):
     try:
         for line in lines:
             fields = line.split(",")
+            print(fields)
             if wallet_type == "equity":
-                print(fields)
                 date_de_transaction = None if fields[0] == '' else datetime.datetime.strptime(fields[0], '%Y-%m-%d').date()
                 date_de_reglement = datetime.datetime.strptime(fields[1], '%Y-%m-%d').date()
                 type_de_transaction = fields[2]
@@ -49,7 +49,7 @@ def csv_to_book(file, wallet=None, headers=None, last_stored_element_date=None):
                 montant_de_l_operation = Decimal(float(fields[11])).quantize(Decimal("1.00"))
                 numero_id = None if fields[13] == '' else int(fields[13])
                 if (type_de_transaction in ['ACHAT', 'VENTE']) and (numero_id is None):
-                    mess.append(f'Number id is missing for a transaction on {date_de_reglement}')
+                    mess.append(f'Le numéro id est manquant pour la transaction du {date_de_reglement}')
                 newdata = DisnatBook(
                     wallet=wallet,
                     date_de_transaction=date_de_transaction,
@@ -68,11 +68,20 @@ def csv_to_book(file, wallet=None, headers=None, last_stored_element_date=None):
                     numero_id=numero_id,
                 )
             elif wallet_type == "crypto":
-                pass
-
+                date = datetime.datetime.strptime(fields[1], '%Y-%m-%d').date()
+                newdata = CryptoBook(
+                    wallet=wallet,
+                    date=date,
+                    type=fields[0],
+                    crypto=fields[3],
+                    number_id=int(fields[2]),
+                    quantity=float(fields[4]),
+                    price=float(fields[5]),
+                    fees=float(fields[6]),
+                )
             newdata.save()
     except Exception as e:
-        return False, f"A problem occured while importing data: {e}. Check the line: {fields}"
+        return False, f"Un problème est survenu: {e}. Voir la ligne: {fields}"
     return True, mess
 
 
@@ -80,7 +89,7 @@ def validate_headers(file_headers, headers):
     fields = file_headers.split(",")
     for i in range(len(headers)):
         if fields[i] != headers[i]:
-            return False, f"Invalid file: column '{fields[i] }' found instead of '{headers[i]}'"
+            return False, f"Fichier invalide: colonne '{fields[i] }' trouvée à la place de '{headers[i]}'"
     return True, 'valid'
 
 
@@ -89,14 +98,34 @@ def validate_overlap(line, last_stored_element_date):
     try:
         frst_new_element_date = datetime.datetime.strptime(fields[1], '%Y-%m-%d').date()
     except:
-        return False, f"Expecting a date in the second column, first row. Got '{fields[1]}' instead."
+        return False, f"Une date est attendue dans la deuxième colunne de la première rangée. '{fields[1]}' à la place."
     if last_stored_element_date and (last_stored_element_date >= frst_new_element_date):
-        return False, f"The last element stored in the datase is from {last_stored_element_date} and the first element in the csv file is from {frst_new_element_date}. Data should not overlap to prevent duplicates."
+        return False, f"Le dernier élément de la base de données est du {last_stored_element_date} et le premier élément du fichier csv file est du {frst_new_element_date}. Les données ne doivent pas se chevaucher pour éviter les duplicata"
     return True, 'valid'
 
 
 def get_crypto_book(wallet, mindate_filter=None, maxdate_filter=None, headers=None):
     book = CryptoBook.objects.filter(wallet=wallet)
+    if book:
+        mindate = book.first().date
+        maxdate = book.last().date
+        if mindate_filter and maxdate_filter:
+            book = book.filter(date__gte=mindate_filter,
+                               date__lte=maxdate_filter)
+        book_values = book.values()
+        df = pd.DataFrame.from_records(book_values, exclude=['id', 'wallet_id'])
+        df = df.fillna(value=np.nan)
+        df.columns = headers
+        final_df = df.to_html(index=False,
+                              #border=0,
+                              classes="table table-striped",
+                              justify="left",
+                              table_id="table_book",
+                              na_rep='')
+    else:
+        mindate, maxdate = None, None
+        final_df = ""
+    return final_df, mindate, maxdate
 
 
 def get_disnat_books(wallet, mindate_filter=None, maxdate_filter=None, headers=None):
