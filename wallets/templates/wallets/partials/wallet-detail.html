@@ -74,7 +74,7 @@
                         <a class="nav-link"
                             hx-target="#htmx_frame"
                             hx-swap="innerHTML"
-                            hx-get="{% url 'accounting:book' pk=wallet.id %}">
+                            hx-get="{{ wallet.book_url }}">
                             View the accounting book
                         </a>
                     </li>

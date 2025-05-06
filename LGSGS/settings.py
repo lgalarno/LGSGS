@@ -144,9 +144,7 @@ DISNAT_HEADERS = ["Date de transaction", "Date de règlement", "Type de transact
            "Symbole", "Description", "Marché", "Quantité", "Prix", "Devise du prix", "Commission payée",
            "Montant de l'opération", "Devise du compte", "Id"]
 
-CRYPTO_HEADERS = ["Date de transaction", "Date de règlement", "Type de transaction", "Classe d'actif",
-           "Symbole", "Description", "Marché", "Quantité", "Prix", "Devise du prix", "Commission payée",
-           "Montant de l'opération", "Devise du compte", "Id"]
+CRYPTO_HEADERS = ["Type", "Date", "ID", "Crypto", "Number", "Price", "Fees"]
 
 
 ######################################################################

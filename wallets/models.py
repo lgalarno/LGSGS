@@ -108,6 +108,13 @@ class Wallet(models.Model):
     def is_crypto(self):
         return self.trader.type == "crypto"
 
+    @property
+    def book_url(self):
+        if self.is_crypto:
+            return reverse("accounting:book-crypto", kwargs={"pk": self.pk})
+        else:
+            return reverse("accounting:book-disnat", kwargs={"pk": self.pk})
+
 
 class Transfer(models.Model):
     TYPE = (

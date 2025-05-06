@@ -1,0 +1,73 @@
+<div class="row mb-4" style="border-style: solid; border-width: 1px; border-radius: 10px; padding: 10px;">
+
+    <div class="col-md-2"> <h4>Sommaire</h4></div>
+    <div class="col-md-3">
+        <p>Période: {{ summary.first_date|date:"d/m/Y" }} au {{ summary.last_date|date:"d/m/Y" }} ({{ summary.days_book }} jours)</p>
+        <br>
+{#        <p>Intérêts: {{ summary.interets }}$</p>#}
+{#        <p>Dividendes: {{ summary.dividendes }}$</p>#}
+{#        <p>Retenues d'impôts: {{ summary.retenue_impots }}$</p>#}
+{#        <p>Profits: {{ summary.profits }}$</p>#}
+{#        <p><span style="text-decoration:overline">Revenus: {{ summary.total_revenue }}$</span></p>#}
+        <div class="table-responsive">
+            <table class="table table-borderless" id="">
+                <tbody>
+                    <tr>
+                        <td>Profits:</td>
+                        <td>{{ summary.profits }}$</td>
+                    </tr>
+                     <tr>
+                        <td>Dividendes:</td>
+                        <td>{{ summary.dividendes }}$</td>
+                    </tr>
+                    <tr>
+                        <td>Intérêts:</td>
+                        <td>{{ summary.interets }}$</td>
+                    </tr>
+                    <tr>
+                        <td>Retenues d'impôts:</td>
+                        <td>{{ summary.retenue_impots }}$</td>
+                    </tr>
+                    <tr style="outline: thin solid">
+                        <td><strong>Revenus:</strong></td>
+                        <td><strong>{{ summary.total_revenue }}$</strong></td>
+                    </tr>
+                </tbody>
+             </table>
+        </div>
+    </div>
+    <div class="col-md-2"></div>
+    <div class="col-md-3">
+        <p>Aujourd'hui: {{ summary.today|date:"d/m/Y" }} ({{ summary.days_total }} jours)</p>
+        <br>
+{#        <p>Balance: {{ summary.balance }}$</p>#}
+{#        <p>Cotisations: {{ summary.cotisation }}$</p>#}
+{#        <br>#}
+{#        <p>Pour la période du tableau: {{ summary.percent_profits_book }}%</p>#}
+{#        <p>Jusqu'ici {{ summary.percent_profits_today }}%</p>#}
+        <div class="table-responsive">
+            <table class="table table-borderless" id="">
+                <tbody>
+                    <tr>
+                        <td>Balance:</td>
+                        <td>{{ summary.balance }}$</td>
+                    </tr>
+                    <tr style="border-bottom: thin solid;" >
+                        <td>Cotisations:</td>
+                        <td>{{ summary.cotisation }}$</td>
+                    </tr>
+                    <tr><td><strong>Pourcentages:</strong></td><td></td></tr>
+                    <tr>
+                        <td>Pour la période du tableau:</td>
+                        <td>{{ summary.percent_profits_book }}%</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid black;">
+                        <td>Jusqu'ici :</td>
+                        <td>{{ summary.percent_profits_today }}%</td>
+                    </tr>
+                </tbody>
+             </table>
+        </div>
+     </div>
+    <div class="col-md-2"></div>
+</div>

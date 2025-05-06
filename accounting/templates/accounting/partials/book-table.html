@@ -1,5 +1,5 @@
 <div class="row mb-4" style="border-style: solid; border-width: 1px; border-radius: 10px; padding: 10px;">
-    <h5>Date range</h5>
+    <h5>Dates</h5>
     <div class="col-sm-5">
         <div class="form-group">
             <input name="start" type="date" class="form-control" required placeholder="yyyy-mm-dd" value="{{ mindate_filter|date:'Y-m-d' }}" min="{{ mindate|date:'Y-m-d' }}"/>
@@ -17,10 +17,12 @@
     </div>
 </div>
 
-<div class="table-responsive">
-     {{ book|safe }}
+<div class="row mb-4" style="border-style: solid; border-width: 1px; border-radius: 10px; padding: 10px;">
+    <h5>Transactions</h5>
+    <div class="table-responsive">
+         {{ book|safe }}
+    </div>
 </div>
-
 {#<div class="table-responsive">#}
 {#    <table class="table table-striped" id="table_book">#}
 {#        <thead>#}

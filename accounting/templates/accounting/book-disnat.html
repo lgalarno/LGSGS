@@ -1,14 +1,15 @@
 
 <form
-      hx-post="{% url 'accounting:book' pk=wallet.id %}"
+      hx-post="{% url 'accounting:book-disnat' pk=wallet.id %}"
       hx-trigger="submit"
       hx-target="this"
       hx-encoding='multipart/form-data'
       id="form"
       >
     {% csrf_token %}
-    <h4>Accounting book</h4>
+    <h4>Tableau du compte</h4>
     {% if book %}
+        {% include 'accounting/partials/disnat-summary-table.html' %}
         {% include 'accounting/partials/book-table.html' %}
     {% else %}
         <p>There are no elements to show.</p>

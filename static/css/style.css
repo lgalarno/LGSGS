@@ -23,8 +23,8 @@ footer{
 .legend li { float: left; margin-right: 10px; }
 .legend span { border: 1px solid #ccc; float: left; width: 12px; height: 12px; margin: 2px; }
 /* your colors */
-.legend .not_monitored { background-color: #E0E0E0; }
-.legend .staking { background-color: #0dcaf0; }
+.legend .not_monitored { background-color: #cbccce; }
+.legend .staking { background-color: #cff4fc; }
 
 /* General customizations */
 
