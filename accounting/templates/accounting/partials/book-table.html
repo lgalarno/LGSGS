@@ -1,25 +1,29 @@
+{#<div class="row mb-4" style="border-style: solid; border-width: 1px; border-radius: 10px; padding: 10px;">#}
+{#    <h5>Dates</h5>#}
+{#    <div class="col-sm-5">#}
+{#        <div class="form-group">#}
+{#            <input name="start" type="date" class="form-control" required placeholder="yyyy-mm-dd" value="{{ mindate_filter|date:'Y-m-d' }}" min="{{ mindate|date:'Y-m-d' }}"/>#}
+{#            <small class="form-text text-muted">Première date de la recherche.</small>#}
+{#        </div>#}
+{#    </div>#}
+{#    <div class="col-sm-5">#}
+{#        <div class="form-group">#}
+{#            <input name="end" type="date" class="form-control" required placeholder="yyyy-mm-dd" value="{{ maxdate_filter|date:'Y-m-d' }}" max="{{ maxdate|date:'Y-m-d'  }}" />#}
+{#            <small class="form-text text-muted">Dernière date de la recherche.</small>#}
+{#        </div>#}
+{#    </div>#}
+{#    <div class="col-sm-2">#}
+{#        <button type="submit" name="task" value='refresh' class="btn btn-primary">Refresh <i class="bi bi-arrow-clockwise"></i></button>#}
+{#    </div>#}
+{#</div>#}
+{% include 'accounting/partials/select-dates.html' %}
 <div class="row mb-4" style="border-style: solid; border-width: 1px; border-radius: 10px; padding: 10px;">
-    <h5>Dates</h5>
-    <div class="col-sm-5">
-        <div class="form-group">
-            <input name="start" type="date" class="form-control" required placeholder="yyyy-mm-dd" value="{{ mindate_filter|date:'Y-m-d' }}" min="{{ mindate|date:'Y-m-d' }}"/>
-            <small class="form-text text-muted">Première date de la recherche.</small>
+    <div class="col col-md-12">
+        <h5 style="display: inline-block; vertical-align:middle" >Transactions</h5>
+        <button style="display: inline-block; vertical-align:middle" type="submit" name="task" value='export'
+                class="btn btn-sm btn-primary">Sauver en csv</button>
+        <div class="table-responsive mt-3">
+             {{ book|safe }}
         </div>
-    </div>
-    <div class="col-sm-5">
-        <div class="form-group">
-            <input name="end" type="date" class="form-control" required placeholder="yyyy-mm-dd" value="{{ maxdate_filter|date:'Y-m-d' }}" max="{{ maxdate|date:'Y-m-d'  }}" />
-            <small class="form-text text-muted">Dernière date de la recherche.</small>
-        </div>
-    </div>
-    <div class="col-sm-2">
-        <button type="submit" name="task" value='refresh' class="btn btn-primary">Refresh <i class="bi bi-arrow-clockwise"></i></button>
-    </div>
-</div>
-
-<div class="row mb-4" style="border-style: solid; border-width: 1px; border-radius: 10px; padding: 10px;">
-    <h5>Transactions</h5>
-    <div class="table-responsive">
-         {{ book|safe }}
     </div>
 </div>

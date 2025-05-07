@@ -50,14 +50,12 @@ htmx.onLoad(function() {
         language: {"search": "Filter:"}
     });
     document.body.addEventListener('htmx:afterRequest', function(evt) {
-        table_listDataTable.ajax.reload(function() {
+        DataTable.ajax.reload(function() {
             htmx.process('#table_list');
             htmx.process('#table_pages');
         }, false)
         // table_pagesDataTable.ajax.reload(function() {
         //     htmx.process('#table_pages');
         // }, false)
-});
-
-
+    });
  })

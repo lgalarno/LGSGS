@@ -1,0 +1,24 @@
+<div class="row mb-4" style="border-style: solid; border-width: 1px; border-radius: 10px; padding: 10px;">
+    <h5>Dates</h5>
+    <div class="col-sm-5">
+        <div class="form-group">
+            <input name="start" type="date" class="form-control" required placeholder="yyyy-mm-dd"
+                   value="{{ mindate_filter|date:'Y-m-d' }}" min="{{ mindate|date:'Y-m-d' }}"
+                   max="{{ maxdate|date:'Y-m-d'  }}"
+            />
+            <small class="form-text text-muted">Première date de la recherche.</small>
+        </div>
+    </div>
+    <div class="col-sm-5">
+        <div class="form-group">
+            <input name="end" type="date" class="form-control" required placeholder="yyyy-mm-dd"
+                   value="{{ maxdate_filter|date:'Y-m-d' }}" min="{{ mindate|date:'Y-m-d' }}"
+                   max="{{ maxdate|date:'Y-m-d'  }}"
+            />
+            <small class="form-text text-muted">Dernière date de la recherche.</small>
+        </div>
+    </div>
+    <div class="col-sm-2">
+        <button type="submit" name="task" value='refresh' class="btn btn-primary">Refresh <i class="bi bi-arrow-clockwise"></i></button>
+    </div>
+</div>

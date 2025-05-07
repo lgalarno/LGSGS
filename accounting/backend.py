@@ -39,7 +39,6 @@ def csv_to_book(file, wallet=None, headers=None, last_stored_element_date=None):
     try:
         for line in lines:
             fields = line.split(",")
-            print(fields)
             if wallet_type == "equity":
                 date_de_transaction = None if fields[0] == '' else datetime.datetime.strptime(fields[0], '%Y-%m-%d').date()
                 date_de_reglement = datetime.datetime.strptime(fields[1], '%Y-%m-%d').date()
@@ -104,7 +103,7 @@ def validate_overlap(line, last_stored_element_date):
     return True, 'valid'
 
 
-def get_crypto_book(wallet, mindate_filter=None, maxdate_filter=None, headers=None):
+def crypto_book(wallet, mindate_filter=None, maxdate_filter=None, headers=None):
     book = CryptoBook.objects.filter(wallet=wallet)
     if book:
         mindate = book.first().date
@@ -112,28 +111,113 @@ def get_crypto_book(wallet, mindate_filter=None, maxdate_filter=None, headers=No
         if mindate_filter and maxdate_filter:
             book = book.filter(date__gte=mindate_filter,
                                date__lte=maxdate_filter)
-        book_values = book.values()
-        df = pd.DataFrame.from_records(book_values, exclude=['id', 'wallet_id'])
-        df = df.fillna(value=np.nan)
-        df.columns = headers
-        final_df = df.to_html(index=False,
-                              #border=0,
-                              classes="table table-striped",
-                              justify="left",
-                              table_id="table_book",
-                              na_rep='')
+        if book:
+            book_values = book.values()
+            df = pd.DataFrame.from_records(book_values, exclude=['id', 'wallet_id'])
+            df = df.fillna(value=np.nan)
+            df.columns = headers
+            final_df = df.to_html(index=False,
+                                  #border=0,
+                                  classes="table table-striped",
+                                  justify="left",
+                                  table_id="table_book",
+                                  na_rep='')
+        else:
+            final_df = "<p>Rien à afficher.</p>"
     else:
         mindate, maxdate = None, None
         final_df = ""
     return final_df, mindate, maxdate
 
 
-def get_disnat_books(wallet, mindate_filter=None, maxdate_filter=None, headers=None):
+def crypto_for_taxes(wallet, mindate_filter=None, maxdate_filter=None):
+    book = CryptoBook.objects.filter(wallet=wallet)
+    if book:
+        mindate = book.first().date
+        maxdate = book.last().date
+        if mindate_filter and maxdate_filter:
+            book = book.filter(date__lte=maxdate_filter)
+        else:
+            mindate_filter = mindate  # set pour filtrer dans 'if date_vente_item > mindate_filter:'
+        if book:
+            book_values = book.values()
+            df = pd.DataFrame.from_records(book_values, exclude=['id', 'wallet_id'])
+            df = df.fillna(value=np.nan)
+
+            tbl = df.groupby(['type', 'number_id', 'date'], as_index=False).agg(avg_price=('price', 'mean'),
+                                                                                quantity=('quantity', 'sum'),
+                                                                                crypto=('crypto', 'first'),
+                                                                                fees=('fees', 'first'))
+            n_ids = tbl.loc[tbl['type'] == "VENTE", "number_id"].unique()
+            crypto = []
+            quantity_sold = []
+            date_achat = []
+            date_vente = []
+            produit_vente = []
+            cout = []
+            frais_vente = []
+
+            for n in n_ids:
+                ventes = tbl.loc[
+                    (tbl['number_id'] == n) & (tbl['type'] == "VENTE"), ['avg_price', 'quantity', 'date', 'fees']]
+                achat = tbl.loc[(tbl['number_id'] == n) & (tbl['type'] == "ACHAT"), ['avg_price', 'date', 'crypto']]
+
+                crypto_item = achat['crypto'].item()
+                date_achat_item = achat['date'].item()
+                prix_achat_item = float(achat['avg_price'].item())
+
+                for v in range(len(ventes)):
+                    date_vente_item = ventes.at[ventes.index[v], 'date']
+                    if date_vente_item > mindate_filter:
+                        quantity_item = float(ventes.at[ventes.index[v], 'quantity'])
+                        prix_vente_item = float(ventes.at[ventes.index[v], 'avg_price'])
+                        produit_vente_item = Decimal(quantity_item * prix_vente_item).quantize(Decimal("1.00"))
+                        cout_item = Decimal(quantity_item * prix_achat_item).quantize(Decimal("1.00"))
+
+                        crypto.append(crypto_item)
+                        quantity_sold.append(quantity_item)
+                        date_achat.append(date_achat_item)
+                        date_vente.append(date_vente_item)
+                        produit_vente.append(produit_vente_item)
+                        cout.append(cout_item)
+                        frais_vente.append(ventes.at[ventes.index[v], 'fees'])
+            summary = {
+                'Nom': crypto,
+                'Quantité vendue': quantity_sold,
+                "Date d'acquisition": date_achat,
+                'Date de disposition': date_vente,
+                'Produit de la disposition ': produit_vente,
+                'Prix de base rajusté': cout,
+                'Frais de vente': frais_vente
+
+            }
+            df_summary = pd.DataFrame(summary)
+            df_summary.sort_values(by=['Date de disposition'], inplace=True)
+            final_df = df_summary.to_html(index=False,
+                                          #border=0,
+                                          classes="table table-striped",
+                                          justify="left",
+                                          table_id="table_book",
+                                          na_rep='',
+                                          float_format=lambda x: f'{x:10.6g}'
+                                          )
+        else:
+            final_df = "<p>Rien à afficher.</p>"
+    else:
+        mindate, maxdate = None, None
+        final_df = ""
+    return final_df, mindate, maxdate
+
+
+def disnat_books(wallet, mindate_filter=None, maxdate_filter=None, headers=None):
     summary = {}
     book = DisnatBook.objects.filter(wallet=wallet)
     if book:
         mindate = book.first().date_de_reglement
         maxdate = book.last().date_de_reglement
+        # get summary using the full book
+        summary = summary_disnat(book, mindate_filter=mindate_filter, maxdate_filter=maxdate_filter)
+
         if mindate_filter and maxdate_filter:
             book = book.filter(date_de_reglement__gte=mindate_filter,
                                date_de_reglement__lte=maxdate_filter)
@@ -142,8 +226,7 @@ def get_disnat_books(wallet, mindate_filter=None, maxdate_filter=None, headers=N
         df = pd.DataFrame.from_records(book_values, exclude=['id', 'wallet_id'])
         df = df.fillna(value=np.nan)
 
-        # get summary
-        summary = get_summary_disnat(df, mindate=mindate, maxdate=maxdate)
+
 
         df.columns = headers
         final_df = df.to_html(index=False,
@@ -160,10 +243,54 @@ def get_disnat_books(wallet, mindate_filter=None, maxdate_filter=None, headers=N
 
 
 # TODO profits
-def get_summary_disnat(df, mindate=None, maxdate=None):
+def summary_disnat(book, mindate_filter=None, maxdate_filter=None) -> dict:
+
+    # if maxdate_filter:
+    #     book_f = book.filter(date_de_reglement__gte=mindate_filter, date_de_reglement__lte=maxdate_filter)
     summary = {}
-    balance = df['montant_de_l_operation'].sum()
-    type_agg = df.groupby('type_de_transaction').agg({'montant_de_l_operation': ['sum']})
+    today = datetime.datetime.now().date()
+    book_values = book.values()
+    df = pd.DataFrame.from_records(book_values, exclude=['id', 'wallet_id'])
+    df = df.fillna(value=np.nan)
+    first_date = df.date_de_reglement[0]
+    maxdate = df.date_de_reglement[len(df)-1]
+    mindate = df.date_de_reglement[0]
+
+    # a request update may be the full period. When maxdate_filter is None, then full
+    full = ((mindate == mindate_filter) and (maxdate == maxdate_filter)) or maxdate_filter is None
+    if maxdate_filter and not full:
+        df_to_maxdate = df[df.date_de_reglement.between(mindate, maxdate_filter)].reset_index()
+        df_filtered = df[df.date_de_reglement.between(mindate_filter, maxdate_filter)].reset_index()
+        first_date = df_filtered.date_de_reglement[0]
+        last_date = df_to_maxdate.date_de_reglement[len(df_to_maxdate) - 1]
+        # to calculate cotisation, interets, dividendes,retenue_impots
+        type_agg = df_filtered.groupby('type_de_transaction').agg(montant_de_l_operation=
+                                                                  ('montant_de_l_operation', 'sum'))
+        balance = None  # set to None, so that % not shown in the view in disnat-summary-table.html
+        #######################################
+        # Calculate profits
+        #######################################
+        df_numero_id = df_to_maxdate.groupby('numero_id').filter(lambda x: len(x) > 1)
+        profits_agg_temp = df_numero_id.groupby('numero_id', as_index=False).agg(
+            montant_total=('montant_de_l_operation', 'sum'),
+            date=('date_de_reglement', 'last')
+        )
+        profits_agg = profits_agg_temp[profits_agg_temp.date.between(mindate_filter, maxdate_filter)].reset_index()
+        profits = profits_agg['montant_total'].sum()
+    else:
+        balance = df['montant_de_l_operation'].sum()
+        last_date = df['date_de_reglement'][len(df) - 1]
+        # to calculate cotisation, interets, dividendes,retenue_impots
+        type_agg = df.groupby('type_de_transaction').agg(montant_total=('montant_de_l_operation', 'sum'))
+        #######################################
+        # Calculate profits
+        #######################################
+        # filter for items with numero_id appearing more than once - should be at least 1 ACHAT
+        filtered_df = df.groupby('numero_id').filter(lambda x: len(x) > 1)
+
+        profits_agg = filtered_df.groupby('numero_id').agg(montant_total=('montant_de_l_operation', 'sum'))
+        profits = profits_agg['montant_total'].sum()
+
     type_de_transaction = list(type_agg.index)
     cotisation = type_agg.loc['COTISATION'].item() if 'COTISATION' in type_de_transaction else 0
     interets = type_agg.loc['INTÉRÊTS'].item() if 'INTÉRÊTS' in type_de_transaction else 0
@@ -171,32 +298,33 @@ def get_summary_disnat(df, mindate=None, maxdate=None):
                         type_de_transaction[i].startswith('DIVIDENDE')]
     dividendes = type_agg.iloc[index_dividendes].sum().item()
     retenue_impots = type_agg.loc["RETENUE D'IMPÔT"].item() if "RETENUE D'IMPÔT" in type_de_transaction else 0
-    filtered_df = df.groupby('numero_id').filter(lambda x: len(x) > 1)
-    profits_agg = filtered_df.groupby('numero_id').agg({'montant_de_l_operation': ['sum']})
-    profits = profits_agg['montant_de_l_operation'].sum().item()
-    today = datetime.datetime.now().date()
-    first_date = df['date_de_reglement'][0]
-    diff_total = today - first_date
-    if diff_total.days > 0 and cotisation > 0:
-        percent_profits_today = Decimal((profits + retenue_impots + dividendes + interets) * 100 * 365 / (diff_total.days * cotisation)).quantize(Decimal("1.00"))
-    else:
-        percent_profits_today = Decimal(0).quantize(Decimal("1.00"))
-    last_date = df['date_de_reglement'][len(df) - 1]
-    diff_book = last_date - first_date
-    if diff_book.days > 0 and cotisation > 0:
-        percent_profits_book = Decimal((profits + retenue_impots + dividendes + interets) * 100 * 365 / (
-                diff_book.days * cotisation)).quantize(Decimal("1.00"))
-    else:
-        percent_profits_book = Decimal(0).quantize(Decimal("1.00"))
 
     total_revenue = profits + retenue_impots + dividendes + interets
+
+    # Calculate % profits if full table, not for partial
+    days_total = today - first_date
+
+    days_book = last_date - first_date
+    if full:
+        if days_total.days > 0 and cotisation > 0:
+            percent_profits_today = Decimal((profits + retenue_impots + dividendes + interets) * 100 * 365 / (days_total.days * cotisation)).quantize(Decimal("1.00"))
+        else:
+            percent_profits_today = Decimal(0).quantize(Decimal("1.00"))
+        if days_book.days > 0 and cotisation > 0:
+            percent_profits_book = Decimal((profits + retenue_impots + dividendes + interets) * 100 * 365 / (
+                    days_book.days * cotisation)).quantize(Decimal("1.00"))
+        else:
+            percent_profits_book = Decimal(0).quantize(Decimal("1.00"))
+    else:
+        percent_profits_book = None
+        percent_profits_today = None
+
     summary = {
-        'cols': [''],
         'first_date': first_date,
         'last_date': last_date,
         "today": today,
-        "days_book": diff_book.days,
-        "days_total": diff_total.days,
+        "days_book": days_book.days,
+        "days_total": days_total.days,
         'balance': balance,
         'cotisation': cotisation,
         'interets': interets,

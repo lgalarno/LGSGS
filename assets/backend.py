@@ -68,7 +68,10 @@ def current_price(symbol, crypto, *args, **kwargs):
             })
             price = ndax.fetch_ticker(symbol).get('last')
         else:
+            print(f'current_price for: {symbol}')
             data = yf.Ticker(symbol).history(period="1d")
+            print(data)
+            print()
             price = data["Close"].iloc[-1]
     except:
         price = 0

@@ -1,26 +1,29 @@
+<div id="form-div">
+    <form
+          hx-post="{% url 'accounting:book-disnat' pk=wallet.id %}"
+          hx-trigger="submit"
+          hx-target="#form-div"
+          hx-encoding='multipart/form-data'
+          id="form"
+          >
+        {% csrf_token %}
+        <h4>Tableau du compte</h4>
+        {% include 'messages_display.html' %}
+        {% if book %}
+            {% include 'accounting/partials/disnat-summary-table.html' %}
+            {% include 'accounting/partials/book-table.html' %}
+        {% else %}
+            <p>Rien dans la banque de données.</p>
+        {% endif %}
 
-<form
-      hx-post="{% url 'accounting:book-disnat' pk=wallet.id %}"
-      hx-trigger="submit"
-      hx-target="this"
-      hx-encoding='multipart/form-data'
-      id="form"
-      >
-    {% csrf_token %}
-    <h4>Tableau du compte</h4>
-    {% if book %}
-        {% include 'accounting/partials/disnat-summary-table.html' %}
-        {% include 'accounting/partials/book-table.html' %}
-    {% else %}
-        <p>Rien dans la banque de données.</p>
-    {% endif %}
-    {% include 'accounting/partials/messages_display.html' %}
-    <div class="mb-3">
-        <label for="formFile" title="only properly formated csv files are accepted" class="form-label">Télécharger un fichier csv</label>
-        <input class="form-control" type="file" id="formFile" name="formFile" accept=".csv">
-    </div>
-    <button type="submit" name="task" value='upload' class="btn btn-primary">Upload</button>
-    {% if table %}
-        <button type="submit" name="task" value='export' class="btn btn-primary">Export</button>
-    {% endif %}
-</form>
+    {#    <div class="mb-3">#}
+    {#        <label for="formFile" title="only properly formated csv files are accepted" class="form-label">Télécharger un fichier csv</label>#}
+    {#        <input class="form-control" type="file" id="formFile" name="formFile" accept=".csv">#}
+    {#    </div>#}
+    {#    <button type="submit" name="task" value='upload' class="btn btn-primary">Upload</button>#}
+    {#    {% if book %}#}
+    {#        <button type="submit" name="task" value='export' class="btn btn-primary">Export</button>#}
+    {#    {% endif %}#}
+    </form>
+    {% include 'accounting/partials/file-input.html' %}
+</div>

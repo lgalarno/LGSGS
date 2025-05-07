@@ -10,31 +10,31 @@ from .models import Asset  #, Ticker, Trader
 # Create your views here.
 
 
-def create_asset(request):
-    form = AssetForm(request.POST or None)
-    if request.method == 'POST':
-        # symbol = request.POST.get('ticker-input')
-        ticker_id = request.POST.get('ticker-input')
-        trader_id = request.POST.get('trader-input')
-        if ticker_id and trader_id:
-            if form.is_valid():
-                instance = form.save(commit=False)
-                # ticker = Ticker.objects.get(pk=ticker_id)
-                # instance.ticker = ticker
-                # trader = Trader.objects.get(pk=trader_id)
-                # instance.trader = trader
-                instance.user = request.user
-                # instance.current = current_price(ticker.symbol)
-                instance.save()
-                messages.success(request, 'Asset created!')
-        else:
-            messages.error(request, 'Please enter a valid ticker and a symbol.')
-
-    context = {
-        "title": "new-asset",
-        'asset_form': form,
-    }
-    return render(request, 'assets/new-asset.html', context)
+# def create_asset(request):
+#     form = AssetForm(request.POST or None)
+#     if request.method == 'POST':
+#         # symbol = request.POST.get('ticker-input')
+#         ticker_id = request.POST.get('ticker-input')
+#         trader_id = request.POST.get('trader-input')
+#         if ticker_id and trader_id:
+#             if form.is_valid():
+#                 instance = form.save(commit=False)
+#                 # ticker = Ticker.objects.get(pk=ticker_id)
+#                 # instance.ticker = ticker
+#                 # trader = Trader.objects.get(pk=trader_id)
+#                 # instance.trader = trader
+#                 instance.user = request.user
+#                 # instance.current = current_price(ticker.symbol)
+#                 instance.save()
+#                 messages.success(request, 'Asset created!')
+#         else:
+#             messages.error(request, 'Please enter a valid ticker and a symbol.')
+#
+#     context = {
+#         "title": "new-asset",
+#         'asset_form': form,
+#     }
+#     return render(request, 'assets/new-asset.html', context)
 
 
 # class AssetListView(LoginRequiredMixin, ListView):

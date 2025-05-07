@@ -1,0 +1,19 @@
+<form
+      hx-post="{% url 'accounting:upload' pk=wallet.id %}"
+      hx-trigger="submit"
+      hx-target="#form-div"
+      hx-encoding='multipart/form-data'
+      id="form-file"
+      >
+    {% csrf_token %}
+    <input type="hidden" name="link_from" value="{{ link_from }}"/>
+    <div class="row">
+        <div class="col-6">
+            <label for="formFile" title="only properly formated csv files are accepted" class="form-label">Télécharger un fichier csv</label>
+            <div class="input-group mb-3">
+                <input  class="form-control" type="file" id="formFile" name="formFile" accept=".csv">
+                <button type="submit" name="task" value='upload' class="btn btn-primary">Upload</button>
+            </div>
+        </div>
+    </div>
+</form>

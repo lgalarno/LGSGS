@@ -75,9 +75,20 @@
                             hx-target="#htmx_frame"
                             hx-swap="innerHTML"
                             hx-get="{{ wallet.book_url }}">
-                            Voir le tableau du compte
+                            Tableau du compte
                         </a>
                     </li>
+                    {% if wallet.is_crypto %}
+                        <li class="nav-item">
+                            <a class="nav-link"
+                                hx-target="#htmx_frame"
+                                hx-swap="innerHTML"
+                                hx-get="{% url 'accounting:crypto-for-taxes' pk=wallet.id %}">
+                                Tableau pour impôts
+                            </a>
+                        </li>
+                    {% endif  %}
+
 {#                    <li class="nav-item">#}
 {#                        <a class="nav-link"#}
 {#                           hx-get="{% url 'wallets:wallets-htmx-api:wallet_update' pk=wallet.id %}"#}

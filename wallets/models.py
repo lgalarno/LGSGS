@@ -163,7 +163,8 @@ class Transaction(models.Model):
         ordering = ['-date']
 
     def __str__(self):
-        return f"{self.date}-{self.type}-{self.ticker.symbol}"
+        #return f"{self.date}-{self.type}-{self.ticker.symbol}"
+        return f"{self.date}"
 
     def get_absolute_url(self):
         return reverse('wallets:wallets-htmx-api:transaction', kwargs={'pk': self.pk})
