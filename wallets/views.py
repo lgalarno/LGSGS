@@ -25,20 +25,14 @@ def wallets(request):
         profits = Profit.objects.filter(transaction_bought__wallet=current_wallet)
         total_profits = Decimal(profits.aggregate(Sum('profit', default=0))['profit__sum']
                                 ).quantize(Decimal("1.00"))
-        # assets = Asset.objects.filter(wallet=current_wallet)
-        # update_prices(assets)
-        # total_balance = u.total_balance
     else:
         current_wallet = None
-        assets = None
         # total_balance = 0
         total_profits = 0
 
     context = {'wallets': user_wallets,
                # 'total_balance': total_balance,
                'wallet': current_wallet,
-               # 'asset_list': assets,
-               # 'profit_list': profits,
                'total_profits': total_profits,
                **get_refresh_info()
                }

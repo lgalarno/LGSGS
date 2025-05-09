@@ -5,8 +5,8 @@ from django.utils import timezone
 
 from decimal import Decimal
 
-from wallets.forms import WalletForm, TransactionForm, TradingPlatformForm, TickerForm  # , TransferForm
-from wallets.models import Wallet, Profit, Transaction, TradingPlatform, Ticker  # , Transfer,
+from wallets.forms import WalletForm, TransactionForm, TradingPlatformForm, TickerForm
+from wallets.models import Wallet, Profit, Transaction, TradingPlatform, Ticker
 
 from assets.backend import current_price, get_refresh_info, update_prices
 from assets.models import Asset

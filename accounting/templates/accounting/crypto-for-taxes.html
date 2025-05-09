@@ -24,16 +24,6 @@
         {% else %}
             <p>Rien dans la banque de données.</p>
         {% endif %}
-
-    {#    <div class="mb-3">#}
-    {#        <label for="formFile" title="only properly formated csv files are accepted" class="form-label">Télécharger un fichier csv</label>#}
-    {#        <input class="form-control" type="file" id="formFile" name="formFile" accept=".csv">#}
-    {#        <button type="submit" name="task" value='upload' class="btn btn-primary">Upload</button>#}
-    {#    </div>#}
-    {##}
-    {#    {% if book %}#}
-    {#        <button type="submit" name="task" value='export' class="btn btn-primary">Export</button>#}
-    {#    {% endif %}#}
     </form>
     {% include 'accounting/partials/file-input.html' %}
 </div>

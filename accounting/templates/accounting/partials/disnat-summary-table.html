@@ -4,11 +4,6 @@
     <div class="col-md-4">
         <p>Période: {{ summary.first_date|date:"d/m/Y" }} au {{ summary.last_date|date:"d/m/Y" }} ({{ summary.days_book }} jours)</p>
         <br>
-{#        <p>Intérêts: {{ summary.interets }}$</p>#}
-{#        <p>Dividendes: {{ summary.dividendes }}$</p>#}
-{#        <p>Retenues d'impôts: {{ summary.retenue_impots }}$</p>#}
-{#        <p>Profits: {{ summary.profits }}$</p>#}
-{#        <p><span style="text-decoration:overline">Revenus: {{ summary.total_revenue }}$</span></p>#}
         <div class="table-responsive">
             <table class="table table-borderless" id="">
                 <tbody>
@@ -45,11 +40,6 @@
         <p>Aujourd'hui: {{ summary.today|date:"d/m/Y" }} ({{ summary.days_total }} jours)</p>
         {% if summary.balance %}
             <br>
-    {#        <p>Balance: {{ summary.balance }}$</p>#}
-    {#        <p>Cotisations: {{ summary.cotisation }}$</p>#}
-    {#        <br>#}
-    {#        <p>Pour la période du tableau: {{ summary.percent_profits_book }}%</p>#}
-    {#        <p>Jusqu'ici {{ summary.percent_profits_today }}%</p>#}
             <div class="table-responsive">
                 <table class="table table-borderless" id="">
                     <tbody>
