@@ -43,6 +43,7 @@
                     <li class="nav-item">
                         <a class="nav-link"
                            hx-get="{% url 'wallets:wallets-htmx-api:asset-list' pk=wallet.id %}"
+                           hx-indicator="#indicator"
                            hx-target="#htmx_frame">
                             Actifs</a>
                     </li>
@@ -101,6 +102,15 @@
             </nav>
         </div>
     </div>
+    <div id="indicator" class="htmx-indicator">
+        <div class="d-flex justify-content-center">
+            <div class="loader"></div>
+{#            <div class="spinner-border" role="status">#}
+{#                <span class="visually-hidden">Loading...</span>#}
+{#            </div>#}
+        </div>
+    </div>
+
     <div id="htmx_frame" class="container-fluid mt-2"
          hx-trigger="load"
          {% if wallet.last_view == 'assets' %}
@@ -118,7 +128,9 @@
          {% elif wallet.last_view  == 'crypto_taxes' %}
             hx-get="{% url 'accounting:crypto-for-taxes' pk=wallet.id %}"
          {% endif %}
-         hx-target="this">
+         hx-target="this"
+         hx-indicator="#indicator"
+         >
 {#        {% if asset_list %}#}
 {#            {% include 'assets/partials/assets_table.html' %}#}
 {#        {% else %}#}
