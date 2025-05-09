@@ -92,17 +92,19 @@ def wallet_update(request, pk):
 
 def wallet_detail(request, pk):
     wallet = get_object_or_404(Wallet, pk=pk)
-    assets = Asset.objects.filter(transaction__wallet=wallet)
+    # assets = Asset.objects.filter(transaction__wallet=wallet)
     profits = Profit.objects.filter(transaction_bought__wallet=wallet)
     total_profits = Decimal(profits.aggregate(Sum('profit', default=0))['profit__sum']
                             ).quantize(Decimal("1.00"))
-    wallet.lastviewed = timezone.now()
+    if not wallet.last_view:
+        wallet.last_view = 'assets'
+    wallet.last_viewed = timezone.now()
     wallet.save()
     context = {
         "title": "wallet-detail",
         'wallet': wallet,
-        'asset_list': assets,
-        'profit_list': profits,
+        # 'asset_list': assets,
+        # 'profit_list': profits,
         'total_profits': total_profits,
         **get_refresh_info()
     }
@@ -133,10 +135,13 @@ def wallet_detail(request, pk):
 
 def buy(request, pk):
     wallet = get_object_or_404(Wallet, pk=pk)
+    wallet.last_view = 'buy'
+    wallet.save()
     context = {
         "title": "buy",
         'wallet': wallet
     }
+    request.session['last_opt'] = "buy"
     form = TransactionForm(request.POST or None, initial={'wallet': wallet})
     if request.method == 'POST':
         ticker_id = request.POST.get('ticker-input')  # ticker_id not in TransactionForm
@@ -281,6 +286,8 @@ def transaction_detail(request, pk):
 
 def transaction_list(request, pk):
     wallet = get_object_or_404(Wallet, pk=pk)
+    wallet.last_view = 'transactions'
+    wallet.save()
     transactions = Transaction.objects.filter(wallet=wallet)
     context = {
         "title": "transaction-list",
@@ -291,6 +298,8 @@ def transaction_list(request, pk):
 
 def asset_list(request, pk):
     wallet = get_object_or_404(Wallet, pk=pk)
+    wallet.last_view = 'assets'
+    wallet.save()
     assets = Asset.objects.filter(wallet=wallet)
     update_prices(assets)
     context = {
@@ -314,6 +323,8 @@ def asset_list(request, pk):
 
 def profit_list(request, pk):
     wallet = get_object_or_404(Wallet, pk=pk)
+    wallet.last_view = 'profits'
+    wallet.save()
     profits = Profit.objects.filter(transaction_bought__wallet=wallet).order_by('-transaction_sold__date')
     #total_profits = Decimal(profits.aggregate(Sum('profit', default=0))['profit__sum']
     #                        ).quantize(Decimal("1.00"))

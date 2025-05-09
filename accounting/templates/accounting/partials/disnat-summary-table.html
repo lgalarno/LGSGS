@@ -12,6 +12,10 @@
         <div class="table-responsive">
             <table class="table table-borderless" id="">
                 <tbody>
+                        <tr style="border-bottom: thin solid;" >
+                            <td>Cotisations:</td>
+                            <td>{{ summary.cotisation }}$</td>
+                        </tr>
                     <tr>
                         <td>Profits:</td>
                         <td>{{ summary.profits }}$</td>
@@ -49,13 +53,9 @@
             <div class="table-responsive">
                 <table class="table table-borderless" id="">
                     <tbody>
-                        <tr>
+                        <tr style="border-bottom: thin solid;" >
                             <td>Balance:</td>
                             <td>{{ summary.balance }}$</td>
-                        </tr>
-                        <tr style="border-bottom: thin solid;" >
-                            <td>Cotisations:</td>
-                            <td>{{ summary.cotisation }}$</td>
                         </tr>
                         <tr><td><strong>Pourcentages:</strong></td><td></td></tr>
                         <tr>

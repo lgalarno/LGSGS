@@ -1,16 +1,15 @@
 from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import render, HttpResponse, reverse
+from django.utils.encoding import smart_str
 from django.views.decorators.http import require_http_methods
 
 import datetime
+import os
 
 from accounting.backend import csv_to_disnat_book,csv_to_crypto_book, disnat_books, crypto_book, crypto_for_taxes
 from wallets.models import Wallet
 
-
-DISNAT_HEADERS = settings.DISNAT_HEADERS
-CRYPTO_HEADERS = settings.CRYPTO_HEADERS
 
 # Create your views here.
 
@@ -25,9 +24,9 @@ def upload(request, pk):
             messages.error(request, f"Erreur: Ce n'est pas un fichier csv")
         else:
             if wallet.is_crypto:
-                valid, mess = csv_to_crypto_book(file, wallet=wallet, headers=CRYPTO_HEADERS)
+                valid, mess = csv_to_crypto_book(file, wallet=wallet)
             else:
-                valid, mess = csv_to_disnat_book(file, wallet=wallet, headers=DISNAT_HEADERS)
+                valid, mess = csv_to_disnat_book(file, wallet=wallet)
             if valid:
                 messages.success(request, "Nouvelles données entrées dans la base de données.")
                 for m in mess:
@@ -36,7 +35,7 @@ def upload(request, pk):
                 messages.error(request, mess)
     if link_from == 'book-disnat':
         book, summary, mindate, maxdate = disnat_books(wallet, mindate_filter=None,
-                                                       maxdate_filter=None, headers=DISNAT_HEADERS)
+                                                       maxdate_filter=None)
         if book:
             mindate_filter = mindate
             maxdate_filter = maxdate
@@ -44,7 +43,6 @@ def upload(request, pk):
             mindate_filter, maxdate_filter = None, None
         context = {'wallet': wallet,
                    'book': book,
-                   'headers': DISNAT_HEADERS,
                    'mindate': mindate,
                    'maxdate': maxdate,
                    'maxdate_filter': maxdate_filter,
@@ -56,7 +54,7 @@ def upload(request, pk):
 
     elif link_from == 'book-crypto':
         book, mindate, maxdate = crypto_book(wallet, mindate_filter=None,
-                                             maxdate_filter=None, headers=CRYPTO_HEADERS)
+                                             maxdate_filter=None)
         if book:
             mindate_filter = mindate
             maxdate_filter = maxdate
@@ -64,7 +62,6 @@ def upload(request, pk):
             mindate_filter, maxdate_filter = None, None
         context = {'wallet': wallet,
                    'book': book,
-                   'headers': CRYPTO_HEADERS,
                    'mindate': mindate,
                    'maxdate': maxdate,
                    'maxdate_filter': maxdate_filter,
@@ -94,18 +91,41 @@ def upload(request, pk):
 
 def book_disnat(request, pk):
     wallet = Wallet.objects.get(pk=pk)
+    wallet.last_view = 'book_disnat'
+    wallet.save()
     book = []
     if request.method == 'POST':
         task = request.POST.get('task')
         if task == 'refresh':
             mindate_filter = datetime.datetime.strptime(request.POST.get('start'), '%Y-%m-%d').date()
             maxdate_filter = datetime.datetime.strptime(request.POST.get('end'), '%Y-%m-%d').date()
-            print(mindate_filter, maxdate_filter)
             book, summary, mindate, maxdate = disnat_books(wallet, mindate_filter=mindate_filter,
-                                               maxdate_filter=maxdate_filter, headers=DISNAT_HEADERS)
+                                               maxdate_filter=maxdate_filter)
+        elif task == 'export':
+            mindate_filter = datetime.datetime.strptime(request.POST.get('start'), '%Y-%m-%d').date()
+            maxdate_filter = datetime.datetime.strptime(request.POST.get('end'), '%Y-%m-%d').date()
+            book, summary, mindate, maxdate = disnat_books(wallet, mindate_filter=mindate_filter,
+                                               maxdate_filter=maxdate_filter, export=True)
+
+            path = os.path.join(settings.MEDIA_ROOT, 'files_temp', request.user.username)
+            url_path = f'{settings.MEDIA_URL}/files_temp/'
+            datesuffix = datetime.datetime.now().strftime('%Y-%m-%d')
+            filename = f'{wallet.name}-{datesuffix}.csv'
+            filepath = smart_str(f'{path}/{filename}')
+            book.to_csv(filepath, index=False, header=True)
+            response = HttpResponse(
+                open(filepath, 'rb').read(),
+                content_type='text/csv',
+                headers={'Content-Disposition': f"attachment; filename = {filename.split(sep='/')[-1]}"},
+            )
+            response["HX-Redirect"] = smart_str(f'{url_path}{filename}')
+            # if os.path.isfile(filepath):
+            #     os.remove(filepath)
+            return response
+
     else:
         book, summary, mindate, maxdate = disnat_books(wallet, mindate_filter=None,
-                                           maxdate_filter=None, headers=DISNAT_HEADERS)
+                                           maxdate_filter=None)
         if book:
             mindate_filter = mindate
             maxdate_filter = maxdate
@@ -113,7 +133,6 @@ def book_disnat(request, pk):
             mindate_filter, maxdate_filter = None, None
     context = {'wallet': wallet,
                'book': book,
-               'headers': DISNAT_HEADERS,
                'mindate': mindate,
                'maxdate': maxdate,
                'maxdate_filter': maxdate_filter,
@@ -127,6 +146,8 @@ def book_disnat(request, pk):
 # TODO Crypto view/export for taxes
 def book_crypto(request, pk):
     wallet = Wallet.objects.get(pk=pk)
+    wallet.last_view = 'book_crypto'
+    wallet.save()
     book = []
     if request.method == 'POST':
         task = request.POST.get('task')
@@ -134,10 +155,30 @@ def book_crypto(request, pk):
             mindate_filter = datetime.datetime.strptime(request.POST.get('start'), '%Y-%m-%d').date()
             maxdate_filter = datetime.datetime.strptime(request.POST.get('end'), '%Y-%m-%d').date()
             book, mindate, maxdate = crypto_book(wallet, mindate_filter=mindate_filter,
-                                               maxdate_filter=maxdate_filter, headers=CRYPTO_HEADERS)
+                                               maxdate_filter=maxdate_filter)
+        elif task == 'export':
+            mindate_filter = datetime.datetime.strptime(request.POST.get('start'), '%Y-%m-%d').date()
+            maxdate_filter = datetime.datetime.strptime(request.POST.get('end'), '%Y-%m-%d').date()
+            book, mindate, maxdate = crypto_book(wallet, mindate_filter=mindate_filter,
+                                               maxdate_filter=maxdate_filter, export=True)
+
+            path = os.path.join(settings.MEDIA_ROOT, 'files_temp')
+            url_path = f'{settings.MEDIA_URL}/files_temp/'
+            datesuffix = datetime.datetime.now().strftime('%Y-%m-%d')
+            filename = f'{wallet.name}-{datesuffix}.csv'
+            filepath = smart_str(f'{path}/{filename}')
+            book.to_csv(filepath, index=False, header=True)
+            response = HttpResponse(
+                open(filepath, 'rb').read(),
+                content_type='text/csv',
+                headers={'Content-Disposition': f"attachment; filename = {filename.split(sep='/')[-1]}"},
+            )
+            response["HX-Redirect"] = smart_str(f'{url_path}{filename}')
+            return response
+
     else:
         book, mindate, maxdate = crypto_book(wallet, mindate_filter=None,
-                                             maxdate_filter=None, headers=CRYPTO_HEADERS)
+                                             maxdate_filter=None)
         if book:
             mindate_filter = mindate
             maxdate_filter = maxdate
@@ -146,7 +187,6 @@ def book_crypto(request, pk):
 
     context = {'wallet': wallet,
                'book': book,
-               'headers': CRYPTO_HEADERS,
                'mindate': mindate,
                'maxdate': maxdate,
                'maxdate_filter': maxdate_filter,
@@ -158,11 +198,33 @@ def book_crypto(request, pk):
 
 def crypto_for_taxes_view(request, pk):
     wallet = Wallet.objects.get(pk=pk)
+    wallet.last_view = 'crypto_taxes'
+    wallet.save()
     if request.method == 'POST':
-        mindate_filter = datetime.datetime.strptime(request.POST.get('start'), '%Y-%m-%d').date()
-        maxdate_filter = datetime.datetime.strptime(request.POST.get('end'), '%Y-%m-%d').date()
-        book, mindate, maxdate = crypto_for_taxes(wallet, mindate_filter=mindate_filter,
-                                                  maxdate_filter=maxdate_filter)
+        task = request.POST.get('task')
+        if task == 'refresh':
+            mindate_filter = datetime.datetime.strptime(request.POST.get('start'), '%Y-%m-%d').date()
+            maxdate_filter = datetime.datetime.strptime(request.POST.get('end'), '%Y-%m-%d').date()
+            book, mindate, maxdate = crypto_for_taxes(wallet, mindate_filter=mindate_filter,
+                                                      maxdate_filter=maxdate_filter)
+        elif task == 'export':
+            mindate_filter = datetime.datetime.strptime(request.POST.get('start'), '%Y-%m-%d').date()
+            maxdate_filter = datetime.datetime.strptime(request.POST.get('end'), '%Y-%m-%d').date()
+            book, mindate, maxdate = crypto_for_taxes(wallet, mindate_filter=mindate_filter,
+                                                      maxdate_filter=maxdate_filter, export=True)
+            path = os.path.join(settings.MEDIA_ROOT, 'files_temp')
+            url_path = f'{settings.MEDIA_URL}/files_temp/'
+            datesuffix = datetime.datetime.now().strftime('%Y-%m-%d')
+            filename = f'{wallet.name}-impôts-{datesuffix}.csv'
+            filepath = smart_str(f'{path}/{filename}')
+            book.to_csv(filepath, index=False, header=True)
+            response = HttpResponse(
+                open(filepath, 'rb').read(),
+                content_type='text/csv',
+                headers={'Content-Disposition': f"attachment; filename = {filename.split(sep='/')[-1]}"},
+            )
+            response["HX-Redirect"] = smart_str(f'{url_path}{filename}')
+            return response
     else:
         book, mindate, maxdate = crypto_for_taxes(wallet, mindate_filter=None,
                                                   maxdate_filter=None)

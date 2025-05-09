@@ -99,7 +99,8 @@ class Wallet(models.Model):
     trader = models.ForeignKey(to=TradingPlatform, related_name='wallet', on_delete=models.CASCADE, null=True, blank=True)
     balance = models.DecimalField(max_digits=10, decimal_places=2)
     asset = models.ManyToManyField(to=Asset, related_name='wallet', blank=True)
-    lastviewed = models.DateTimeField(default=timezone.now)
+    last_view = models.CharField(max_length=16, null=True, blank=True)
+    last_viewed = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f"{str(self.user)}-{self.name}"  # str(self.user)

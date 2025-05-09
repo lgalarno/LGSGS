@@ -1,4 +1,4 @@
-{% if wallet %}
+{#{% if wallet %}#}
     <div class="row">
         <div class="col col-lg-12">
 {#            <h4 style="float: right">balance: <strong>{{ wallet.balance }}$</strong></h4>#}
@@ -101,18 +101,35 @@
             </nav>
         </div>
     </div>
-    <div id="htmx_frame" class="container-fluid mt-2">
-        {% if asset_list %}
-            {% include 'assets/partials/assets_table.html' %}
-        {% else %}
-            <p>This wallet has no assets</p>
-        {% endif %}
+    <div id="htmx_frame" class="container-fluid mt-2"
+         hx-trigger="load"
+         {% if wallet.last_view == 'assets' %}
+            hx-get="{% url 'wallets:wallets-htmx-api:asset-list' pk=wallet.id %}"
+         {% elif wallet.last_view  == 'buy' %}
+            hx-get="{% url 'wallets:wallets-htmx-api:buy' pk=wallet.id %}"
+         {% elif wallet.last_view  == 'profits' %}
+            hx-get="{% url 'wallets:wallets-htmx-api:profit-list' pk=wallet.id %}"
+         {% elif wallet.last_view  == 'transactions' %}
+            hx-get="{% url 'wallets:wallets-htmx-api:transaction-list' pk=wallet.id %}"
+         {% elif wallet.last_view  == 'book_disnat' %}
+            hx-get="{% url 'accounting:book-disnat' pk=wallet.id %}"
+          {% elif wallet.last_view  == 'book_crypto' %}
+            hx-get="{% url 'accounting:book-crypto' pk=wallet.id %}"
+         {% elif wallet.last_view  == 'crypto_taxes' %}
+            hx-get="{% url 'accounting:crypto-for-taxes' pk=wallet.id %}"
+         {% endif %}
+         hx-target="this">
+{#        {% if asset_list %}#}
+{#            {% include 'assets/partials/assets_table.html' %}#}
+{#        {% else %}#}
+{#            <p>This wallet has no assets</p>#}
+{#        {% endif %}#}
     </div>
 
-{% else %}
-    <div class="row">
-        <div class="col col-lg-12">
-            <p>Total balance: {{ total_balance }}$</p>
-        </div>
-    </div>
-{% endif %}
+{#{% else %}#}
+{#    <div class="row">#}
+{#        <div class="col col-lg-12">#}
+{#            <p>Total balance: {{ total_balance }}$</p>#}
+{#        </div>#}
+{#    </div>#}
+{#{% endif %}#}

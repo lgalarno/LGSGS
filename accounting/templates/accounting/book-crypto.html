@@ -3,7 +3,6 @@
           hx-post="{% url 'accounting:book-crypto' pk=wallet.id %}"
           hx-trigger="submit"
           hx-target="#form-div"
-          hx-encoding='multipart/form-data'
           id="form"
           >
         {% csrf_token %}

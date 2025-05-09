@@ -3,14 +3,16 @@
           hx-post="{% url 'accounting:book-disnat' pk=wallet.id %}"
           hx-trigger="submit"
           hx-target="#form-div"
-          hx-encoding='multipart/form-data'
           id="form"
           >
         {% csrf_token %}
         <h4>Tableau du compte</h4>
         {% include 'messages_display.html' %}
+
         {% if book %}
-            {% include 'accounting/partials/disnat-summary-table.html' %}
+            {% if summary %}
+                {% include 'accounting/partials/disnat-summary-table.html' %}
+            {% endif %}
             {% include 'accounting/partials/book-table.html' %}
         {% else %}
             <p>Rien dans la banque de données.</p>

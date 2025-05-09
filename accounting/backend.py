@@ -1,3 +1,4 @@
+from django.conf import settings
 
 from accounting.models import DisnatBook, CryptoBook
 
@@ -7,20 +8,23 @@ import datetime
 import numpy as np
 import pandas as pd
 
+DISNAT_HEADERS = settings.DISNAT_HEADERS
+CRYPTO_HEADERS = settings.CRYPTO_HEADERS
+#
 
-def csv_to_crypto_book(file, wallet, headers):
+def csv_to_crypto_book(file, wallet):
     obj = CryptoBook.objects.filter(wallet=wallet)
     last_stored_element_date = None if not obj else obj.last().date
-    return csv_to_book(file, wallet=wallet, headers=headers, last_stored_element_date=last_stored_element_date)
+    return csv_to_book(file, wallet=wallet, headers=CRYPTO_HEADERS, last_stored_element_date=last_stored_element_date)
 
 
-def csv_to_disnat_book(file, wallet, headers):
+def csv_to_disnat_book(file, wallet):
     """
     Import data from a csv file to the db
     """
     obj = DisnatBook.objects.filter(wallet=wallet)
     last_stored_element_date = None if not obj else obj.last().date_de_reglement
-    return csv_to_book(file, wallet=wallet, headers=headers, last_stored_element_date=last_stored_element_date)
+    return csv_to_book(file, wallet=wallet, headers=DISNAT_HEADERS, last_stored_element_date=last_stored_element_date)
 
 
 def csv_to_book(file, wallet=None, headers=None, last_stored_element_date=None):
@@ -103,7 +107,7 @@ def validate_overlap(line, last_stored_element_date):
     return True, 'valid'
 
 
-def crypto_book(wallet, mindate_filter=None, maxdate_filter=None, headers=None):
+def crypto_book(wallet, mindate_filter=None, maxdate_filter=None, export=False):
     book = CryptoBook.objects.filter(wallet=wallet)
     if book:
         mindate = book.first().date
@@ -115,13 +119,16 @@ def crypto_book(wallet, mindate_filter=None, maxdate_filter=None, headers=None):
             book_values = book.values()
             df = pd.DataFrame.from_records(book_values, exclude=['id', 'wallet_id'])
             df = df.fillna(value=np.nan)
-            df.columns = headers
-            final_df = df.to_html(index=False,
-                                  #border=0,
-                                  classes="table table-striped",
-                                  justify="left",
-                                  table_id="table_book",
-                                  na_rep='')
+            df.columns = CRYPTO_HEADERS
+            if export:
+                final_df = df
+            else:
+                final_df = df.to_html(index=False,
+                                      #border=0,
+                                      classes="table table-striped",
+                                      justify="left",
+                                      table_id="table_book",
+                                      na_rep='')
         else:
             final_df = "<p>Rien à afficher.</p>"
     else:
@@ -130,7 +137,7 @@ def crypto_book(wallet, mindate_filter=None, maxdate_filter=None, headers=None):
     return final_df, mindate, maxdate
 
 
-def crypto_for_taxes(wallet, mindate_filter=None, maxdate_filter=None):
+def crypto_for_taxes(wallet, mindate_filter=None, maxdate_filter=None, export=False):
     book = CryptoBook.objects.filter(wallet=wallet)
     if book:
         mindate = book.first().date
@@ -193,14 +200,17 @@ def crypto_for_taxes(wallet, mindate_filter=None, maxdate_filter=None):
             }
             df_summary = pd.DataFrame(summary)
             df_summary.sort_values(by=['Date de disposition'], inplace=True)
-            final_df = df_summary.to_html(index=False,
-                                          #border=0,
-                                          classes="table table-striped",
-                                          justify="left",
-                                          table_id="table_book",
-                                          na_rep='',
-                                          float_format=lambda x: f'{x:10.6g}'
-                                          )
+            if export:
+                final_df = df_summary
+            else:
+                final_df = df_summary.to_html(index=False,
+                                              #border=0,
+                                              classes="table table-striped",
+                                              justify="left",
+                                              table_id="table_book",
+                                              na_rep='',
+                                              float_format=lambda x: f'{x:10.6g}'
+                                              )
         else:
             final_df = "<p>Rien à afficher.</p>"
     else:
@@ -209,14 +219,18 @@ def crypto_for_taxes(wallet, mindate_filter=None, maxdate_filter=None):
     return final_df, mindate, maxdate
 
 
-def disnat_books(wallet, mindate_filter=None, maxdate_filter=None, headers=None):
+def disnat_books(wallet, mindate_filter=None, maxdate_filter=None, export=False):
     summary = {}
     book = DisnatBook.objects.filter(wallet=wallet)
     if book:
         mindate = book.first().date_de_reglement
         maxdate = book.last().date_de_reglement
+
         # get summary using the full book
-        summary = summary_disnat(book, mindate_filter=mindate_filter, maxdate_filter=maxdate_filter)
+        if export:
+            summary = {}
+        else:
+            summary = summary_disnat(book, mindate_filter=mindate_filter, maxdate_filter=maxdate_filter)
 
         if mindate_filter and maxdate_filter:
             book = book.filter(date_de_reglement__gte=mindate_filter,
@@ -225,29 +239,23 @@ def disnat_books(wallet, mindate_filter=None, maxdate_filter=None, headers=None)
         book_values = book.values()
         df = pd.DataFrame.from_records(book_values, exclude=['id', 'wallet_id'])
         df = df.fillna(value=np.nan)
-
-
-
-        df.columns = headers
-        final_df = df.to_html(index=False,
-                              #border=0,
-                              classes="table table-striped",
-                              justify="left",
-                              table_id="table_book",
-                              na_rep='')
+        df.columns = DISNAT_HEADERS
+        if not export:
+            df = df.to_html(index=False,
+                                  #border=0,
+                                  classes="table table-striped",
+                                  justify="left",
+                                  table_id="table_book",
+                                  na_rep='')
     else:
         mindate, maxdate = None, None
-        final_df = ""
+        df = ""
 
-    return final_df, summary, mindate, maxdate
+    return df, summary, mindate, maxdate
 
 
 # TODO profits
 def summary_disnat(book, mindate_filter=None, maxdate_filter=None) -> dict:
-
-    # if maxdate_filter:
-    #     book_f = book.filter(date_de_reglement__gte=mindate_filter, date_de_reglement__lte=maxdate_filter)
-    summary = {}
     today = datetime.datetime.now().date()
     book_values = book.values()
     df = pd.DataFrame.from_records(book_values, exclude=['id', 'wallet_id'])
