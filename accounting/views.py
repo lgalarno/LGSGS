@@ -91,8 +91,10 @@ def upload(request, pk):
 
 def book_disnat(request, pk):
     wallet = Wallet.objects.get(pk=pk)
-    wallet.last_view = 'book_disnat'
-    wallet.save()
+    # wallet.last_view = 'book_disnat'
+    # wallet.save()
+    request.session["last_view"][f'{wallet.pk}'] = 'book_disnat'
+    request.session["update"] = 'true'  # mock to update session because of using dict
     book = []
     if request.method == 'POST':
         task = request.POST.get('task')
@@ -146,8 +148,10 @@ def book_disnat(request, pk):
 # TODO Crypto view/export for taxes
 def book_crypto(request, pk):
     wallet = Wallet.objects.get(pk=pk)
-    wallet.last_view = 'book_crypto'
-    wallet.save()
+    # wallet.last_view = 'book_crypto'
+    # wallet.save()
+    request.session["last_view"][f'{wallet.pk}'] = 'book_crypto'
+    request.session["update"] = 'true'  # mock to update session because of using dict
     book = []
     if request.method == 'POST':
         task = request.POST.get('task')
@@ -198,8 +202,10 @@ def book_crypto(request, pk):
 
 def crypto_for_taxes_view(request, pk):
     wallet = Wallet.objects.get(pk=pk)
-    wallet.last_view = 'crypto_taxes'
-    wallet.save()
+    # wallet.last_view = 'crypto_taxes'
+    # wallet.save()
+    request.session["last_view"][f'{wallet.pk}'] = 'crypto_taxes'
+    request.session["update"] = 'true'  # mock to update session because of using dict
     if request.method == 'POST':
         task = request.POST.get('task')
         if task == 'refresh':

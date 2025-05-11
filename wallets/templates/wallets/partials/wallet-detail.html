@@ -110,27 +110,45 @@
 {#            </div>#}
         </div>
     </div>
-
+{#<h1>last_view: {{ request.session.last_view }}</h1>#}
+{#<h1>wallet.id: {{ request.session.last_view|dict_key:wallet.id  }}</h1>#}
     <div id="htmx_frame" class="container-fluid mt-2"
          hx-trigger="load"
-         {% if wallet.last_view == 'assets' %}
+          {% if request.session.last_view|dict_key:wallet.id == 'assets' %}
             hx-get="{% url 'wallets:wallets-htmx-api:asset-list' pk=wallet.id %}"
-         {% elif wallet.last_view  == 'buy' %}
+         {% elif request.session.last_view|dict_key:wallet.id  == 'buy' %}
             hx-get="{% url 'wallets:wallets-htmx-api:buy' pk=wallet.id %}"
-         {% elif wallet.last_view  == 'profits' %}
+         {% elif request.session.last_view|dict_key:wallet.id  == 'profits' %}
             hx-get="{% url 'wallets:wallets-htmx-api:profit-list' pk=wallet.id %}"
-         {% elif wallet.last_view  == 'transactions' %}
+         {% elif request.session.last_view|dict_key:wallet.id  == 'transactions' %}
             hx-get="{% url 'wallets:wallets-htmx-api:transaction-list' pk=wallet.id %}"
-         {% elif wallet.last_view  == 'book_disnat' %}
+         {% elif request.session.last_view|dict_key:wallet.id  == 'book_disnat' %}
             hx-get="{% url 'accounting:book-disnat' pk=wallet.id %}"
-          {% elif wallet.last_view  == 'book_crypto' %}
+          {% elif request.session.last_view|dict_key:wallet.id  == 'book_crypto' %}
             hx-get="{% url 'accounting:book-crypto' pk=wallet.id %}"
-         {% elif wallet.last_view  == 'crypto_taxes' %}
+         {% elif request.session.last_view|dict_key:wallet.id  == 'crypto_taxes' %}
             hx-get="{% url 'accounting:crypto-for-taxes' pk=wallet.id %}"
          {% endif %}
+
+{#         {% if wallet.last_view == 'assets' %}#}
+{#            hx-get="{% url 'wallets:wallets-htmx-api:asset-list' pk=wallet.id %}"#}
+{#         {% elif wallet.last_view  == 'buy' %}#}
+{#            hx-get="{% url 'wallets:wallets-htmx-api:buy' pk=wallet.id %}"#}
+{#         {% elif wallet.last_view  == 'profits' %}#}
+{#            hx-get="{% url 'wallets:wallets-htmx-api:profit-list' pk=wallet.id %}"#}
+{#         {% elif wallet.last_view  == 'transactions' %}#}
+{#            hx-get="{% url 'wallets:wallets-htmx-api:transaction-list' pk=wallet.id %}"#}
+{#         {% elif wallet.last_view  == 'book_disnat' %}#}
+{#            hx-get="{% url 'accounting:book-disnat' pk=wallet.id %}"#}
+{#          {% elif wallet.last_view  == 'book_crypto' %}#}
+{#            hx-get="{% url 'accounting:book-crypto' pk=wallet.id %}"#}
+{#         {% elif wallet.last_view  == 'crypto_taxes' %}#}
+{#            hx-get="{% url 'accounting:crypto-for-taxes' pk=wallet.id %}"#}
+{#         {% endif %}#}
          hx-target="this"
          hx-indicator="#indicator"
          >
+
 {#        {% if asset_list %}#}
 {#            {% include 'assets/partials/assets_table.html' %}#}
 {#        {% else %}#}

@@ -16,10 +16,25 @@ from assets.backend import get_refresh_info
 def wallets(request):
     u = request.user
     user_wallets = Wallet.objects.filter(user=u)
+    # last_view = {}
+    # for w in user_wallets:
+    #     if w.last_view:
+    #         last_view[f'{w.pk}'] = w.last_view
+    #     else:
+    #         last_view[f'{w.pk}'] = 'asset'
+
+        # last_view = {}
+        # request.session["last_view"] = {f'{w.pk}': last_view}
     if user_wallets:
-        current_wallet = user_wallets.order_by("last_view").last()
+        current_wallet = user_wallets.order_by("last_viewed").last()
         if not current_wallet.last_view:
             current_wallet.last_view = 'assets'
+        if not request.session.get("last_view"):
+            last_view = {}
+            for w in user_wallets:
+                last_view[f'{w.pk}'] = 'assets'
+                # last_view[f'{w.pk}'] = w.last_view if w.last_view else 'assets'
+            request.session["last_view"] = last_view
         current_wallet.last_viewed = timezone.now()
         current_wallet.save()
         profits = Profit.objects.filter(transaction_bought__wallet=current_wallet)

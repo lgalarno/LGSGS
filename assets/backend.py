@@ -76,11 +76,12 @@ def current_price(symbol, crypto, *args, **kwargs):
 
 
 def update_prices(qs=None):
-    if not qs:
-        qs = Asset.objects.all()
-    for asset in qs:
-        t = asset.transaction
-        cp = current_price(t.ticker.symbol, t.is_crypto)
-        if not asset.current == cp:
-            asset.current = cp
-            asset.save()
+    # if not qs:
+    #     qs = Asset.objects.all()
+    if qs:
+        for asset in qs:
+            t = asset.transaction
+            cp = current_price(t.ticker.symbol, t.is_crypto)
+            if not asset.current == cp:
+                asset.current = cp
+                asset.save()

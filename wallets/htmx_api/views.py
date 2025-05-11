@@ -96,8 +96,6 @@ def wallet_detail(request, pk):
     profits = Profit.objects.filter(transaction_bought__wallet=wallet)
     total_profits = Decimal(profits.aggregate(Sum('profit', default=0))['profit__sum']
                             ).quantize(Decimal("1.00"))
-    if not wallet.last_view:
-        wallet.last_view = 'assets'
     wallet.last_viewed = timezone.now()
     wallet.save()
     context = {
@@ -135,13 +133,15 @@ def wallet_detail(request, pk):
 
 def buy(request, pk):
     wallet = get_object_or_404(Wallet, pk=pk)
-    wallet.last_view = 'buy'
-    wallet.save()
+    request.session["last_view"][f'{wallet.pk}'] = 'buy'
+    request.session["update"] = 'true'  # mock to update session because of using dict
+    # wallet.last_view = 'buy'
+    # wallet.save()
     context = {
         "title": "buy",
         'wallet': wallet
     }
-    request.session['last_opt'] = "buy"
+
     form = TransactionForm(request.POST or None, initial={'wallet': wallet})
     if request.method == 'POST':
         ticker_id = request.POST.get('ticker-input')  # ticker_id not in TransactionForm
@@ -286,8 +286,10 @@ def transaction_detail(request, pk):
 
 def transaction_list(request, pk):
     wallet = get_object_or_404(Wallet, pk=pk)
-    wallet.last_view = 'transactions'
-    wallet.save()
+    # wallet.last_view = 'transactions'
+    # wallet.save()
+    request.session["last_view"][f'{wallet.pk}'] = 'transactions'
+    request.session["update"] = 'true'  # mock to update session because of using dict
     transactions = Transaction.objects.filter(wallet=wallet)
     context = {
         "title": "transaction-list",
@@ -298,8 +300,10 @@ def transaction_list(request, pk):
 
 def asset_list(request, pk):
     wallet = get_object_or_404(Wallet, pk=pk)
-    wallet.last_view = 'assets'
-    wallet.save()
+    # wallet.last_view = 'assets'
+    # wallet.save()
+    request.session["last_view"][f'{wallet.pk}'] = 'assets'
+    request.session["update"] = 'true'  # mock to update session because of using dict
     assets = Asset.objects.filter(wallet=wallet)
     update_prices(assets)
     context = {
@@ -323,8 +327,10 @@ def asset_list(request, pk):
 
 def profit_list(request, pk):
     wallet = get_object_or_404(Wallet, pk=pk)
-    wallet.last_view = 'profits'
-    wallet.save()
+    # wallet.last_view = 'profits'
+    # wallet.save()
+    request.session["last_view"][f'{wallet.pk}'] = 'profits'
+    request.session["update"] = 'true'  # mock to update session because of using dict
     profits = Profit.objects.filter(transaction_bought__wallet=wallet).order_by('-transaction_sold__date')
     #total_profits = Decimal(profits.aggregate(Sum('profit', default=0))['profit__sum']
     #                        ).quantize(Decimal("1.00"))
@@ -392,4 +398,4 @@ def update(request):
     #     transaction.trading_platform = trading_platforms.get(name=transaction.trader.name)
     #     transaction.save()
 
-    return HttpResponse('done')
+    return HttpResponse('Nothing to do')
