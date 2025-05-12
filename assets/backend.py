@@ -33,7 +33,7 @@ def ticker_name(symbol, tickertype):
     :param symbol: ticker symbol, tickertype: as of Ticker model: crypto or equity
     :return: if the ticker symbol exists, return its name; otherwise, return None
     """
-    #TODO only support ndax and Yahho finance tickers. Add others based on exchange?
+    #TODO only support ndax and Yahoo finance tickers. Add others based on exchange?
     if tickertype == 'crypto':
         ndax = ccxt.ndax({
             'apiKey': NDAX_API_KEY

@@ -254,7 +254,6 @@ def disnat_books(wallet, mindate_filter=None, maxdate_filter=None, export=False)
     return df, summary, mindate, maxdate
 
 
-# TODO profits
 def summary_disnat(book, mindate_filter=None, maxdate_filter=None) -> dict:
     today = datetime.datetime.now().date()
     book_values = book.values()

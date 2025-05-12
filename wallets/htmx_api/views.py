@@ -72,7 +72,6 @@ def wallet_create(request):
     return render(request, 'wallets/partials/wallet-form.html', context)
 
 
-# TODO update creates new wallet. To fix.
 def wallet_update(request, pk):
     wallet = get_object_or_404(Wallet, pk=pk)
     form = WalletForm(request.POST or None, instance=wallet)
@@ -300,12 +299,28 @@ def transaction_list(request, pk):
 
 def asset_list(request, pk):
     wallet = get_object_or_404(Wallet, pk=pk)
+    pk_str = str(pk)
+    assets = Asset.objects.filter(wallet=wallet)
     # wallet.last_view = 'assets'
     # wallet.save()
     request.session["last_view"][f'{wallet.pk}'] = 'assets'
+
+    now = timezone.now()
+    assets_updated = request.session.get('assets_updated')
+    if assets_updated and assets_updated.get(pk_str):   # assets_updated and wallet
+        assets_updated_time = timezone.datetime.fromisoformat(assets_updated.get(pk_str))
+        assets_updated[pk_str] = now.isoformat()
+    else:   # maybe assets_updated, but not with a wallet. Set to now
+        if assets_updated:  # assets_updated but no wallet
+            assets_updated[pk_str] = now.isoformat()
+        else:  # no assets_updated
+            request.session["assets_updated"] = {
+                pk_str: now.isoformat()
+            }
+        assets_updated_time = now
+    if (now - assets_updated_time).total_seconds() > 60:
+        update_prices(assets)
     request.session["update"] = 'true'  # mock to update session because of using dict
-    assets = Asset.objects.filter(wallet=wallet)
-    update_prices(assets)
     context = {
         "title": "asset-list",
         'wallet': wallet,

@@ -53,7 +53,6 @@ from .models import Asset  #, Ticker, Trader
 #         return context
 
 
-# TODO add details
 class AssetDetailView(DetailView):
     model = Asset
 

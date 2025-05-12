@@ -64,7 +64,7 @@ class WalletDeleteView(LoginRequiredMixin, DeleteView):
         return redirect(self.get_success_url())
 
 
-# TODO add details
+# TODO add details for crypto
 class TickerDetailView(DetailView):
     model = Ticker
 

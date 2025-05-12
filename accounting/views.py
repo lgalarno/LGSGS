@@ -7,7 +7,7 @@ from django.views.decorators.http import require_http_methods
 import datetime
 import os
 
-from accounting.backend import csv_to_disnat_book,csv_to_crypto_book, disnat_books, crypto_book, crypto_for_taxes
+from accounting.backend import csv_to_disnat_book, csv_to_crypto_book, disnat_books, crypto_book, crypto_for_taxes
 from wallets.models import Wallet
 
 
@@ -145,7 +145,7 @@ def book_disnat(request, pk):
     return render(request, 'accounting/book-disnat.html', context)
 
 
-# TODO Crypto view/export for taxes
+# TODO total (profits)?
 def book_crypto(request, pk):
     wallet = Wallet.objects.get(pk=pk)
     # wallet.last_view = 'book_crypto'
