@@ -58,6 +58,7 @@ class CryptoBook(models.Model):
         return Decimal(total_price).quantize(Decimal("1.00"))
 
 
+# Transform all fees in $
 @receiver(pre_save, sender=CryptoBook)
 def fees_in_money(sender, instance, *args, **kwargs):
     if instance.wallet.trader.fees_sell == "crypto" and instance.type == 'VENTE':

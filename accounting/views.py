@@ -211,13 +211,13 @@ def crypto_for_taxes_view(request, pk):
         if task == 'refresh':
             mindate_filter = datetime.datetime.strptime(request.POST.get('start'), '%Y-%m-%d').date()
             maxdate_filter = datetime.datetime.strptime(request.POST.get('end'), '%Y-%m-%d').date()
-            book, mindate, maxdate = crypto_for_taxes(wallet, mindate_filter=mindate_filter,
-                                                      maxdate_filter=maxdate_filter)
+            book, mindate, maxdate, net_profits = crypto_for_taxes(wallet, mindate_filter=mindate_filter,
+                                                                   maxdate_filter=maxdate_filter)
         elif task == 'export':
             mindate_filter = datetime.datetime.strptime(request.POST.get('start'), '%Y-%m-%d').date()
             maxdate_filter = datetime.datetime.strptime(request.POST.get('end'), '%Y-%m-%d').date()
-            book, mindate, maxdate = crypto_for_taxes(wallet, mindate_filter=mindate_filter,
-                                                      maxdate_filter=maxdate_filter, export=True)
+            book, mindate, maxdate, net_profits = crypto_for_taxes(wallet, mindate_filter=mindate_filter,
+                                                                   maxdate_filter=maxdate_filter, export=True)
             path = os.path.join(settings.MEDIA_ROOT, 'files_temp')
             url_path = f'{settings.MEDIA_URL}/files_temp/'
             datesuffix = datetime.datetime.now().strftime('%Y-%m-%d')
@@ -232,8 +232,8 @@ def crypto_for_taxes_view(request, pk):
             response["HX-Redirect"] = smart_str(f'{url_path}{filename}')
             return response
     else:
-        book, mindate, maxdate = crypto_for_taxes(wallet, mindate_filter=None,
-                                                  maxdate_filter=None)
+        book, mindate, maxdate, net_profits = crypto_for_taxes(wallet,
+                                                               mindate_filter=None, maxdate_filter=None)
         mindate_filter = mindate
         maxdate_filter = maxdate
 
@@ -243,6 +243,7 @@ def crypto_for_taxes_view(request, pk):
                'maxdate': maxdate,
                'maxdate_filter': maxdate_filter,
                'mindate_filter': mindate_filter,
+               'net_profits': net_profits,
                'link_from': "crypto-for-taxes"
                }
     return render(request, 'accounting/crypto-for-taxes.html', context)
