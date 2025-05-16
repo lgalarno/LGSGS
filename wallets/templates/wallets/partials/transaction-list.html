@@ -6,12 +6,12 @@
                 <th scope="col">Date</th>
 {#                <th scope="col">Trader</th>#}
                 <th scope="col">Type</th>
-                <th scope="col">Symbol</th>
-                <th scope="col">Quantity</th>
-                <th scope="col">Price</th>
+                <th scope="col">Symbole</th>
+                <th scope="col">Quantité</th>
+                <th scope="col">Prix</th>
                 <th scope="col">Change</th>
-                <th scope="col">Fees</th>
-                <th scope="col">Currency</th>
+                <th scope="col">Frais</th>
+                <th scope="col">Devise</th>
             </tr>
         </thead>
         <tbody>
@@ -25,7 +25,11 @@
                     >{{ t.date }}</a>
                  </td>
                 <td>
-                    {{ t.type|title }}
+                    {% if t.type == 'buy' %}
+                        Achat
+                    {% else %}
+                        Vente
+                    {% endif %}
                 </td>
                 <td>
                     {{ t.ticker.symbol }}

@@ -22,20 +22,24 @@
                 </tr>
                 <tr>
                     <td>
-                        {{ transaction.type }}
+                        {% if transaction.type == 'buy '%}
+                            Achat
+                        {% else %}
+                            Vente
+                        {% endif %}
                       <td>
                         {{ transaction.quantity }}
                     </td>
                     <td>
                         {{ transaction.ticker.symbol }}
                     </td>
-                    <td>at {{ transaction.price }}$</td>
+                    <td>à {{ transaction.price }}$</td>
                 </tr>
                 <tr>
                     <td>
-                        fees: {{ transaction.fees }}
-                        {% if transaction.ticker.type == 'crypto' %}
-                            {{ transaction.ticker.symbol }}
+                        frais: {{ transaction.get_fees }}
+                        {% if transaction.fees_type == 'crypto' %}
+                            {{ transaction.ticker.symbol }} ({{ transaction.fees_in_dollars }}$)
                         {% else %}
                             $
                         {% endif %}

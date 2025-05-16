@@ -110,8 +110,6 @@
 {#            </div>#}
         </div>
     </div>
-{#<h1>last_view: {{ request.session.last_view }}</h1>#}
-{#<h1>wallet.id: {{ request.session.last_view|dict_key:wallet.id  }}</h1>#}
     <div id="htmx_frame" class="container-fluid mt-2"
          hx-trigger="load"
           {% if request.session.last_view|dict_key:wallet.id == 'assets' %}

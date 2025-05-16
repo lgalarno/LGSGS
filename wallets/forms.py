@@ -101,9 +101,10 @@ class TransactionForm(forms.ModelForm):
         labels = {
             "date": "Date",
             "description": "Description",
-            "quantity": "Quantity",
-            "price": "Price",
-            "fees": "Fees (in crypto or $)",
+            "quantity": "Quantité",
+            "price": "Prix",
+            "currency": "Devise",
+            "fees": "Frais (en crypto ou $)",
         }
         widgets = {
             'date': forms.DateInput(attrs={"type": "date"}),

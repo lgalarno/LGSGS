@@ -20,12 +20,12 @@ def upload_location(instance, filename):
 
 class TradingPlatform(models.Model):
     FEES = (
-        ('money', 'Money'),
+        ('money', 'Monnaie'),
         ('crypto', 'Crypto'),
     )
     TYPE = (
         ('crypto', 'Crypto'),
-        ('equity', 'Equity'),
+        ('equity', 'Action'),
     )
 
     name = models.CharField(max_length=255, null=True, blank=True)
@@ -76,7 +76,7 @@ def auto_delete_file_on_change(sender, instance, **kwargs):
 class Ticker(models.Model):
     TYPE = (
         ('crypto', 'Crypto'),
-        ('equity', 'Equity'),
+        ('equity', 'Action'),
     )
     symbol = models.CharField(max_length=16)
     name = models.CharField(max_length=255, null=True, blank=True)
@@ -139,8 +139,8 @@ class Transfer(models.Model):
 
 class Transaction(models.Model):
     TYPE = (
-        ('buy', 'Buy'),
-        ('sell', 'Sell'),
+        ('buy', 'Achat'),
+        ('sell', 'Vente'),
     )
     CURRENCY = (
         ('cad', 'CAD'),
@@ -175,6 +175,22 @@ class Transaction(models.Model):
         return self.ticker.type == "crypto"
 
     @property
+    def fees_in_dollars(self):
+        if (self.wallet.trader.fees_sell == "crypto" and self.type == 'sell') or (self.wallet.trader.fees_buy == "crypto" and self.type == 'buy'):
+            fees = Decimal(self.price * self.fees).quantize(Decimal("1.00"))
+        else:
+            fees = self.fees.normalize()
+        return fees
+
+    @property
+    def get_fees(self):
+        return self.fees.normalize()
+
+    @property
+    def get_price(self):
+        return self.price.normalize()
+
+    @property
     def brut(self):
         brut = self.quantity * float(self.price) + float(self.change)
         if self.ticker.type == 'equity':
@@ -185,19 +201,22 @@ class Transaction(models.Model):
     def total_paid(self):
         if self.type == 'buy':
             return Decimal((self.quantity * float(self.price) + float(self.change)
-                            + float(self.fees))).quantize(Decimal("1.00"))
+                            + float(self.fees_in_dollars))).quantize(Decimal("1.00"))
         else:
             return 0
 
     @property
     def total_revenue(self):
         if self.type == 'sell':
-            if self.trading_platform.fees_sell == 'money':
-                total = Decimal((self.quantity * float(self.price) + float(self.change)
-                                 - float(self.fees))).quantize(Decimal("1.00"))
-            elif self.trading_platform.fees_sell == 'crypto':
-                q = self.quantity - self.fees
-                total = Decimal(q * float(self.price) + float(self.change))
+            total = Decimal((self.quantity * float(self.price) + float(self.change)
+                             - float(self.fees_in_dollars))).quantize(Decimal("1.00"))
+        # if self.type == 'sell':
+        #     if self.trading_platform.fees_sell == 'money':
+        #         total = Decimal((self.quantity * float(self.price) + float(self.change)
+        #                          - float(self.fees))).quantize(Decimal("1.00"))
+        #     elif self.trading_platform.fees_sell == 'crypto':
+        #         q = self.quantity - self.fees
+        #         total = Decimal(q * float(self.price) + float(self.change))
             return total
         else:
             return 0
@@ -205,10 +224,12 @@ class Transaction(models.Model):
     @property
     def price_per_share(self):
         if self.type == 'buy':
-            if self.trading_platform.fees_buy == 'crypto':
-                return self.value / (self.quantity - float(self.fees))
-            elif self.trading_platform.fees_buy == 'money':
-                return (float(self.fees) + float(self.change)) / self.quantity + float(self.price)
+            p = (float(self.fees_in_dollars) + float(self.change)) / self.quantity + float(self.price)
+            return Decimal(p).quantize(Decimal("1.0000000000")).normalize()
+            # if self.trading_platform.fees_buy == 'crypto':
+            #     return self.value / (self.quantity - float(self.fees))
+            # elif self.trading_platform.fees_buy == 'money':
+            #     return (float(self.fees) + float(self.change)) / self.quantity + float(self.price)
         return 0
 
     @property
@@ -218,7 +239,17 @@ class Transaction(models.Model):
         return quantity * float(self.price)
 
     @property
-    def get_fees_type(self, quantity=None):
+    def fees_type(self):
+        if self.type == 'buy':
+            fees_type = self.trading_platform.fees_buy
+        elif self.type == 'sell':
+            fees_type = self.trading_platform.fees_sell
+        else:
+            fees_type = None
+        return fees_type
+
+    @property
+    def get_fees_type(self):
         if self.type == 'buy':
             fees_type = self.trading_platform.fees_buy
         elif self.type == 'sell':

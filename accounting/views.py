@@ -91,8 +91,6 @@ def upload(request, pk):
 
 def book_disnat(request, pk):
     wallet = Wallet.objects.get(pk=pk)
-    # wallet.last_view = 'book_disnat'
-    # wallet.save()
     request.session["last_view"][f'{wallet.pk}'] = 'book_disnat'
     request.session["update"] = 'true'  # mock to update session because of using dict
     book = []
@@ -148,8 +146,6 @@ def book_disnat(request, pk):
 # TODO total (profits)?
 def book_crypto(request, pk):
     wallet = Wallet.objects.get(pk=pk)
-    # wallet.last_view = 'book_crypto'
-    # wallet.save()
     request.session["last_view"][f'{wallet.pk}'] = 'book_crypto'
     request.session["update"] = 'true'  # mock to update session because of using dict
     book = []
@@ -202,8 +198,6 @@ def book_crypto(request, pk):
 
 def crypto_for_taxes_view(request, pk):
     wallet = Wallet.objects.get(pk=pk)
-    # wallet.last_view = 'crypto_taxes'
-    # wallet.save()
     request.session["last_view"][f'{wallet.pk}'] = 'crypto_taxes'
     request.session["update"] = 'true'  # mock to update session because of using dict
     if request.method == 'POST':

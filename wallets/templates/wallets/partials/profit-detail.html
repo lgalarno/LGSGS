@@ -23,14 +23,14 @@
                 </tr>
                 <tr>
                     <td colspan="4">
-                        {{ purchased.quantity }} units of {{ purchased.ticker.symbol }} at {{ purchased.price }}$ (real price per share: {{ purchased.price_per_share }}$)
+                        {{ purchased.quantity }} unités de {{ purchased.ticker.symbol }} à {{ purchased.get_price }}$ (prix réel par unité: {{ purchased.price_per_share }}$)
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        fees: {{ purchased.fees }}
-                        {% if purchased.ticker.type == 'crypto' %}
-                            {{ purchased.ticker.symbol }}
+                        frais: {{ purchased.get_fees }}
+                        {% if purchased.fees_type == 'crypto' %}
+                            {{ purchased.ticker.symbol }} ({{ purchased.fees_in_dollars }}$)
                         {% else %}
                             $
                         {% endif %}
@@ -49,7 +49,7 @@
                         <strong>{{ purchased.brut }}$</strong>
                     </td>
                     <td style="text-align: right;">
-                        <strong>Marginal cost for {{ sold.quantity }} units:</strong>
+                        <strong>Coût marginal {{ sold.quantity }} unités:</strong>
                     </td>
                     <td>
                         <strong>{{ marginal_cost }}$</strong>
@@ -63,12 +63,17 @@
                 </tr>
                 <tr>
                     <td colspan="4">
-                        {{ sold.quantity }} units of {{ sold.ticker.symbol }} at {{ sold.price }}$
+                        {{ sold.quantity }} unités de {{ sold.ticker.symbol }} à {{ sold.get_price }}$
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        fees: {{ sold.fees }}$
+                        frais: {{ sold.get_fees }}
+                        {% if sold.fees_type == 'crypto' %}
+                            {{ sold.ticker.symbol }} ({{ sold.fees_in_dollars }}$)
+                        {% else %}
+                            $
+                        {% endif %}
                     </td>
                     <td>
                         change: {{ sold.change }}$
@@ -81,7 +86,7 @@
                     <td></td>
                     <td></td>
                     <td style="text-align: right;">
-                        <strong>Revenue: </strong>
+                        <strong>Revenu: </strong>
                     </td>
                     <td>
                         <strong>{{ sold.total_revenue }}$</strong>
@@ -89,7 +94,7 @@
                 </tr>
                 <tr>
                     <td colspan="3" style="text-align: right;">
-                        <strong>Marginal profit for {{ sold.quantity }} units:</strong>
+                        <strong>Profit marginal pour {{ sold.quantity }} unités:</strong>
                     </td>
                     <td >
                         <strong>{{ marginal_profit }}$</strong>

@@ -1,8 +1,8 @@
 {% load crispy_forms_tags %}
 <div class="row justify-content-md-center">
     <div class="col col-lg-6 default_form">
-        <h2 style="display: inline;">Sell {{ asset.transaction.ticker.symbol }}</h2>
-        <h4>You have {{ asset.quantity }} units.</h4>
+        <h2 style="display: inline;">Vendre {{ asset.transaction.ticker.symbol }}</h2>
+        <h4>Vous avez {{ asset.quantity }} unités.</h4>
         <form
               hx-post="{% url 'wallets:wallets-htmx-api:sell' pk=asset.id %}"
               hx-trigger="submit"
@@ -11,7 +11,7 @@
             {% csrf_token %}
             {% crispy form %}
             <a href="{% url 'wallets:wallets' %}" type="button" class="btn btn-secondary">Cancel</a>
-            <button type="submit" class="btn btn-primary">Sell</button>
+            <button type="submit" class="btn btn-primary">Vendre</button>
         </form>
     </div>
 </div>

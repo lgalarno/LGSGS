@@ -91,7 +91,6 @@ def wallet_update(request, pk):
 
 def wallet_detail(request, pk):
     wallet = get_object_or_404(Wallet, pk=pk)
-    # assets = Asset.objects.filter(transaction__wallet=wallet)
     profits = Profit.objects.filter(transaction_bought__wallet=wallet)
     total_profits = Decimal(profits.aggregate(Sum('profit', default=0))['profit__sum']
                             ).quantize(Decimal("1.00"))
@@ -100,8 +99,6 @@ def wallet_detail(request, pk):
     context = {
         "title": "wallet-detail",
         'wallet': wallet,
-        # 'asset_list': assets,
-        # 'profit_list': profits,
         'total_profits': total_profits,
         **get_refresh_info()
     }
@@ -134,8 +131,6 @@ def buy(request, pk):
     wallet = get_object_or_404(Wallet, pk=pk)
     request.session["last_view"][f'{wallet.pk}'] = 'buy'
     request.session["update"] = 'true'  # mock to update session because of using dict
-    # wallet.last_view = 'buy'
-    # wallet.save()
     context = {
         "title": "buy",
         'wallet': wallet
@@ -148,13 +143,13 @@ def buy(request, pk):
             if form.is_valid():
                 instance = form.save(commit=False)
                 ticker = Ticker.objects.get(pk=ticker_id)
-                # check if wallet has enough money.
-                cost = Decimal(
-                        instance.quantity * float(instance.price) + float(instance.change)).quantize(
-                        Decimal("1.00"))
                 trader = TradingPlatform.objects.get(pk=wallet.trader.pk)
+                # check if wallet has enough money.
+                # cost = Decimal(
+                #         instance.quantity * float(instance.price) + float(instance.change)).quantize(
+                #         Decimal("1.00"))
                 if wallet.trader.fees_buy == 'money':
-                    cost = cost + instance.fees  # fees in $ adds to
+                    #cost = cost + instance.fees  # fees in $ adds to
                     quantity = instance.quantity
                     fees_per_unit = Decimal(float(instance.fees) / quantity).quantize(
                         Decimal("1.000000"))
@@ -164,6 +159,9 @@ def buy(request, pk):
                         Decimal("1.000000"))
                 else:
                     form.add_error(None, "Trader improperly configured.")
+                    quantity = 0
+                    fees_per_unit = 0
+
                 # if cost > wallet.balance:
                 #     form.add_error(None, "Not enough money in the wallet.")
                 if not form.errors:
@@ -285,8 +283,6 @@ def transaction_detail(request, pk):
 
 def transaction_list(request, pk):
     wallet = get_object_or_404(Wallet, pk=pk)
-    # wallet.last_view = 'transactions'
-    # wallet.save()
     request.session["last_view"][f'{wallet.pk}'] = 'transactions'
     request.session["update"] = 'true'  # mock to update session because of using dict
     transactions = Transaction.objects.filter(wallet=wallet)
@@ -301,8 +297,6 @@ def asset_list(request, pk):
     wallet = get_object_or_404(Wallet, pk=pk)
     pk_str = str(pk)
     assets = Asset.objects.filter(wallet=wallet)
-    # wallet.last_view = 'assets'
-    # wallet.save()
     request.session["last_view"][f'{wallet.pk}'] = 'assets'
 
     now = timezone.now()
@@ -342,17 +336,12 @@ def asset_list(request, pk):
 
 def profit_list(request, pk):
     wallet = get_object_or_404(Wallet, pk=pk)
-    # wallet.last_view = 'profits'
-    # wallet.save()
     request.session["last_view"][f'{wallet.pk}'] = 'profits'
     request.session["update"] = 'true'  # mock to update session because of using dict
     profits = Profit.objects.filter(transaction_bought__wallet=wallet).order_by('-transaction_sold__date')
-    #total_profits = Decimal(profits.aggregate(Sum('profit', default=0))['profit__sum']
-    #                        ).quantize(Decimal("1.00"))
     context = {
         "title": "asset-list",
         'profit_list': profits,
-        #'total_profits': total_profits,
     }
     return render(request, 'wallets/partials/profit-list.html', context)
 

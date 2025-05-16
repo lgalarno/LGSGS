@@ -8,13 +8,13 @@
                         <a href = "{{ a.transaction.ticker.get_absolute_url }}" {% if a.transaction.ticker.type == "equity"  %}target="_blank"{% endif %}>{{ a.transaction.ticker.symbol }}</a>
                     </td>
                     <td style="text-align:right">
-                        Price: {{ a.price }}$
+                        Prix: {{ a.price }}$
                     </td>
                     <td style="text-align:right">
-                        Total paid: {{ a.paid }}$
+                        Total payé {{ a.paid }}$
                     </td>                
                     <td style="text-align:right">
-                        Qty: {{ a.quantity }}
+                        Qté: {{ a.quantity }}
                     </td>
                     <td style="text-align:right">
                         {{ a.date }}
@@ -22,13 +22,13 @@
                 </tr>
                 <tr {% if a.staking %} class="table-info" {% elif not a.monitor %} class="table-secondary" {% endif %} style="border-bottom: 2px solid black;">
                     <td>
-                        Target (total - price) {{ a.target }}$ - {{ a.target_price }}$
+                        Cible (total - prix) {{ a.target }}$ - {{ a.target_price }}$
                     </td>                
                     <td style="text-align:right">
-                        Current price: {{ a.current }}$
+                        Prix actuel: {{ a.current }}$
                     </td>
                     <td style="text-align:right">
-                        Current value: {{ a.value }}$
+                        Valeur actuelle: {{ a.value }}$
                     </td >
                     <td style="text-align:right">
                         <p class="{{ a.delta_alert }}">
@@ -37,16 +37,16 @@
                     </td>
                     <td style="text-align:right">
                         {% if wallet %}
-                            <a title="sell"
+                            <a title="vendre"
                                hx-get="{% url 'wallets:wallets-htmx-api:sell' pk=a.id %}"
                                hx-target="#htmx_frame">
                                 <i class="bi bi-bank"></i>
                             </a>
                         {% endif %}
-                        <a href="{{ a.get_absolute_url }}" title="edit" class="ms-2">
+                        <a href="{{ a.get_absolute_url }}" title="modifier" class="ms-2">
                             <i class="bi bi-pencil"></i>
                         </a>
-                        <a href="{{ a.get_delete_url }}" onclick="return confirm('Are you sure?')" title="delete" class="ms-2">
+                        <a href="{{ a.get_delete_url }}" onclick="return confirm('Êtes vous certain?')" title="effacer" class="ms-2">
                             <i class="bi bi-x-circle"></i>
                         </a>
                     </td>
@@ -56,9 +56,9 @@
          </table>
     </div>
     <small  style="display: inline" >
-        <i >Last updated: {{ last_updated }}</i>
+        <i >Mis à jour: {{ last_updated }}</i>
         ; 
-        <i>Next price update at {{ update_at }}</i>
+        <i>Prochaine mise à jour {{ update_at }}</i>
         <button class="btn btn-success btn-sm"
                 {% if wallet %}
                     hx-get="{% url 'wallets:wallets-htmx-api:asset-list' pk=wallet.id %}"
@@ -66,11 +66,11 @@
                     hx-get="{% url 'assets:assets-htmx-api:asset-list' %}"
                 {% endif %}
             hx-target="#htmx_frame" title="refresh">
-            refresh now <i class="bi bi-arrow-clockwise"></i>
+            mise à jour maintenant <i class="bi bi-arrow-clockwise"></i>
         </button>
     </small>
     <ul class="legend" style="display: inline; float: right;" >
-        <li><span class="not_monitored"></span> Not monitored</li>
+        <li><span class="not_monitored"></span> Non surveillé</li>
         {% if wallet.is_crypto %}
             <li><span class="staking"></span> Staking</li>
         {% endif %}

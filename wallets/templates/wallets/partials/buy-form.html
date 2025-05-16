@@ -2,7 +2,7 @@
 
 <div class="row justify-content-md-center">
     <div class="col col-lg-6 default_form">
-        <h2>Purchase</h2>
+        <h2>Acheter</h2>
         <form
               hx-post="{% url 'wallets:wallets-htmx-api:buy' pk=wallet.id %}"
               hx-trigger="submit"
@@ -50,7 +50,7 @@
                 <div class="form-group col-md-3 mb-0">
                     <div id="div_id_margin" class="mb-3">
                         <label for="id_margin" class="form-label requiredField">
-                            Margin
+                            Marge
                             <span class="asteriskField">*</span>
                         </label>
                         <input type="number" name="margin" step="any" class="numberinput form-control" required="" id="id_margin">
@@ -60,7 +60,7 @@
                     <div id="div_id_monitor" class="form-check">
                         <p>&nbsp</p>
                         <input type="checkbox" name="monitor" class="checkboxinput form-check-input" id="id_monitor" checked>
-                        <label for="id_monitor" class="form-check-label">Monitor</label>
+                        <label for="id_monitor" class="form-check-label">Surveiller</label>
                     </div>
                 </div>
                 {% if wallet.is_crypto  %}
@@ -82,7 +82,7 @@
             >
                 Clear
             </a>
-            <button type="submit" class="btn btn-primary">Buy</button>
+            <button type="submit" class="btn btn-primary">Acheter</button>
 {#            <a href="{% url 'wallets:wallets' %}" class="btn btn-secondary">#}
 {#                << Back to your wallets#}
 {#            </a>#}
