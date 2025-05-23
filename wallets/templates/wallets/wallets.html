@@ -25,7 +25,7 @@
                                    hx-target="#wallet_frame"
                                 >
                                     {% if w.trader.logo %}
-                                        <img alt="" src="{{ w.trader.logo.url }}" height="20">
+                                        <img alt="" src="{% static w.trader.logo %}" height="20">
                                     {% endif %}
                                     {{ w.name }}
                                 </a>

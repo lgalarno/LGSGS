@@ -1,4 +1,5 @@
 {#{% if wallet %}#}
+{% load static %}
     <div class="row">
         <div class="col col-lg-12">
 {#            <h4 style="float: right">balance: <strong>{{ wallet.balance }}$</strong></h4>#}
@@ -6,7 +7,7 @@
             <h2 style="display: inline;" >
                 {% if wallet.trader.logo %}
                     <a href="{{ wallet.trader.url }}" target="_blank" title="{{ wallet.trader.name }} {{ wallet.trader.url }}">
-                        <img alt="" src="{{ wallet.trader.logo.url }}" height="40">
+                        <img alt="" src="{% static wallet.trader.logo %}" height="40">
                     </a>
                 {% endif %}
 

@@ -7,18 +7,32 @@ from django.utils import timezone
 
 from decimal import Decimal
 
-import os
-
 from assets.models import Asset
 
 # Create your models here.
 
 
 def upload_location(instance, filename):
+    # keep for compatibility with migrations
     return f"logos/{filename}"
 
 
 class TradingPlatform(models.Model):
+    NAME = (
+        ('Disnat', 'Disnat'),
+        ('NDAX', 'NDAX'),
+        ('Coinbase', 'Coinbase'),
+    )
+    URL = (
+        ('https://www.disnat.com/', 'https://www.disnat.com/'),
+        ('https://portal.ndax.io/', 'https://portal.ndax.io/'),
+        ('https://www.coinbase.com/', 'https://www.coinbase.com/'),
+    )
+    LOGO = (
+        ('images/logos/logo-courtage-ligne-fr.png', 'images/logos/logo-courtage-ligne-fr.png'),
+        ('images/logos/ndax.png', 'images/logos/ndax.png'),
+        ('images/logos/coinbase.png', 'images/logos/coinbase.png',),
+    )
     FEES = (
         ('money', 'Monnaie'),
         ('crypto', 'Crypto'),
@@ -27,13 +41,10 @@ class TradingPlatform(models.Model):
         ('crypto', 'Crypto'),
         ('equity', 'Action'),
     )
-
-    name = models.CharField(max_length=255, null=True, blank=True)
+    name = models.CharField(max_length=32,  choices=NAME, default=NAME[0][0])
     type = models.CharField(max_length=20, choices=TYPE, default=TYPE[0][0])
-    logo = models.ImageField(upload_to=upload_location,
-                             null=True,
-                             blank=True)
-    url = models.URLField(blank=True, null=True)
+    logo = models.FileField(choices=LOGO, default=LOGO[0][0], null=True, blank=True)  # (max_length=255, choices=LOGO, default=LOGO[0][0], null=True, blank=True)
+    url = models.URLField(blank=True, null=True, choices=URL, default=URL[0][0])
     fees_buy = models.CharField(max_length=20, choices=FEES, default=FEES[0][0])
     fees_sell = models.CharField(max_length=20, choices=FEES, default=FEES[0][0])
 
@@ -41,36 +52,82 @@ class TradingPlatform(models.Model):
         return self.name
 
 
-@receiver(models.signals.post_delete, sender=TradingPlatform)
-def auto_delete_file_on_delete(sender, instance, **kwargs):
-    """
-    Deletes file from filesystem
-    when corresponding `Player` object is deleted.
-    """
-    if instance.logo:
-        if os.path.isfile(instance.logo.path):
-            os.remove(instance.logo.path)
-
-
 @receiver(models.signals.pre_save, sender=TradingPlatform)
-def auto_delete_file_on_change(sender, instance, **kwargs):
-    """
-    Deletes old file from filesystem
-    when corresponding `Player` object is updated
-    with new file.
-    """
-    if not instance.pk:
-        return False
-    try:
-        old_logo = TradingPlatform.objects.get(pk=instance.pk).logo
-    except TradingPlatform.DoesNotExist:
-        return False
-    new_logo = instance.logo
-    if not bool(old_logo):
-        return False
-    if not old_logo == new_logo:
-        if os.path.isfile(old_logo.path):
-            os.remove(old_logo.path)
+def complete_instance(sender, instance, *args, **kwargs):
+    t = instance.name
+    if t == 'Disnat':
+        instance.type = 'equity'
+        instance.logo = 'images/logos/logo-courtage-ligne-fr.png'
+        instance.url = 'https://www.disnat.com/'
+        instance.fees_buy = 'money'
+        instance.fees_sell = 'money'
+    elif t == 'Coinbase':
+        instance.type = 'crypto'
+        instance.logo = 'images/logos/coinbase.png'
+        instance.url = 'https://www.coinbase.com/'
+        instance.fees_buy = 'money'
+        instance.fees_sell = 'money'
+    elif instance.name == 'NDAX':
+        instance.type = 'crypto'
+        instance.logo = 'images/logos/ndax.png'
+        instance.url = 'https://portal.ndax.io/'
+        instance.fees_buy = 'crypto'
+        instance.fees_sell = 'money'
+
+
+# class TradingPlatform(models.Model):
+#     FEES = (
+#         ('money', 'Monnaie'),
+#         ('crypto', 'Crypto'),
+#     )
+#     TYPE = (
+#         ('crypto', 'Crypto'),
+#         ('equity', 'Action'),
+#     )
+#
+#     name = models.CharField(max_length=255, null=True, blank=True)
+#     type = models.CharField(max_length=20, choices=TYPE, default=TYPE[0][0])
+#     logo = models.ImageField(upload_to=upload_location,
+#                              null=True,
+#                              blank=True)
+#     url = models.URLField(blank=True, null=True)
+#     fees_buy = models.CharField(max_length=20, choices=FEES, default=FEES[0][0])
+#     fees_sell = models.CharField(max_length=20, choices=FEES, default=FEES[0][0])
+#
+#     def __str__(self):
+#         return self.name
+
+
+# @receiver(models.signals.post_delete, sender=TradingPlatform)
+# def auto_delete_file_on_delete(sender, instance, **kwargs):
+#     """
+#     Deletes file from filesystem
+#     when corresponding `Player` object is deleted.
+#     """
+#     if instance.logo:
+#         if os.path.isfile(instance.logo.path):
+#             os.remove(instance.logo.path)
+#
+#
+# @receiver(models.signals.pre_save, sender=TradingPlatform)
+# def auto_delete_file_on_change(sender, instance, **kwargs):
+#     """
+#     Deletes old file from filesystem
+#     when corresponding `Player` object is updated
+#     with new file.
+#     """
+#     if not instance.pk:
+#         return False
+#     try:
+#         old_logo = TradingPlatform.objects.get(pk=instance.pk).logo
+#     except TradingPlatform.DoesNotExist:
+#         return False
+#     new_logo = instance.logo
+#     if not bool(old_logo):
+#         return False
+#     if not old_logo == new_logo:
+#         if os.path.isfile(old_logo.path):
+#             os.remove(old_logo.path)
 
 
 class Ticker(models.Model):

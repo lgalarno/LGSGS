@@ -139,6 +139,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 FROM_EMAIL = config["FROM_EMAIL"]
 EMAIL_PASSWORD = config["EMAIL_PASSWORD"]
 NDAX_API_KEY = config["NDAX_API_KEY"]
+FERNET_KEY = config["FERNET_KEY"]
 
 DISNAT_HEADERS = ["Date de transaction", "Date de règlement", "Type de transaction", "Classe d'actif",
            "Symbole", "Description", "Marché", "Quantité", "Prix", "Devise du prix", "Commission payée",

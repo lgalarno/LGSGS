@@ -11,8 +11,8 @@ from assets.backend import ticker_name
 class TradingPlatformForm(forms.ModelForm):
     class Meta:
         model = TradingPlatform
-        fields = ['name', 'type', 'logo', 'url', 'fees_buy', 'fees_sell']
-
+        # fields = ['name', 'type', 'logo', 'url', 'fees_buy', 'fees_sell']
+        fields = ['name']
         labels = {
             "fees_buy": "Fees when buying",
             "fees_sell": "Fees when selling",
