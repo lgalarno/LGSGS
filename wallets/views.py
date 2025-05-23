@@ -7,13 +7,17 @@ from django.views.generic import DeleteView, DetailView
 
 from decimal import Decimal
 
+from accounts.models import TraderCredentials
 from wallets.models import Wallet, Profit, Ticker
+
 from assets.backend import get_refresh_info
+from wallets.backend import balance
 
 # Create your views here.
 
 
 def wallets(request):
+    b = None
     u = request.user
     user_wallets = Wallet.objects.filter(user=u)
     # last_view = {}
@@ -40,13 +44,15 @@ def wallets(request):
         profits = Profit.objects.filter(transaction_bought__wallet=current_wallet)
         total_profits = Decimal(profits.aggregate(Sum('profit', default=0))['profit__sum']
                                 ).quantize(Decimal("1.00"))
+        tc = current_wallet.credentials
+        if tc:
+            b = balance(credential=tc)
     else:
         current_wallet = None
-        # total_balance = 0
         total_profits = 0
 
     context = {'wallets': user_wallets,
-               # 'total_balance': total_balance,
+               'balance': b,
                'wallet': current_wallet,
                'total_profits': total_profits,
                **get_refresh_info()

@@ -2,15 +2,13 @@
 {% load static %}
     <div class="row">
         <div class="col col-lg-12">
-{#            <h4 style="float: right">balance: <strong>{{ wallet.balance }}$</strong></h4>#}
             <h4 style="float: right">profits: <strong>{{ total_profits }}$</strong></h4>
-            <h2 style="display: inline;" >
+            <h2 >
                 {% if wallet.trader.logo %}
                     <a href="{{ wallet.trader.url }}" target="_blank" title="{{ wallet.trader.name }} {{ wallet.trader.url }}">
                         <img alt="" src="{% static wallet.trader.logo %}" height="40">
                     </a>
                 {% endif %}
-
                 <a style="display: inline;"
                    hx-get="{% url 'wallets:wallets-htmx-api:wallet_update' pk=wallet.id %}"
                    hx-target="#form-dialog"
@@ -18,6 +16,9 @@
                      {{ wallet.name }}
                 </a>
             </h2>
+            {% if balance %}
+                <h4 style="float: right">balance: <strong>{{ balance }}$</strong></h4>
+            {% endif %}
         </div>
     </div>
 {#    <div class="row">#}

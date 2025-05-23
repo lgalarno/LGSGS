@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 
-from .models import User
+from .models import User  #, TraderCredentials
 
 
 class CustomUserCreationForm(forms.Form):
@@ -40,3 +40,19 @@ class CustomUserCreationForm(forms.Form):
             self.cleaned_data['password1']
         )
         return user
+
+#
+# class TraderCredentialsForm(forms.Form):
+#     class Meta:
+#         model = TraderCredentials
+#         fields = ['unername', 'password', 'twofa', 'api_key', 'secret']
+#         labels = {
+#             "api_key": "API key (encrypté)",
+#             "secret": "Secret key (encrypté)",
+#             "unername": "Nom / email utilisé pour se connecter",
+#             "password": "Mot de passe (encrypté)",
+#             "twofa": "QR Code of Google 2FA secret (encrypté)",
+#         }
+#         widgets = {
+#             'password': forms.PasswordInput,
+#         }

@@ -10,6 +10,7 @@ from wallets.models import Wallet, Profit, Transaction, TradingPlatform, Ticker
 
 from assets.backend import current_price, get_refresh_info, update_prices
 from assets.models import Asset
+from wallets.backend import balance
 
 
 def ticker_list(request, pk):
@@ -96,8 +97,15 @@ def wallet_detail(request, pk):
                             ).quantize(Decimal("1.00"))
     wallet.last_viewed = timezone.now()
     wallet.save()
+    tc = wallet.credentials
+    if tc:
+        b = balance(credential=tc)
+    else:
+        b = None
+    print(b)
     context = {
         "title": "wallet-detail",
+        'balance': b,
         'wallet': wallet,
         'total_profits': total_profits,
         **get_refresh_info()

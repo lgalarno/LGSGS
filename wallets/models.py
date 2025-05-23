@@ -67,7 +67,7 @@ def complete_instance(sender, instance, *args, **kwargs):
         instance.url = 'https://www.coinbase.com/'
         instance.fees_buy = 'money'
         instance.fees_sell = 'money'
-    elif instance.name == 'NDAX':
+    elif t == 'NDAX':
         instance.type = 'crypto'
         instance.logo = 'images/logos/ndax.png'
         instance.url = 'https://portal.ndax.io/'
@@ -172,6 +172,14 @@ class Wallet(models.Model):
             return reverse("accounting:book-crypto", kwargs={"pk": self.pk})
         else:
             return reverse("accounting:book-disnat", kwargs={"pk": self.pk})
+
+    @property
+    def credentials(self):
+        try:
+            tc = self.trader.credentials.filter(user=self.user).get()
+        except:
+            tc = None
+        return tc
 
 
 class Transfer(models.Model):

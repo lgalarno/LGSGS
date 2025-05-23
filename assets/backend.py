@@ -4,13 +4,12 @@ from django.utils import timezone
 from dateutil.relativedelta import relativedelta
 from django_celery_beat.models import PeriodicTask
 
-from assets.models import Asset
 
 import ccxt
 import yfinance as yf
 
 
-NDAX_API_KEY = settings.NDAX_API_KEY
+# NDAX_API_KEY = settings.NDAX_API_KEY
 
 
 def get_refresh_info() -> dict:
@@ -36,7 +35,8 @@ def ticker_name(symbol, tickertype):
     #TODO only support ndax and Yahoo finance tickers. Add others based on exchange?
     if tickertype == 'crypto':
         ndax = ccxt.ndax({
-            'apiKey': NDAX_API_KEY
+            'enableRateLimit': True,
+            # 'apiKey': NDAX_API_KEY
         })
         markets = ndax.load_markets()
         if symbol in list(markets.keys()):
@@ -63,7 +63,7 @@ def current_price(symbol, crypto, *args, **kwargs):
     try:
         if crypto:
             ndax = ccxt.ndax({
-                'apiKey': NDAX_API_KEY,
+                # 'apiKey': NDAX_API_KEY,
                 'enableRateLimit': False
             })
             price = ndax.fetch_ticker(symbol).get('last')
