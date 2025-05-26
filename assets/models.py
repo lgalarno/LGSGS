@@ -107,7 +107,8 @@ class Asset(models.Model):
         ordering = ['-monitor', 'staking', '-date']
 
     def __str__(self):
-        return f"{self.transaction.ticker.symbol}-{self.date}"
+        # return f"{self.transaction.ticker.symbol}-{self.date}"
+        return f"{self.id}-{self.date}"
 
     def get_absolute_url(self):
         return reverse('assets:update-asset', kwargs={'pk': self.pk})
