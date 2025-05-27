@@ -102,7 +102,6 @@ def wallet_detail(request, pk):
         b = balance(credential=tc)
     else:
         b = None
-    print(b)
     context = {
         "title": "wallet-detail",
         'balance': b,

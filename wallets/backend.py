@@ -11,13 +11,14 @@ def balance(credential=None):
     trader = credential.trader.name
     if trader == 'NDAX':
         ndax = ccxt.ndax()
-        ndax.apiKey = credential.get_api_key
-        ndax.secret = credential.get_secret
+        ndax.apiKey = credential.decrypt(todecrypt='apiKey')
+        ndax.secret = credential.decrypt(todecrypt='secret')
         ndax.uid = credential.uid
         ndax.login = credential.unername
-        ndax.password = credential.get_password
-        ndax.twofa = credential.get_twofa
+        ndax.password = credential.decrypt(todecrypt='password')
+        ndax.twofa = credential.decrypt(todecrypt='twofa')
         ndax.enableRateLimit = False
+        ndax.requiredCredentials
         try:
             ndax.sign_in()
             info = ndax.fetchBalance()
@@ -29,9 +30,8 @@ def balance(credential=None):
         except:
             balance = 'Unavailable'
     elif trader == 'Coinbase':
-
-        api_key = credential.get_api_key
-        secret = credential.get_secret
+        api_key = credential.decrypt(todecrypt='apiKey')
+        secret = credential.decrypt(todecrypt='secret')
         api_secret = f"-----BEGIN EC PRIVATE KEY-----\n{secret}\n-----END EC PRIVATE KEY-----\n"
         jwt_uri = jwt_generator.format_jwt_uri("GET", "/api/v3/brokerage/accounts")
         jwt_token = jwt_generator.build_rest_jwt(jwt_uri, api_key, api_secret)

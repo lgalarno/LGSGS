@@ -35,21 +35,18 @@ class TraderCredentials(models.Model):
     def __str__(self):
         return f'{str(self.user)} - {self.trader}'
 
-    @property
-    def get_password(self):
-        return decrypt(self.password)
-
-    @property
-    def get_twofa(self):
-        return decrypt(self.twofa)
-
-    @property
-    def get_api_key(self):
-        return decrypt(self.api_key)
-
-    @property
-    def get_secret(self):
-        return decrypt(self.secret)
+    def decrypt(self, todecrypt=None):
+        if todecrypt == 'password':
+            td = self.password
+        elif todecrypt == 'twofa':
+            td = self.twofa
+        elif todecrypt == 'apiKey':
+            td = self.api_key
+        elif todecrypt == 'secret':
+            td = self.secret
+        else:
+            return False
+        return decrypt(td)
 
 
 @receiver(models.signals.pre_save, sender=TraderCredentials)
