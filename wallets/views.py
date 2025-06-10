@@ -7,11 +7,11 @@ from django.views.generic import DeleteView, DetailView
 
 from decimal import Decimal
 
-from accounts.models import TraderCredentials
+# from accounts.models import TraderCredentials
 from wallets.models import Wallet, Profit, Ticker
 
 from assets.backend import get_refresh_info
-from wallets.backend import balance
+from wallets.backend import get_balance
 
 # Create your views here.
 
@@ -46,7 +46,7 @@ def wallets(request):
                                 ).quantize(Decimal("1.00"))
         tc = current_wallet.credentials
         if tc:
-            b = balance(credential=tc)
+            b = get_balance(credential=tc)
         else:
             b = current_wallet.balance
     else:

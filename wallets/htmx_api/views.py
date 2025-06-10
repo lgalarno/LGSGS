@@ -10,7 +10,7 @@ from wallets.models import Wallet, Profit, Transaction, TradingPlatform, Ticker
 
 from assets.backend import current_price, get_refresh_info, update_prices
 from assets.models import Asset
-from wallets.backend import balance
+from wallets.backend import get_balance
 
 
 def ticker_list(request, pk):
@@ -99,7 +99,7 @@ def wallet_detail(request, pk):
     wallet.save()
     tc = wallet.credentials
     if tc:
-        b = balance(credential=tc)
+        b = get_balance(credential=tc)
     else:
         b = wallet.balance
     context = {

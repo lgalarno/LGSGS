@@ -6,7 +6,7 @@ from coinbase import jwt_generator
 from decimal import Decimal
 
 
-def balance(credential=None):
+def get_balance(credential=None):
     balance = False
     trader = credential.trader.name
     if trader == 'NDAX':
