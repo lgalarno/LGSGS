@@ -1,7 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.dispatch import receiver
-# from django.db.models import Sum
 
 from accounts.backend import encrypt, decrypt
 from wallets.models import TradingPlatform

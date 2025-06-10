@@ -47,6 +47,8 @@ def wallets(request):
         tc = current_wallet.credentials
         if tc:
             b = balance(credential=tc)
+        else:
+            b = current_wallet.balance
     else:
         current_wallet = None
         total_profits = 0

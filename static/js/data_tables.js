@@ -1,13 +1,10 @@
-htmx.onLoad(function() {
-    /////////////////////////////////////////////////////////////
-    // DataTable
-    /////////////////////////////////////////////////////////////
-
-    $('#table_book').DataTable({
+$(function() {
+     $('#table_book').DataTable({
         // columnDefs: [
         //     { orderable: false,
         //         targets: -1 }
         //     ],
+        responsive: true,
         searching: true,
         bPaginate: true,
         pageLength: 25,
@@ -35,9 +32,12 @@ htmx.onLoad(function() {
             "infoThousands": " ",
             "search": "Rechercher :",
             "thousands": " "
-        },
+        }
     });
 
+    /////////////////////////////////////////////////////////////
+    // DataTable
+    /////////////////////////////////////////////////////////////
     $('#table_list').DataTable({
         columnDefs: [
             { orderable: false,
@@ -108,13 +108,5 @@ htmx.onLoad(function() {
         },
     select: true,
     });
-    document.body.addEventListener('htmx:afterRequest', function(evt) {
-        DataTable.ajax.reload(function() {
-            htmx.process('#table_list');
-            htmx.process('#table_pages');
-        }, false)
-        // table_pagesDataTable.ajax.reload(function() {
-        //     htmx.process('#table_pages');
-        // }, false)
-    });
+
  })

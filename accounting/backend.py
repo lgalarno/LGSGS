@@ -129,7 +129,8 @@ def crypto_book(wallet, mindate_filter=None, maxdate_filter=None, export=False):
                                   classes="table table-striped",
                                   justify="left",
                                   table_id="table_book",
-                                  na_rep='')
+                                  na_rep='',
+                                  float_format=lambda x: f'{x:10.6g}')
     else:
         mindate, maxdate = None, None
         final_df = "<p>Rien à afficher.</p>"
@@ -169,7 +170,6 @@ def crypto_for_taxes(wallet, mindate_filter=None, maxdate_filter=None, export=Fa
                 (tbl['number_id'] == n) & (tbl['type'] == "VENTE"), ['avg_price', 'quantity', 'date', 'fees']]
             achats = tbl.loc[
                 (tbl['number_id'] == n) & (tbl['type'] == "ACHAT"), ['avg_price', 'date', 'crypto', 'fees']]
-
             crypto_item = achats['crypto'].item()
             date_achat_item = achats['date'].item()
             prix_achat_item = achats['avg_price'].item()
@@ -272,7 +272,7 @@ def disnat_books(wallet, mindate_filter=None, maxdate_filter=None, export=False)
         if not export:
             df = df.to_html(index=False,
                                   #border=0,
-                                  classes="table table-striped",
+                                  classes="table table-striped mt-3",
                                   justify="left",
                                   table_id="table_book",
                                   na_rep='')

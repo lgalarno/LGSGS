@@ -5,7 +5,7 @@ from django.utils import timezone
 
 from decimal import Decimal
 
-from wallets.forms import WalletForm, TransactionForm, TradingPlatformForm, TickerForm
+from wallets.forms import WalletForm, TransactionForm, TradingPlatformForm, TickerForm, TransferForm
 from wallets.models import Wallet, Profit, Transaction, TradingPlatform, Ticker
 
 from assets.backend import current_price, get_refresh_info, update_prices
@@ -101,7 +101,7 @@ def wallet_detail(request, pk):
     if tc:
         b = balance(credential=tc)
     else:
-        b = None
+        b = wallet.balance
     context = {
         "title": "wallet-detail",
         'balance': b,
@@ -112,26 +112,26 @@ def wallet_detail(request, pk):
     return render(request, 'wallets/partials/wallet-detail.html', context)
 
 
-# def transfer(request, pk):
-#     wallet = get_object_or_404(Wallet, pk=pk)
-#     form = TransferForm(request.POST or None, initial={'wallet': wallet})
-#     context = {
-#         "title": "transfer",
-#         'wallet': wallet
-#     }
-#     if request.method == "POST":
-#         if form.is_valid():
-#             instance = form.save(commit=False)
-#             w = instance.wallet
-#             w.balance = w.balance + instance.amount
-#             w.save()
-#             instance.save()
-#             context["wallet"] = w
-#             response = HttpResponse()
-#             response["HX-Redirect"] = reverse("wallets:wallets")
-#             return response
-#     context["form"] = form
-#     return render(request, 'wallets/partials/transfer-form-modal.html', context)
+def transfer(request, pk):
+    wallet = get_object_or_404(Wallet, pk=pk)
+    form = TransferForm(request.POST or None, initial={'wallet': wallet})
+    context = {
+        "title": "transfer",
+        'wallet': wallet
+    }
+    if request.method == "POST":
+        if form.is_valid():
+            instance = form.save(commit=False)
+            w = instance.wallet
+            w.balance = w.balance + instance.amount
+            w.save()
+            instance.save()
+            context["wallet"] = w
+            response = HttpResponse()
+            response["HX-Redirect"] = reverse("wallets:wallets")
+            return response
+    context["form"] = form
+    return render(request, 'wallets/partials/transfer-form-modal.html', context)
 
 
 def buy(request, pk):
