@@ -139,6 +139,9 @@ class Ticker(models.Model):
     name = models.CharField(max_length=255, null=True, blank=True)
     type = models.CharField(max_length=20, choices=TYPE, default=TYPE[0][0])
 
+    class Meta:
+        ordering = ['symbol']
+
     def __str__(self):
         return self.symbol
 
