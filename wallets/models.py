@@ -162,6 +162,9 @@ class Wallet(models.Model):
     last_view = models.CharField(max_length=16, null=True, blank=True)
     last_viewed = models.DateTimeField(default=timezone.now)
 
+    class Meta:
+        ordering = ['name']
+
     def __str__(self):
         return f"{str(self.user)}-{self.name}"  # str(self.user)
 

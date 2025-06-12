@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models.signals import pre_save, post_save
+from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.shortcuts import reverse
 

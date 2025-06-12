@@ -319,7 +319,7 @@ def asset_list(request, pk):
                 pk_str: now.isoformat()
             }
         assets_updated_time = now
-    if (now - assets_updated_time).total_seconds() > 60:
+    if (now - assets_updated_time).total_seconds() > 120:
         update_prices(assets)
     request.session["update"] = 'true'  # mock to update session because of using dict
     context = {
