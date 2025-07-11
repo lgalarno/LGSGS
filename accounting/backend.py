@@ -43,6 +43,8 @@ def csv_to_book(file, wallet=None, headers=None, last_stored_element_date=None):
     try:
         for line in lines:
             fields = line.split(",")
+            if fields == ['']:  # last line empty
+                break
             if wallet_type == "equity":
                 date_de_transaction = None if fields[0] == '' else datetime.datetime.strptime(fields[0], '%Y-%m-%d').date()
                 date_de_reglement = datetime.datetime.strptime(fields[1], '%Y-%m-%d').date()
