@@ -46,6 +46,7 @@ def csv_to_book(file, wallet=None, headers=None, last_stored_element_date=None):
             if fields == ['']:  # last line empty
                 break
             if wallet_type == "equity":
+                fields = ['' if f == '-' else f for f in fields]  # in Disnat, sometimes '-' is used instead of empty
                 date_de_transaction = None if fields[0] == '' else datetime.datetime.strptime(fields[0], '%Y-%m-%d').date()
                 date_de_reglement = datetime.datetime.strptime(fields[1], '%Y-%m-%d').date()
                 type_de_transaction = fields[2]
@@ -84,7 +85,7 @@ def csv_to_book(file, wallet=None, headers=None, last_stored_element_date=None):
                     price=float(fields[5]),
                     fees=float(fields[6]),  # Transformed in $ in the model
                 )
-            newdata.save()
+            #newdata.save()
     except Exception as e:
         return False, f"Un problème est survenu: {e}. Voir la ligne: {fields}"
     return True, mess

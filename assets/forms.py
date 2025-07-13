@@ -62,11 +62,11 @@ class AssetForm(forms.ModelForm):
         fields = ['date', 'description', 'quantity', 'price', 'margin', 'monitor']
 
         labels = {
-            "date": "Date purchased",
+            "date": "Date acheté",
             "description": "Description",
-            "quantity": "Quantity",
-            "price": "Price",
-            "margin": "Profit margin",
+            "quantity": "Quantité",
+            "price": "Prix",
+            "margin": "Marge de profit",
         }
         widgets = {
             'date': forms.DateInput(attrs={"type": "date"}),
