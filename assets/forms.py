@@ -99,11 +99,11 @@ class AssetUpdateForm(forms.ModelForm):
 
         labels = {
             # "ticker": "Ticker/Symbol",
-            "fees_per_unit": "Marge de profit",
             "quantity": "Quantité",
             'price': 'prix',
+            'fees_per_unit': 'frais par unité',
             "date": "Date d'achat",
-            "margin": "Profit margin",
+            "margin": "Marge de profit",
             'monitor': "Suivre",
             'emailed':  'email envoyé'
         }

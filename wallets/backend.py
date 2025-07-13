@@ -28,7 +28,7 @@ def get_balance(credential=None):
                 if free:
                     balance = Decimal(free).quantize(Decimal("1.00"))
         except:
-            balance = 'Unavailable'
+            balance = 'Pas disponible'
     elif trader == 'Coinbase':
         api_key = credential.decrypt(todecrypt='apiKey')
         secret = credential.decrypt(todecrypt='secret')
@@ -51,7 +51,7 @@ def get_balance(credential=None):
                 if balance_str:
                     balance = Decimal(float(balance_str)).quantize(Decimal("1.00"))
         except:
-            balance = 'Unavailable'
+            balance = 'Pas disponible'
     return balance
 
 
