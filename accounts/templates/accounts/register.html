@@ -9,12 +9,12 @@
             {% if not request.user.is_authenticated %}
                 <form method='POST'>{% csrf_token %}
                     {{ form.as_p }}
-                    <button type="submit" class="btn btn-primary"> Register </button>
+                    <button type="submit" class="btn btn-primary"> Créer </button>
                 </form>
                 <br>
-                <p>Already have an account? Please <a href='{% url "accounts:login" %}'>Log in</a></p>
+                <p>Vous avez déjà un compte? SVP <a href='{% url "accounts:login" %}'>Log in</a></p>
             {% else %}
-                <p>You're already logged in and cannot register. Would you like to <a href='{% url "accounts:logout" %}'>log out</a>?</p>
+                <p>Vous êtes déjà logged in et ne pouvez pas créer de compte. Voulez-vous <a href='{% url "accounts:logout" %}'>log out</a>?</p>
             {% endif %}
         </div>
     </div>

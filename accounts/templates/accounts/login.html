@@ -15,9 +15,9 @@
                     <button type="submit" class="btn btn-primary"> Log in  </button>
                 </form>
                 <br>
-                <p>Need an account? Please <a href={% url 'accounts:register' %}>Register</a></p>
+                <p>Besoin d'un compte? SVP <a href={% url 'accounts:register' %}>créer un compte</a></p>
             {% else %}
-                <p>You're already logged in. Would you like to <a href='{% url 'accounts:logout' %}'>logout</a>?</p>
+                <p>Vous êtes déjà logged in. Voulez-vous <a href='{% url 'accounts:logout' %}'>logout</a>?</p>
             {% endif %}
         </div>
     </div>

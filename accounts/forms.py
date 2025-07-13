@@ -5,23 +5,23 @@ from .models import User  #, TraderCredentials
 
 
 class CustomUserCreationForm(forms.Form):
-    username = forms.CharField(label='Enter Username', min_length=3, max_length=150)
-    email = forms.EmailField(label='Enter email')
-    password1 = forms.CharField(label='Enter password', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput)
+    username = forms.CharField(label="Entrer nom d'usager", min_length=3, max_length=150)
+    email = forms.EmailField(label='Entrer email')
+    password1 = forms.CharField(label='Entrer mot de passe', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Confirmer mot de passe', widget=forms.PasswordInput)
 
     def clean_username(self):
         username = self.cleaned_data['username'].lower()
         r = User.objects.filter(username=username)
         if r.count():
-            raise ValidationError("Username already exists")
+            raise ValidationError("Nom d'usager existe déjà")
         return username
 
     def clean_email(self):
         email = self.cleaned_data['email'].lower()
         r = User.objects.filter(email=email)
         if r.count():
-            raise ValidationError("Email already exists")
+            raise ValidationError("Email existe déjà")
         return email
 
     def clean_password2(self):
@@ -29,7 +29,7 @@ class CustomUserCreationForm(forms.Form):
         password2 = self.cleaned_data.get('password2')
 
         if password1 and password2 and password1 != password2:
-            raise ValidationError("Password don't match")
+            raise ValidationError("Mot de passe pas identique")
 
         return password2
 

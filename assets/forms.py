@@ -62,11 +62,12 @@ class AssetForm(forms.ModelForm):
         fields = ['date', 'description', 'quantity', 'price', 'margin', 'monitor']
 
         labels = {
-            "date": "Date acheté",
+            "date": "Date d'achat",
             "description": "Description",
             "quantity": "Quantité",
             "price": "Prix",
             "margin": "Marge de profit",
+            'monitor': "Suivre"
         }
         widgets = {
             'date': forms.DateInput(attrs={"type": "date"}),
@@ -98,9 +99,13 @@ class AssetUpdateForm(forms.ModelForm):
 
         labels = {
             # "ticker": "Ticker/Symbol",
-            "fees_per_unit": "Fees per unit",
-            "date": "Date purchased",
+            "fees_per_unit": "Marge de profit",
+            "quantity": "Quantité",
+            'price': 'prix',
+            "date": "Date d'achat",
             "margin": "Profit margin",
+            'monitor': "Suivre",
+            'emailed':  'email envoyé'
         }
         widgets = {
             'date': forms.DateInput(attrs={"type": "date"}),

@@ -24,7 +24,7 @@ class TradingPlatformForm(forms.ModelForm):
         name = cleaned_data.get('name')
         qs = TradingPlatform.objects.filter(name=name).first()
         if qs:
-            self.add_error("name", "Trader already exists")
+            self.add_error("name", "Trader existe déjà")
         return cleaned_data
 
 
@@ -34,7 +34,7 @@ class TickerForm(forms.ModelForm):
         fields = ['symbol', 'name', 'type']
 
         labels = {
-            "symbol": "Ticker/Symbol",
+            "symbol": "Ticker/Symbôle",
         }
         widgets = {
             'name': forms.HiddenInput(),
@@ -46,14 +46,14 @@ class TickerForm(forms.ModelForm):
         type = cleaned_data.get('type')
         qs = Ticker.objects.filter(symbol=symbol).first()
         if qs:
-            self.add_error("symbol", "Symbol already exists")
+            self.add_error("symbol", "Symbôle existe déjà")
         else:
             name = ticker_name(symbol, type)
             if name:
                 self.cleaned_data['name'] = name
                 self.cleaned_data['symbol'] = symbol
             else:
-                self.add_error("symbol", "Symbol does not exist or please, be more specific")
+                self.add_error("symbol", "Symbôle n'existe pas ou SVP, soyez plous specifique")
         return cleaned_data
 
 
@@ -69,7 +69,9 @@ class TransferForm(forms.ModelForm):
         fields = ['type', 'amount', 'description', 'date', 'wallet']
 
         labels = {
-            "date": "Date transferred",
+            "date": "Date de transfert",
+            'amount': 'Montant',
+            'wallet': 'Porte-feuille',
         }
         widgets = {
             'date': forms.DateInput(attrs={"type": "date"}),
