@@ -339,7 +339,7 @@ class Transaction(models.Model):
 class Profit(models.Model):
     transaction_bought = models.ForeignKey(to=Transaction, related_name='bought', on_delete=models.CASCADE)
     transaction_sold = models.ForeignKey(to=Transaction, related_name='sold', on_delete=models.CASCADE)
-    profit = models.DecimalField(max_digits=14, decimal_places=2, validators=[MinValueValidator(0.0)])
+    profit = models.DecimalField(max_digits=14, decimal_places=2)
     timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
 
     def __str__(self):
