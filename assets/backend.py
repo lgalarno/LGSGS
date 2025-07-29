@@ -4,6 +4,7 @@ from django.utils import timezone
 from dateutil.relativedelta import relativedelta
 from django_celery_beat.models import PeriodicTask
 
+from assets.models import Asset
 
 import ccxt
 import yfinance as yf
@@ -76,8 +77,8 @@ def current_price(symbol, crypto, *args, **kwargs):
 
 
 def update_prices(qs=None):
-    # if not qs:
-    #     qs = Asset.objects.all()
+    if not qs:  # automatic update task
+        qs = Asset.objects.all()
     if qs:
         for asset in qs:
             t = asset.transaction
