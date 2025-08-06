@@ -7,6 +7,7 @@ from django.utils import timezone
 
 from decimal import Decimal
 
+from wallets.backend import get_balance
 from assets.models import Asset
 
 # Create your models here.
@@ -158,6 +159,7 @@ class Wallet(models.Model):
     name = models.CharField(max_length=120)
     trader = models.ForeignKey(to=TradingPlatform, related_name='wallet', on_delete=models.CASCADE, null=True, blank=True)
     balance = models.DecimalField(max_digits=10, decimal_places=2)
+    balance_date = models.DateField(default=timezone.now)
     asset = models.ManyToManyField(to=Asset, related_name='wallet', blank=True)
     last_view = models.CharField(max_length=16, null=True, blank=True)
     last_viewed = models.DateTimeField(default=timezone.now)
@@ -186,6 +188,17 @@ class Wallet(models.Model):
         except:
             tc = None
         return tc
+
+
+@receiver(models.signals.post_save, sender=Wallet)
+def update_balance(sender, instance, created, *args, **kwargs):
+    tc = instance.credentials
+    if tc:
+        balance = get_balance(credential=tc)
+        if not balance == 'Pas disponible':
+            instance.balance = balance
+            instance.balance_date = timezone.now().date()
+            instance.save()
 
 
 class Transfer(models.Model):

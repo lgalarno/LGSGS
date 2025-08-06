@@ -44,17 +44,17 @@ def wallets(request):
         profits = Profit.objects.filter(transaction_bought__wallet=current_wallet)
         total_profits = Decimal(profits.aggregate(Sum('profit', default=0))['profit__sum']
                                 ).quantize(Decimal("1.00"))
-        tc = current_wallet.credentials
-        if tc:
-            b = get_balance(credential=tc)
-        else:
-            b = current_wallet.balance
+        # tc = current_wallet.credentials
+        # if tc:
+        #     b = get_balance(credential=tc)
+        # else:
+        #     b = current_wallet.balance
     else:
         current_wallet = None
         total_profits = 0
 
     context = {'wallets': user_wallets,
-               'balance': b,
+               'balance': current_wallet.balance,
                'wallet': current_wallet,
                'total_profits': total_profits,
                **get_refresh_info()

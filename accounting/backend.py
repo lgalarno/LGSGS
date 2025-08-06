@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.db.models import Sum
 
 from accounting.models import DisnatBook, CryptoBook
 
@@ -85,7 +86,14 @@ def csv_to_book(file, wallet=None, headers=None, last_stored_element_date=None):
                     price=float(fields[5]),
                     fees=float(fields[6]),  # Transformed in $ in the model
                 )
-            #newdata.save()
+            newdata.save()
+        # update wallet balance from the new data if wallet_type == "equity"
+        if wallet_type == "equity":
+            book = DisnatBook.objects.filter(wallet=wallet)
+            wallet.balance = Decimal(book.aggregate(Sum('montant_de_l_operation', default=0))['montant_de_l_operation__sum']
+                    ).quantize(Decimal("1.00"))
+            wallet.balance_date = book.order_by('-date_de_reglement').first().date_de_reglement
+            wallet.save()
     except Exception as e:
         return False, f"Un problème est survenu: {e}. Voir la ligne: {fields}"
     return True, mess

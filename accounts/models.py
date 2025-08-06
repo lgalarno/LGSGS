@@ -13,11 +13,6 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
-    #
-    # def total_balance(self):
-    #     wallets = self.wallet_set.all()
-    #     return wallets.aggregate(Sum('balance', default=0))['balance__sum']
-#
 
 
 class TraderCredentials(models.Model):
