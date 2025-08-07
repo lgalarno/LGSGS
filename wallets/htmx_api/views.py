@@ -97,14 +97,8 @@ def wallet_detail(request, pk):
                             ).quantize(Decimal("1.00"))
     wallet.last_viewed = timezone.now()
     wallet.save()
-    # tc = wallet.credentials
-    # if tc:
-    #     b = get_balance(credential=tc)
-    # else:
-    #     b = wallet.balance
     context = {
         "title": "wallet-detail",
-        'balance': wallet.balance,
         'wallet': wallet,
         'total_profits': total_profits,
         **get_refresh_info()

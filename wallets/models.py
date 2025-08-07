@@ -192,8 +192,10 @@ class Wallet(models.Model):
 
 @receiver(models.signals.post_save, sender=Wallet)
 def update_balance(sender, instance, created, *args, **kwargs):
+    print('update_balance')
     tc = instance.credentials
-    if tc:
+    today = timezone.now().date()
+    if tc and (today != instance.balance_date):
         balance = get_balance(credential=tc)
         if not balance == 'Pas disponible':
             instance.balance = balance
