@@ -47,7 +47,11 @@
 
             <div id="wallet_frame" class="container-fluid">
                 {% include 'messages_display.html' %}
-                {% include 'wallets/partials/wallet-detail.html' %}
+                {% if wallets %}
+                    {% include 'wallets/partials/wallet-detail.html' %}
+                {% else %}
+                    <p>Vous n'avez aucun porte-feuille.</p>
+                {% endif %}
             </div>
 
             <br>

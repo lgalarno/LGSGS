@@ -8,7 +8,7 @@ from wallets.models import TradingPlatform
 
 
 class User(AbstractUser):
-    website = models.URLField(blank=True, verbose_name='External portfolio url')
+    website = models.URLField(blank=True)  # , verbose_name='Adresse web du portfolio')
     country = models.CharField(max_length=120, blank=True, null=True)
 
     def __str__(self):

@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import  UpdateView
 
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, CustomUserChangeForm, CustomAuthenticationForm
 from .models import User
 
 # Create your views here.
@@ -26,13 +26,13 @@ def register_view(request):
 
 def login_view(request):
     if request.method == "POST":
-        form = AuthenticationForm(request, data=request.POST)
+        form = CustomAuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
             login(request, user)
             return redirect("wallets:wallets")
     else:
-        form = AuthenticationForm(request)
+        form = CustomAuthenticationForm(request)
     context = {
         "form": form
     }
@@ -48,7 +48,12 @@ def logout_view(request):
 
 class EditProfile(LoginRequiredMixin, UpdateView):
     model = User
-    fields = ['email', 'username', 'first_name', 'last_name', 'country', 'website']
+    form_class = CustomUserChangeForm
+    # fields = ['email', 'username', 'first_name', 'last_name', 'country', 'website']
+    # labels = {
+    #     'email': 'Adresse email',
+    #     'username': "Nom d'usager",
+    # }
     template_name = 'accounts/edit_profile.html'
     success_message = 'Changes successfully saved'
 

@@ -1,13 +1,22 @@
 from django import forms
+from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
 
 from .models import User  #, TraderCredentials
 
 
+class CustomAuthenticationForm(AuthenticationForm):
+    def __init__(self, request=None, *args, **kwargs):
+        super().__init__(request=None, *args, **kwargs)
+        self.fields['username'].label = "Nom d'usager"
+        self.fields['password'].label = 'Mot de passe'
+
+
+
 class CustomUserCreationForm(forms.Form):
-    username = forms.CharField(label="Entrer nom d'usager", min_length=3, max_length=150)
-    email = forms.EmailField(label='Entrer email')
-    password1 = forms.CharField(label='Entrer mot de passe', widget=forms.PasswordInput)
+    username = forms.CharField(label="Nom d'usager", min_length=3, max_length=150)
+    email = forms.EmailField(label='email')
+    password1 = forms.CharField(label='Mot de passe', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Confirmer mot de passe', widget=forms.PasswordInput)
 
     def clean_username(self):
@@ -29,7 +38,7 @@ class CustomUserCreationForm(forms.Form):
         password2 = self.cleaned_data.get('password2')
 
         if password1 and password2 and password1 != password2:
-            raise ValidationError("Mot de passe pas identique")
+            raise ValidationError("Mots de passe pas identiques")
 
         return password2
 
@@ -40,6 +49,24 @@ class CustomUserCreationForm(forms.Form):
             self.cleaned_data['password1']
         )
         return user
+
+
+class CustomUserChangeForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['email', 'username', 'first_name', 'last_name', 'country', 'website']
+        labels = {
+            'email': 'Adresse email',
+            'username': "Nom d'usager",
+            'first_name': 'Prénom',
+            'last_name': "Nom",
+            'country': 'Pays',
+            'website': "Adresse web du portfolio",
+        }
+        help_texts = {
+            'username': "",
+        }
+
 
 #
 # class TraderCredentialsForm(forms.Form):
