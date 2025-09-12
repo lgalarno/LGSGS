@@ -1,8 +1,8 @@
 from django.contrib import messages
 from django.contrib.auth import login, logout
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse_lazy
 from django.views.generic import  UpdateView
 
 from .forms import CustomUserCreationForm, CustomUserChangeForm, CustomAuthenticationForm
@@ -49,13 +49,8 @@ def logout_view(request):
 class EditProfile(LoginRequiredMixin, UpdateView):
     model = User
     form_class = CustomUserChangeForm
-    # fields = ['email', 'username', 'first_name', 'last_name', 'country', 'website']
-    # labels = {
-    #     'email': 'Adresse email',
-    #     'username': "Nom d'usager",
-    # }
     template_name = 'accounts/edit_profile.html'
-    success_message = 'Changes successfully saved'
+    success_url = reverse_lazy('accounts:EditProfile')
 
     def get_object(self):
         obj = get_object_or_404(User, pk=self.request.user.pk)
@@ -69,8 +64,3 @@ class EditProfile(LoginRequiredMixin, UpdateView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'edit profile'
         return context
-
-    def get_success_url(self):
-        return '/account/edit/'
-
-
