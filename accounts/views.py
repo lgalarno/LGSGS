@@ -16,7 +16,7 @@ def register_view(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Account created successfully. You must log in to view your profile.')
+            messages.success(request, 'Votre compte a été créé avec succès. Vous devez vous identifier pour voir votre profil.')
             return redirect('accounts:login')
     else:
         form = CustomUserCreationForm()
@@ -62,7 +62,7 @@ class EditProfile(LoginRequiredMixin, UpdateView):
         return obj
 
     def form_valid(self, form):
-        messages.success(self.request, f"Your profile has been saved.")  # {m}")
+        messages.success(self.request, f"Votre profil a été changé.")  # {m}")
         return super().form_valid(form)
 
     def get_context_data(self, *args, **kwargs):
