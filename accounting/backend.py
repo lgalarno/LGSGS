@@ -137,7 +137,7 @@ def crypto_book(wallet, mindate_filter=None, maxdate_filter=None, export=False):
         else:
             final_df = df.to_html(index=False,
                                   #border=0,
-                                  classes="table table-striped",
+                                  classes="table table-striped table_book",
                                   justify="left",
                                   table_id="table_book",
                                   na_rep='',
@@ -247,7 +247,7 @@ def crypto_for_taxes(wallet, mindate_filter=None, maxdate_filter=None, export=Fa
         else:
             final_df = df_summary.to_html(index=False,
                                           #border=0,
-                                          classes="table table-striped",
+                                          classes="table table-striped table_book",
                                           justify="left",
                                           table_id="table_book",
                                           na_rep='',
@@ -283,7 +283,7 @@ def disnat_books(wallet, mindate_filter=None, maxdate_filter=None, export=False)
         if not export:
             df = df.to_html(index=False,
                                   #border=0,
-                                  classes="table table-striped mt-3",
+                                  classes="table table-striped mt-3 table_book",
                                   justify="left",
                                   table_id="table_book",
                                   na_rep='')
