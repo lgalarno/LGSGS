@@ -69,7 +69,7 @@ def current_price(symbol, crypto, *args, **kwargs):
             })
             price = ndax.fetch_ticker(symbol).get('last')
         else:
-            data = yf.Ticker(symbol).history(period="1d")
+            data = yf.Ticker(symbol).history(period="3d")  # 3d because sometime, days are skipped?
             price = data["Close"].iloc[-1]
     except:
         price = 0

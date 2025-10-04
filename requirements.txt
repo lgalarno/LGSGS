@@ -35,15 +35,15 @@ gunicorn==22.0.0
 html5lib==1.1
 idna==3.7
 kombu==5.3.7
-lxml==5.2.1
+lxml
 multidict==6.1.0
 multitasking==0.0.11
-mysqlclient==2.2.4
-numpy==1.26.4
+mysqlclient
+numpy
 packaging==24.0
-pandas==2.2.2
+pandas
 peewee==3.17.3
-pillow==10.3.0
+pillow
 platformdirs==4.3.6
 prompt-toolkit==3.0.43
 propcache==0.2.0
@@ -52,7 +52,7 @@ pycparser==2.22
 PyJWT==2.10.1
 python-crontab==3.0.0
 python-dateutil==2.9.0.post0
-python-dotenv==1.0.1
+python-dotenv
 pytz==2024.1
 redis==5.0.4
 requests==2.31.0
@@ -67,4 +67,4 @@ wcwidth==0.2.13
 webencodings==0.5.1
 websockets==13.1
 yarl==1.17.2
-yfinance==0.2.58
+yfinance

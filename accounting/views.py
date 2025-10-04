@@ -243,5 +243,6 @@ def crypto_for_taxes_view(request, pk):
     return render(request, 'accounting/crypto-for-taxes.html', context)
 
 
+# TODO export
 def export(request):
     return HttpResponse("export")
