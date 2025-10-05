@@ -1,4 +1,4 @@
-$(function() {
+htmx.onLoad(function() {
      $('#table_book').DataTable({
         // columnDefs: [
         //     { orderable: false,
@@ -13,6 +13,18 @@ $(function() {
         processing: true,
         deferRender: true,
         bDestroy: true,
+
+     layout: {
+        topStart: {
+            buttons: [
+                {
+                    extend: 'csvHtml5',
+                    text: 'sauver en csv',
+                    charset: 'utf-8',
+                }
+                ]
+        }
+    },
         language: {
             "info": "Affichage de _START_ à _END_ sur _TOTAL_ entrées",
             "infoEmpty": "Affichage de 0 à 0 sur 0 entrées",
@@ -110,3 +122,4 @@ $(function() {
     });
 
  })
+DataTable.Buttons.defaults.dom.button.className = 'btn btn-sm btn-primary';

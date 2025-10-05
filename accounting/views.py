@@ -14,6 +14,7 @@ from wallets.models import Wallet
 # Create your views here.
 
 
+#TODO nettoyer si export en csv de datatable fonctionne bien
 @require_http_methods(["POST"])
 def upload(request, pk):
     file = request.FILES.get('formFile')
@@ -101,27 +102,27 @@ def book_disnat(request, pk):
             maxdate_filter = datetime.datetime.strptime(request.POST.get('end'), '%Y-%m-%d').date()
             book, summary, mindate, maxdate = disnat_books(wallet, mindate_filter=mindate_filter,
                                                maxdate_filter=maxdate_filter)
-        elif task == 'export':
-            mindate_filter = datetime.datetime.strptime(request.POST.get('start'), '%Y-%m-%d').date()
-            maxdate_filter = datetime.datetime.strptime(request.POST.get('end'), '%Y-%m-%d').date()
-            book, summary, mindate, maxdate = disnat_books(wallet, mindate_filter=mindate_filter,
-                                               maxdate_filter=maxdate_filter, export=True)
-
-            path = os.path.join(settings.MEDIA_ROOT, 'files_temp', request.user.username)
-            url_path = f'{settings.MEDIA_URL}/files_temp/'
-            datesuffix = datetime.datetime.now().strftime('%Y-%m-%d')
-            filename = f'{wallet.name}-{datesuffix}.csv'
-            filepath = smart_str(f'{path}/{filename}')
-            book.to_csv(filepath, index=False, header=True)
-            response = HttpResponse(
-                open(filepath, 'rb').read(),
-                content_type='text/csv',
-                headers={'Content-Disposition': f"attachment; filename = {filename.split(sep='/')[-1]}"},
-            )
-            response["HX-Redirect"] = smart_str(f'{url_path}{filename}')
-            # if os.path.isfile(filepath):
-            #     os.remove(filepath)
-            return response
+        # elif task == 'export':
+        #     mindate_filter = datetime.datetime.strptime(request.POST.get('start'), '%Y-%m-%d').date()
+        #     maxdate_filter = datetime.datetime.strptime(request.POST.get('end'), '%Y-%m-%d').date()
+        #     book, summary, mindate, maxdate = disnat_books(wallet, mindate_filter=mindate_filter,
+        #                                        maxdate_filter=maxdate_filter, export=True)
+        #
+        #     path = os.path.join(settings.MEDIA_ROOT, 'files_temp', request.user.username)
+        #     url_path = f'{settings.MEDIA_URL}/files_temp/'
+        #     datesuffix = datetime.datetime.now().strftime('%Y-%m-%d')
+        #     filename = f'{wallet.name}-{datesuffix}.csv'
+        #     filepath = smart_str(f'{path}/{filename}')
+        #     book.to_csv(filepath, index=False, header=True)
+        #     response = HttpResponse(
+        #         open(filepath, 'rb').read(),
+        #         content_type='text/csv',
+        #         headers={'Content-Disposition': f"attachment; filename = {filename.split(sep='/')[-1]}"},
+        #     )
+        #     response["HX-Redirect"] = smart_str(f'{url_path}{filename}')
+        #     # if os.path.isfile(filepath):
+        #     #     os.remove(filepath)
+        #     return response
 
     else:
         book, summary, mindate, maxdate = disnat_books(wallet, mindate_filter=None,
@@ -155,26 +156,26 @@ def book_crypto(request, pk):
             mindate_filter = datetime.datetime.strptime(request.POST.get('start'), '%Y-%m-%d').date()
             maxdate_filter = datetime.datetime.strptime(request.POST.get('end'), '%Y-%m-%d').date()
             book, mindate, maxdate = crypto_book(wallet, mindate_filter=mindate_filter,
-                                               maxdate_filter=maxdate_filter)
-        elif task == 'export':
-            mindate_filter = datetime.datetime.strptime(request.POST.get('start'), '%Y-%m-%d').date()
-            maxdate_filter = datetime.datetime.strptime(request.POST.get('end'), '%Y-%m-%d').date()
-            book, mindate, maxdate = crypto_book(wallet, mindate_filter=mindate_filter,
-                                               maxdate_filter=maxdate_filter, export=True)
-
-            path = os.path.join(settings.MEDIA_ROOT, 'files_temp')
-            url_path = f'{settings.MEDIA_URL}/files_temp/'
-            datesuffix = datetime.datetime.now().strftime('%Y-%m-%d')
-            filename = f'{wallet.name}-{datesuffix}.csv'
-            filepath = smart_str(f'{path}/{filename}')
-            book.to_csv(filepath, index=False, header=True)
-            response = HttpResponse(
-                open(filepath, 'rb').read(),
-                content_type='text/csv',
-                headers={'Content-Disposition': f"attachment; filename = {filename.split(sep='/')[-1]}"},
-            )
-            response["HX-Redirect"] = smart_str(f'{url_path}{filename}')
-            return response
+                                                 maxdate_filter=maxdate_filter)
+        # elif task == 'export':
+        #     mindate_filter = datetime.datetime.strptime(request.POST.get('start'), '%Y-%m-%d').date()
+        #     maxdate_filter = datetime.datetime.strptime(request.POST.get('end'), '%Y-%m-%d').date()
+        #     book, mindate, maxdate = crypto_book(wallet, mindate_filter=mindate_filter,
+        #                                        maxdate_filter=maxdate_filter, export=True)
+        #
+        #     path = os.path.join(settings.MEDIA_ROOT, 'files_temp')
+        #     url_path = f'{settings.MEDIA_URL}/files_temp/'
+        #     datesuffix = datetime.datetime.now().strftime('%Y-%m-%d')
+        #     filename = f'{wallet.name}-{datesuffix}.csv'
+        #     filepath = smart_str(f'{path}/{filename}')
+        #     book.to_csv(filepath, index=False, header=True)
+        #     response = HttpResponse(
+        #         open(filepath, 'rb').read(),
+        #         content_type='text/csv',
+        #         headers={'Content-Disposition': f"attachment; filename = {filename.split(sep='/')[-1]}"},
+        #     )
+        #     response["HX-Redirect"] = smart_str(f'{url_path}{filename}')
+        #     return response
 
     else:
         book, mindate, maxdate = crypto_book(wallet, mindate_filter=None,
@@ -207,24 +208,24 @@ def crypto_for_taxes_view(request, pk):
             maxdate_filter = datetime.datetime.strptime(request.POST.get('end'), '%Y-%m-%d').date()
             book, mindate, maxdate, net_profits = crypto_for_taxes(wallet, mindate_filter=mindate_filter,
                                                                    maxdate_filter=maxdate_filter)
-        elif task == 'export':
-            mindate_filter = datetime.datetime.strptime(request.POST.get('start'), '%Y-%m-%d').date()
-            maxdate_filter = datetime.datetime.strptime(request.POST.get('end'), '%Y-%m-%d').date()
-            book, mindate, maxdate, net_profits = crypto_for_taxes(wallet, mindate_filter=mindate_filter,
-                                                                   maxdate_filter=maxdate_filter, export=True)
-            path = os.path.join(settings.MEDIA_ROOT, 'files_temp')
-            url_path = f'{settings.MEDIA_URL}/files_temp/'
-            datesuffix = datetime.datetime.now().strftime('%Y-%m-%d')
-            filename = f'{wallet.name}-impôts-{datesuffix}.csv'
-            filepath = smart_str(f'{path}/{filename}')
-            book.to_csv(filepath, index=False, header=True)
-            response = HttpResponse(
-                open(filepath, 'rb').read(),
-                content_type='text/csv',
-                headers={'Content-Disposition': f"attachment; filename = {filename.split(sep='/')[-1]}"},
-            )
-            response["HX-Redirect"] = smart_str(f'{url_path}{filename}')
-            return response
+        # elif task == 'export':
+        #     mindate_filter = datetime.datetime.strptime(request.POST.get('start'), '%Y-%m-%d').date()
+        #     maxdate_filter = datetime.datetime.strptime(request.POST.get('end'), '%Y-%m-%d').date()
+        #     book, mindate, maxdate, net_profits = crypto_for_taxes(wallet, mindate_filter=mindate_filter,
+        #                                                            maxdate_filter=maxdate_filter, export=True)
+        #     path = os.path.join(settings.MEDIA_ROOT, 'files_temp')
+        #     url_path = f'{settings.MEDIA_URL}/files_temp/'
+        #     datesuffix = datetime.datetime.now().strftime('%Y-%m-%d')
+        #     filename = f'{wallet.name}-impôts-{datesuffix}.csv'
+        #     filepath = smart_str(f'{path}/{filename}')
+        #     book.to_csv(filepath, index=False, header=True)
+        #     response = HttpResponse(
+        #         open(filepath, 'rb').read(),
+        #         content_type='text/csv',
+        #         headers={'Content-Disposition': f"attachment; filename = {filename.split(sep='/')[-1]}"},
+        #     )
+        #     response["HX-Redirect"] = smart_str(f'{url_path}{filename}')
+        #     return response
     else:
         book, mindate, maxdate, net_profits = crypto_for_taxes(wallet,
                                                                mindate_filter=None, maxdate_filter=None)
@@ -241,8 +242,3 @@ def crypto_for_taxes_view(request, pk):
                'link_from': "crypto-for-taxes"
                }
     return render(request, 'accounting/crypto-for-taxes.html', context)
-
-
-# TODO export
-def export(request):
-    return HttpResponse("export")
