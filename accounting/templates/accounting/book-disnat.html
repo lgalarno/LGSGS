@@ -14,6 +14,7 @@
                 {% include 'accounting/partials/disnat-summary-table.html' %}
             {% endif %}
             {% include 'accounting/partials/book-table.html' %}
+            {{ csvfilename|json_script:"csvfilename" }}
         {% else %}
             <p>Rien dans la banque de données.</p>
         {% endif %}

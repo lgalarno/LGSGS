@@ -1,4 +1,12 @@
 htmx.onLoad(function() {
+
+    const csvfilenameel = document.getElementById('csvfilename')
+    if (csvfilenameel !== null) {
+        csvfilename = JSON.parse(csvfilenameel.textContent);
+    } else {
+        csvfilename = 'tableau';
+    }
+
      $('#table_book').DataTable({
         // columnDefs: [
         //     { orderable: false,
@@ -20,6 +28,7 @@ htmx.onLoad(function() {
                 {
                     extend: 'csvHtml5',
                     text: 'sauver en csv',
+                    filename: csvfilename,
                     charset: 'utf-8',
                 }
                 ]

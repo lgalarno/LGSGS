@@ -11,6 +11,7 @@
         {% if book %}
             <small>* Noter que les frais sont tous en $</small>
             {% include 'accounting/partials/book-table.html' %}
+            {{ csvfilename|json_script:"csvfilename" }}
         {% else %}
             <p>Rien dans la banque de données.</p>
         {% endif %}

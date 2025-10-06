@@ -22,6 +22,7 @@
                     </div>
                 </div>
             </div>
+            {{ csvfilename|json_script:"csvfilename" }}
         {% else %}
             <p>Rien dans la banque de données.</p>
         {% endif %}

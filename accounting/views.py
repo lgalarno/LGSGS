@@ -139,7 +139,8 @@ def book_disnat(request, pk):
                'maxdate_filter': maxdate_filter,
                'mindate_filter': mindate_filter,
                'summary': summary,
-               'link_from': "book-disnat"
+               'link_from': "book-disnat",
+               'csvfilename': wallet.name,
                }
     return render(request, 'accounting/book-disnat.html', context)
 
@@ -192,6 +193,7 @@ def book_crypto(request, pk):
                'maxdate': maxdate,
                'maxdate_filter': maxdate_filter,
                'mindate_filter': mindate_filter,
+               'csvfilename': wallet.name,
                'link_from': "book-crypto"
                }
     return render(request, 'accounting/book-crypto.html', context)
@@ -239,6 +241,7 @@ def crypto_for_taxes_view(request, pk):
                'maxdate_filter': maxdate_filter,
                'mindate_filter': mindate_filter,
                'net_profits': net_profits,
+               'csvfilename': f'{wallet.name}-impôts',
                'link_from': "crypto-for-taxes"
                }
     return render(request, 'accounting/crypto-for-taxes.html', context)
