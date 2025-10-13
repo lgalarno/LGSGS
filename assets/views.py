@@ -94,7 +94,7 @@ class AssetUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_form_kwargs(self):
         kwargs = super(AssetUpdateView, self).get_form_kwargs()
-        kwargs['is_crypto'] = self.object.transaction.is_crypto
+        kwargs['is_crypto'] = self.object.transaction.ticker.type == "crypto"
         return kwargs
 
 
