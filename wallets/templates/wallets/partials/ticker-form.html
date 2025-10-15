@@ -1,7 +1,7 @@
 {% load crispy_forms_tags %}
 
 <form class="modal-content"
-      hx-post="{% url 'wallets:wallets-htmx-api:ticker_create' %}"
+      hx-post="{% url 'wallets:wallets-htmx-api:ticker_create' pk=wallet.id %}"
       hx-trigger="submit"
       id="form">    
     {% csrf_token %}

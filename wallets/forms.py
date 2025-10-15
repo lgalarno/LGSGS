@@ -40,6 +40,21 @@ class TickerForm(forms.ModelForm):
             'name': forms.HiddenInput(),
         }
 
+    def __init__(self, *args, **kwargs):
+        tickertype = kwargs.pop('tickertype', None)
+        super().__init__(*args, **kwargs)
+        self.initial['type'] = tickertype
+        self.fields['type'].widget = forms.HiddenInput()
+        #  Créer fake field seulement pour meilleur visuel car si field disabled, les données ne sont pas transmises
+        #  quand la form est soumise
+        self.fields['tickertype'] = forms.ChoiceField(choices=(
+            ('crypto', 'Crypto'),
+            ('equity', 'Action'),
+        ))
+        self.initial['tickertype'] = tickertype
+        self.fields['tickertype'].disabled = True
+        self.fields['tickertype'].label = 'Type'
+
     def clean(self):
         cleaned_data = super().clean()
         symbol = cleaned_data.get('symbol').upper()

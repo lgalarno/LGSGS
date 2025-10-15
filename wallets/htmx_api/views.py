@@ -21,8 +21,10 @@ def ticker_list(request, pk):
     return render(request, 'wallets/partials/ticker-select.html', context)
 
 
-def ticker_create(request):
-    form = TickerForm(request.POST or None)
+def ticker_create(request, pk):
+    wallet = get_object_or_404(Wallet, pk=pk)
+    tickertype = wallet.trader.type
+    form = TickerForm(request.POST or None, tickertype=tickertype)
     if request.method == "POST":
         if form.is_valid():
             form.save()
@@ -30,6 +32,7 @@ def ticker_create(request):
     context = {
         "title": "new-ticker",
         'form_ticker': form,
+        'wallet': wallet,
     }
     return render(request, 'wallets/partials/ticker-form.html', context)
 
