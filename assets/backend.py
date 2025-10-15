@@ -28,12 +28,43 @@ def get_refresh_info() -> dict:
     }
 
 
+def ticker_info(symbol, tickertype):
+    """
+    :param symbol: ticker symbol, tickertype: as of Ticker model: crypto or equity
+    :return: if the ticker symbol exists, return its name; otherwise, return None
+    """
+    #TODO only support ndax and Yahoo finance tickers. Add others based on exchange?
+    tinfo = {'error': False,
+             'name': None,
+             'symbol': symbol.upper()
+             }
+    if tickertype == 'crypto':
+        ndax = ccxt.ndax({
+            'enableRateLimit': True,
+            # 'apiKey': NDAX_API_KEY
+        })
+        markets = ndax.load_markets()
+        if tinfo['symbol'] in list(markets.keys()):
+            tinfo['name'] = markets[tinfo['symbol']].get('base')
+        else:
+            tinfo['error'] = True
+    else:
+        ticker = yf.Ticker(tinfo['symbol'])
+        info = ticker.info
+        if info.get('symbol') is not None:
+            tinfo['name'] = info.get('shortName')
+        else:
+            tinfo['error'] = True
+    return tinfo
+
+
 def ticker_name(symbol, tickertype):
     """
     :param symbol: ticker symbol, tickertype: as of Ticker model: crypto or equity
     :return: if the ticker symbol exists, return its name; otherwise, return None
     """
     #TODO only support ndax and Yahoo finance tickers. Add others based on exchange?
+    name = None
     if tickertype == 'crypto':
         ndax = ccxt.ndax({
             'enableRateLimit': True,
@@ -41,17 +72,14 @@ def ticker_name(symbol, tickertype):
         })
         markets = ndax.load_markets()
         if symbol in list(markets.keys()):
-            return markets[symbol].get('base')
+            name = markets[symbol].get('base')
     else:
         ticker = yf.Ticker(symbol)
-        # info = None
-        try:
-            info = ticker.info
-            name = info['shortName']
-            return name
-        except:
-            return None
-    return None
+        info = ticker.info
+        print(info.get('symbol'))
+        if info.get('symbol') is not None:
+            name = info.get('shortName')
+    return name
 
 
 def current_price(symbol, type, *args, **kwargs):

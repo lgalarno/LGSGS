@@ -6,7 +6,7 @@ from crispy_forms.layout import Layout, Row, Column, Hidden, Field
 
 from .models import Wallet, Transaction, TradingPlatform, Ticker, Transfer
 
-from assets.backend import ticker_name
+from assets.backend import ticker_name, ticker_info
 
 
 class TradingPlatformForm(forms.ModelForm):
@@ -48,10 +48,10 @@ class TickerForm(forms.ModelForm):
         if qs:
             self.add_error("symbol", "Symbôle existe déjà")
         else:
-            name = ticker_name(symbol, type)
-            if name:
-                self.cleaned_data['name'] = name
-                self.cleaned_data['symbol'] = symbol
+            tinfo = ticker_info(symbol, type)
+            if not tinfo['error']:
+                self.cleaned_data['name'] = tinfo['name']
+                self.cleaned_data['symbol'] = tinfo['symbol']
             else:
                 self.add_error("symbol", "Symbôle n'existe pas ou SVP, soyez plous specifique")
         return cleaned_data
