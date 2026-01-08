@@ -339,7 +339,8 @@ def summary_disnat(book, mindate_filter=None, maxdate_filter=None) -> dict:
         profits = profits_agg['montant_total'].sum()
 
     type_de_transaction = list(type_agg.index)
-    cotisation = type_agg.loc['COTISATION'].item() if 'COTISATION' in type_de_transaction else 0
+    cotisations = type_agg.loc['COTISATION'].item() if 'COTISATION' in type_de_transaction else 0
+    retraits = type_agg.loc['RÉSILIATION'].item() if 'RÉSILIATION' in type_de_transaction else 0
     interets = type_agg.loc['INTÉRÊTS'].item() if 'INTÉRÊTS' in type_de_transaction else 0
     index_dividendes = [i for i in range(len(type_de_transaction)) if
                         type_de_transaction[i].startswith('DIVIDENDE')]
@@ -353,13 +354,13 @@ def summary_disnat(book, mindate_filter=None, maxdate_filter=None) -> dict:
 
     days_book = last_date - first_date
     if full:
-        if days_total.days > 0 and cotisation > 0:
-            percent_profits_today = Decimal((profits + retenue_impots + dividendes + interets) * 100 * 365 / (days_total.days * cotisation)).quantize(Decimal("1.00"))
+        if days_total.days > 0 and cotisations > 0:
+            percent_profits_today = Decimal((profits + retenue_impots + dividendes + interets) * 100 * 365 / (days_total.days * cotisations)).quantize(Decimal("1.00"))
         else:
             percent_profits_today = Decimal(0).quantize(Decimal("1.00"))
-        if days_book.days > 0 and cotisation > 0:
+        if days_book.days > 0 and cotisations > 0:
             percent_profits_book = Decimal((profits + retenue_impots + dividendes + interets) * 100 * 365 / (
-                    days_book.days * cotisation)).quantize(Decimal("1.00"))
+                    days_book.days * cotisations)).quantize(Decimal("1.00"))
         else:
             percent_profits_book = Decimal(0).quantize(Decimal("1.00"))
     else:
@@ -373,7 +374,8 @@ def summary_disnat(book, mindate_filter=None, maxdate_filter=None) -> dict:
         "days_book": days_book.days,
         "days_total": days_total.days,
         'balance': balance,
-        'cotisation': cotisation,
+        'cotisations': cotisations,
+        'retraits': retraits,
         'interets': interets,
         'dividendes':dividendes,
         'retenue_impots': retenue_impots,
