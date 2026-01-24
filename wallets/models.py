@@ -144,7 +144,7 @@ class Ticker(models.Model):
         ordering = ['symbol']
 
     def __str__(self):
-        return self.symbol
+        return f"{self.symbol}-{self.type}"
 
     def get_absolute_url(self):
         if self.type == 'equity':
@@ -250,7 +250,7 @@ class Transaction(models.Model):
 
     def __str__(self):
         #return f"{self.date}-{self.type}-{self.ticker.symbol}"
-        return f"{self.date}"
+        return f"{self.date}-{self.ticker}"
 
     def get_absolute_url(self):
         return reverse('wallets:wallets-htmx-api:transaction', kwargs={'pk': self.pk})
