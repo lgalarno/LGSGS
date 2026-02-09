@@ -341,6 +341,7 @@ def summary_disnat(book, mindate_filter=None, maxdate_filter=None) -> dict:
     type_de_transaction = list(type_agg.index)
     cotisations = type_agg.loc['COTISATION'].item() if 'COTISATION' in type_de_transaction else 0
     retraits = type_agg.loc['RÉSILIATION'].item() if 'RÉSILIATION' in type_de_transaction else 0
+    investissement = cotisations - retraits
     interets = type_agg.loc['INTÉRÊTS'].item() if 'INTÉRÊTS' in type_de_transaction else 0
     index_dividendes = [i for i in range(len(type_de_transaction)) if
                         type_de_transaction[i].startswith('DIVIDENDE')]
@@ -376,6 +377,7 @@ def summary_disnat(book, mindate_filter=None, maxdate_filter=None) -> dict:
         'balance': balance,
         'cotisations': cotisations,
         'retraits': retraits,
+        'investissement': investissement,
         'interets': interets,
         'dividendes':dividendes,
         'retenue_impots': retenue_impots,

@@ -1,20 +1,24 @@
 <div class="row mb-4" style="border-style: solid; border-width: 1px; border-radius: 10px; padding: 10px;">
 
-    <div class="col-md-2"> <h4>Sommaire</h4></div>
+    <div class="col-md-2"><h4>Sommaire</h4></div>
     <div class="col-md-4">
-        <p>Période: {{ summary.first_date|date:"d/m/Y" }} au {{ summary.last_date|date:"d/m/Y" }} ({{ summary.days_book }} jours)</p>
+        <p>du {{ summary.first_date|date:"d/m/Y" }} au {{ summary.last_date|date:"d/m/Y" }} ({{ summary.days_book }} jours)</p>
         <br>
         <div class="table-responsive">
             <table class="table table-borderless" id="">
                 <tbody>
-                        <tr >
-                            <td>Cotisations:</td>
-                            <td>{{ summary.cotisations }}$</td>
-                        </tr>
-                        <tr style="border-bottom: thin solid;" >
-                            <td>Retraits:</td>
-                            <td>{{ summary.retraits }}$</td>
-                        </tr>
+                    <tr >
+                        <td>Cotisations:</td>
+                        <td>{{ summary.cotisations }}$</td>
+                    </tr>
+                    <tr style="border-bottom: thin solid;" >
+                        <td>Retraits:</td>
+                        <td>{{ summary.retraits }}$</td>
+                    </tr>
+                    <tr style="border-bottom: thin solid;" >
+                        <td><strong>Investissement:</strong></td>
+                        <td><strong>{{ summary.investissement }}$</strong></td>
+                    </tr>
                     <tr>
                         <td>Profits:</td>
                         <td>{{ summary.profits }}$</td>
