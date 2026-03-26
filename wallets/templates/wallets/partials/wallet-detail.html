@@ -10,7 +10,7 @@
                     </a>
                 {% endif %}
                 <a style="display: inline;"
-                   hx-get="{% url 'wallets:wallets-htmx-api:wallet_update' pk=wallet.id %}"
+                   hx-get="{% url 'wallets:wallets-htmx-requests:wallet_update' pk=wallet.id %}"
                    hx-target="#form-dialog"
                 >
                      {{ wallet.name }}
@@ -30,44 +30,44 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
                         <a class="nav-link"
-                           hx-get="{% url 'wallets:wallets-htmx-api:asset-list' pk=wallet.id %}"
+                           hx-get="{% url 'wallets:wallets-htmx-requests:asset-list' pk=wallet.id %}"
                            hx-indicator="#indicator"
                            hx-target="#htmx_frame">
                             Actifs</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link"
-                           hx-get="{% url 'wallets:wallets_htmx-api:transfer' pk=wallet.id %}"
+                           hx-get="{% url 'wallets:wallets_htmx-requests:transfer' pk=wallet.id %}"
                            hx-target="#form-dialog">
                         Transfer d'argent</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link"
-                           hx-get="{% url 'wallets:wallets-htmx-api:buy' pk=wallet.id %}"
+                           hx-get="{% url 'wallets:wallets-htmx-requests:buy' pk=wallet.id %}"
                            hx-target="#htmx_frame">
                             Acheter</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link"
-                           hx-get="{% url 'wallets:wallets-htmx-api:profit-list' pk=wallet.id %}"
+                           hx-get="{% url 'wallets:wallets-htmx-requests:profit-list' pk=wallet.id %}"
                            hx-target="#htmx_frame">
                             Profits</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link"
-                           hx-get="{% url 'wallets:wallets-htmx-api:transaction-list' pk=wallet.id %}"
+                           hx-get="{% url 'wallets:wallets-htmx-requests:transaction-list' pk=wallet.id %}"
                            hx-target="#htmx_frame">
                             Historique des transactions</a>
                     </li>
 {#                    <li class="nav-item">#}
 {#                        <a class="nav-link"#}
-{#                           hx-get="{% url 'wallets:wallets-htmx-api:transfer-list' pk=wallet.id %}"#}
+{#                           hx-get="{% url 'wallets:wallets-htmx-requests:transfer-list' pk=wallet.id %}"#}
 {#                           hx-target="#htmx_frame">#}
 {#                            Transfer history</a>#}
 {#                    </li>#}
 {#                    <li class="nav-item">#}
 {#                        <a class="nav-link"#}
-{#                           hx-get="{% url 'wallets:wallets-htmx-api:update'%}"#}
+{#                           hx-get="{% url 'wallets:wallets-htmx-requests:update'%}"#}
 {#                           hx-target="#htmx_frame">#}
 {#                            Update</a>#}
 {#                    </li>#}
@@ -92,7 +92,7 @@
 
 {#                    <li class="nav-item">#}
 {#                        <a class="nav-link"#}
-{#                           hx-get="{% url 'wallets:wallets-htmx-api:wallet_update' pk=wallet.id %}"#}
+{#                           hx-get="{% url 'wallets:wallets-htmx-requests:wallet_update' pk=wallet.id %}"#}
 {#                           hx-target="#form-dialog"#}
 {#                        >#}
 {#                            Edit wallet#}
@@ -113,13 +113,13 @@
     <div id="htmx_frame" class="container-fluid mt-2"
          hx-trigger="load"
           {% if request.session.last_view|dict_key:wallet.id == 'assets' %}
-            hx-get="{% url 'wallets:wallets-htmx-api:asset-list' pk=wallet.id %}"
+            hx-get="{% url 'wallets:wallets-htmx-requests:asset-list' pk=wallet.id %}"
          {% elif request.session.last_view|dict_key:wallet.id  == 'buy' %}
-            hx-get="{% url 'wallets:wallets-htmx-api:buy' pk=wallet.id %}"
+            hx-get="{% url 'wallets:wallets-htmx-requests:buy' pk=wallet.id %}"
          {% elif request.session.last_view|dict_key:wallet.id  == 'profits' %}
-            hx-get="{% url 'wallets:wallets-htmx-api:profit-list' pk=wallet.id %}"
+            hx-get="{% url 'wallets:wallets-htmx-requests:profit-list' pk=wallet.id %}"
          {% elif request.session.last_view|dict_key:wallet.id  == 'transactions' %}
-            hx-get="{% url 'wallets:wallets-htmx-api:transaction-list' pk=wallet.id %}"
+            hx-get="{% url 'wallets:wallets-htmx-requests:transaction-list' pk=wallet.id %}"
          {% elif request.session.last_view|dict_key:wallet.id  == 'book_disnat' %}
             hx-get="{% url 'accounting:book-disnat' pk=wallet.id %}"
           {% elif request.session.last_view|dict_key:wallet.id  == 'book_crypto' %}
@@ -129,13 +129,13 @@
          {% endif %}
 
 {#         {% if wallet.last_view == 'assets' %}#}
-{#            hx-get="{% url 'wallets:wallets-htmx-api:asset-list' pk=wallet.id %}"#}
+{#            hx-get="{% url 'wallets:wallets-htmx-requests:asset-list' pk=wallet.id %}"#}
 {#         {% elif wallet.last_view  == 'buy' %}#}
-{#            hx-get="{% url 'wallets:wallets-htmx-api:buy' pk=wallet.id %}"#}
+{#            hx-get="{% url 'wallets:wallets-htmx-requests:buy' pk=wallet.id %}"#}
 {#         {% elif wallet.last_view  == 'profits' %}#}
-{#            hx-get="{% url 'wallets:wallets-htmx-api:profit-list' pk=wallet.id %}"#}
+{#            hx-get="{% url 'wallets:wallets-htmx-requests:profit-list' pk=wallet.id %}"#}
 {#         {% elif wallet.last_view  == 'transactions' %}#}
-{#            hx-get="{% url 'wallets:wallets-htmx-api:transaction-list' pk=wallet.id %}"#}
+{#            hx-get="{% url 'wallets:wallets-htmx-requests:transaction-list' pk=wallet.id %}"#}
 {#         {% elif wallet.last_view  == 'book_disnat' %}#}
 {#            hx-get="{% url 'accounting:book-disnat' pk=wallet.id %}"#}
 {#          {% elif wallet.last_view  == 'book_crypto' %}#}

@@ -10,5 +10,5 @@ urlpatterns = [
     path('', login_required(views.wallets), name="wallets"),
     path('delete-wallet/<int:pk>/', WalletDeleteView.as_view(), name="delete-wallets"),
     path('ticker-detail/<int:pk>/', TickerDetailView.as_view(), name="detail-ticker"),
-    path('htmx-api/', include('wallets.htmx_api.urls', namespace="wallets-htmx-api")),
+    path('htmx-requests/', include('wallets.htmx-requests.urls', namespace="wallets-htmx-requests")),
 ]

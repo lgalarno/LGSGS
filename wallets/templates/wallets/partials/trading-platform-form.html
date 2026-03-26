@@ -1,7 +1,7 @@
 {% load crispy_forms_tags %}
 
 <form class="modal-content"
-      hx-post="{% url 'wallets:wallets-htmx-api:trading_platform_create' %}"
+      hx-post="{% url 'wallets:wallets-htmx-requests:trading_platform_create' %}"
       hx-trigger="submit"
       hx-encoding="multipart/form-data"
       id="form">

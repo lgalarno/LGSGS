@@ -253,7 +253,7 @@ class Transaction(models.Model):
         return f"{self.date}-{self.ticker}"
 
     def get_absolute_url(self):
-        return reverse('wallets:wallets-htmx-api:transaction', kwargs={'pk': self.pk})
+        return reverse('wallets:wallets-htmx-requests:transaction', kwargs={'pk': self.pk})
 
     # @property
     # def is_crypto(self):

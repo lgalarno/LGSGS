@@ -30,6 +30,7 @@ htmx.onLoad(function() {
                     text: 'sauver en csv',
                     filename: csvfilename,
                     charset: 'utf-8',
+                    bom: true,
                 }
                 ]
         }

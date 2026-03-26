@@ -4,7 +4,7 @@
     <div class="col col-lg-6 default_form">
         <h2>Transfer money</h2>
         <form
-              hx-post="{% url 'wallets:wallets_htmx-api:transfer' pk=wallet.id %}"
+              hx-post="{% url 'wallets:wallets_htmx-requests:transfer' pk=wallet.id %}"
               hx-trigger="submit"
               hx-target="#wallet_frame"
               id="form">

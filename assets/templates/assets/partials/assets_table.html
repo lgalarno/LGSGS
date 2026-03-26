@@ -38,7 +38,7 @@
                     <td style="text-align:right">
                         {% if wallet %}
                             <a title="vendre"
-                               hx-get="{% url 'wallets:wallets-htmx-api:sell' pk=a.id %}"
+                               hx-get="{% url 'wallets:wallets-htmx-requests:sell' pk=a.id %}"
                                hx-target="#htmx_frame">
                                 <i class="bi bi-bank"></i>
                             </a>
@@ -61,9 +61,9 @@
         <i>Prochaine mise à jour {{ update_at }}</i>
         <button class="btn btn-success btn-sm"
                 {% if wallet %}
-                    hx-get="{% url 'wallets:wallets-htmx-api:asset-list' pk=wallet.id %}"
+                    hx-get="{% url 'wallets:wallets-htmx-requests:asset-list' pk=wallet.id %}"
                 {% else %}
-                    hx-get="{% url 'assets:assets-htmx-api:asset-list' %}"
+                    hx-get="{% url 'assets:assets-htmx-requests:asset-list' %}"
                 {% endif %}
             hx-target="#htmx_frame" title="refresh">
             mise à jour maintenant <i class="bi bi-arrow-clockwise"></i>

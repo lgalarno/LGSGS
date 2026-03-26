@@ -4,7 +4,7 @@
     <div class="col col-lg-6 default_form">
         <h2>Acheter</h2>
         <form
-              hx-post="{% url 'wallets:wallets-htmx-api:buy' pk=wallet.id %}"
+              hx-post="{% url 'wallets:wallets-htmx-requests:buy' pk=wallet.id %}"
               hx-trigger="submit"
               hx-target="#htmx_frame"
               id="form">
@@ -16,12 +16,12 @@
                 <div class="col">
                     <div id="ticker-list"
                          hx-trigger="load, tickerListChanged from:body, change from:#trader-input"
-                         hx-get="{% url 'wallets:wallets-htmx-api:ticker-list' pk=wallet.id %}"
+                         hx-get="{% url 'wallets:wallets-htmx-requests:ticker-list' pk=wallet.id %}"
                          hx-target="this">
                     </div>
 
                     <button
-                        hx-get="{% url 'wallets:wallets-htmx-api:ticker_create' pk=wallet.id %}"
+                        hx-get="{% url 'wallets:wallets-htmx-requests:ticker_create' pk=wallet.id %}"
                         hx-target="#form-dialog"
                         hx-trigger="click"
                         class="btn btn-primary btn-sm float-end"><i class="bi bi-plus-circle"> ticker</i>
@@ -30,12 +30,12 @@
 {#                <div class="col col-lg-6">#}
 {#                    <div id="trader-list"#}
 {#                         hx-trigger="load, traderListChanged from:body"#}
-{#                         hx-get="{% url 'wallets:wallets_htmx-api:ticker-list' %}"#}
+{#                         hx-get="{% url 'wallets:wallets_htmx-requests:ticker-list' %}"#}
 {#                         hx-target="this">#}
 {#                    </div>#}
 {##}
 {#                    <button#}
-{#                        hx-get="{% url 'assets:assets-htmx-api:trader_create' %}"#}
+{#                        hx-get="{% url 'assets:assets-htmx-requests:trader_create' %}"#}
 {#                        hx-target="#form-dialog"#}
 {#                        hx-trigger="click"#}
 {#                        class="btn btn-primary btn-sm float-end"><i class="bi bi-plus-circle"> trader</i>#}
@@ -76,7 +76,7 @@
             <a href="{% url 'wallets:wallets' %}" type="button" class="btn btn-secondary">Cancel</a>
 
             <a class="btn btn-primary"
-               hx-post="{% url 'wallets:wallets-htmx-api:buy' pk=wallet.id %}"
+               hx-post="{% url 'wallets:wallets-htmx-requests:buy' pk=wallet.id %}"
                hx-trigger="submit"
                hx-target="#htmx_frame"
             >

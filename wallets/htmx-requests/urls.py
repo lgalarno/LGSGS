@@ -3,7 +3,7 @@ from django.urls import path
 
 from . import views
 
-app_name = 'wallets_htmx-api'
+app_name = 'wallets_htmx-requests'
 
 urlpatterns = [
     path('buy/<int:pk>/', login_required(views.buy), name="buy"),

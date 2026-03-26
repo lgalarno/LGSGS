@@ -4,7 +4,7 @@
         <h2 style="display: inline;">Vendre {{ asset.transaction.ticker.symbol }}</h2>
         <h4>Vous avez {{ asset.quantity }} unités.</h4>
         <form
-              hx-post="{% url 'wallets:wallets-htmx-api:sell' pk=asset.id %}"
+              hx-post="{% url 'wallets:wallets-htmx-requests:sell' pk=asset.id %}"
               hx-trigger="submit"
               hx-target="#wallet_frame"
               id="form">

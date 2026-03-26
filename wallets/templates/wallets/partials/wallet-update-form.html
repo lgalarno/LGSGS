@@ -1,7 +1,7 @@
 {% load crispy_forms_tags %}
 
 <form class="modal-content"
-      hx-post="{% url 'wallets:wallets-htmx-api:wallet_create' %}"
+      hx-post="{% url 'wallets:wallets-htmx-requests:wallet_create' %}"
       hx-trigger="submit"
       id="form">
     
@@ -18,12 +18,12 @@
                 <div class="col">
                     <div id="trader-list"
                          hx-trigger="load, traderListChanged from:body"
-                         hx-get="{% url 'wallets:wallets-htmx-api:trading-platform-list' %}"
+                         hx-get="{% url 'wallets:wallets-htmx-requests:trading-platform-list' %}"
                          hx-target="this">
                     </div>
 
                     <button
-                        hx-get="{% url 'wallets:wallets-htmx-api:trading_platform_create' %}"
+                        hx-get="{% url 'wallets:wallets-htmx-requests:trading_platform_create' %}"
                         hx-target="#form-dialog-lg"
                         hx-trigger="click"
                         class="btn btn-primary btn-sm float-end"><i class="bi bi-plus-circle"> trader</i>
