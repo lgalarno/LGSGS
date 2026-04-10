@@ -1,12 +1,11 @@
-from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import render, HttpResponse, reverse
-from django.utils.encoding import smart_str
 from django.views.decorators.http import require_http_methods
 
 import datetime
-import os
 
+from accounting.classes import DisnatLedger
+from accounting.models import DisnatBook
 from accounting.backend import csv_to_disnat_book, csv_to_crypto_book, disnat_books, crypto_book, crypto_for_taxes
 from wallets.models import Wallet
 
@@ -94,14 +93,14 @@ def book_disnat(request, pk):
     wallet = Wallet.objects.get(pk=pk)
     request.session["last_view"][f'{wallet.pk}'] = 'book_disnat'
     request.session["update"] = 'true'  # mock to update session because of using dict
-    book = []
+    #book = []
     if request.method == 'POST':
-        task = request.POST.get('task')
-        if task == 'refresh':
-            mindate_filter = datetime.datetime.strptime(request.POST.get('start'), '%Y-%m-%d').date()
-            maxdate_filter = datetime.datetime.strptime(request.POST.get('end'), '%Y-%m-%d').date()
-            book, summary, mindate, maxdate = disnat_books(wallet, mindate_filter=mindate_filter,
-                                               maxdate_filter=maxdate_filter)
+        # task = request.POST.get('task')
+        # if task == 'refresh':
+        mindate_filter = datetime.datetime.strptime(request.POST.get('start'), '%Y-%m-%d').date()
+        maxdate_filter = datetime.datetime.strptime(request.POST.get('end'), '%Y-%m-%d').date()
+            # book, summary, mindate, maxdate = disnat_books(wallet, mindate_filter=mindate_filter,
+            #                                   maxdate_filter=maxdate_filter)
         # elif task == 'export':
         #     mindate_filter = datetime.datetime.strptime(request.POST.get('start'), '%Y-%m-%d').date()
         #     maxdate_filter = datetime.datetime.strptime(request.POST.get('end'), '%Y-%m-%d').date()
@@ -122,18 +121,29 @@ def book_disnat(request, pk):
         #     response["HX-Redirect"] = smart_str(f'{url_path}{filename}')
         #     # if os.path.isfile(filepath):
         #     #     os.remove(filepath)
-        #     return response
-
+        #     return respon
     else:
-        book, summary, mindate, maxdate = disnat_books(wallet, mindate_filter=None,
-                                           maxdate_filter=None)
-        if book:
-            mindate_filter = mindate
-            maxdate_filter = maxdate
-        else:
-            mindate_filter, maxdate_filter = None, None
+        mindate_filter, maxdate_filter = None, None
+        # book, summary, mindate, maxdate = disnat_books(wallet, mindate_filter=None,
+        #                                    maxdate_filter=None)
+        # if book:
+        #     mindate_filter = mindate
+        #     maxdate_filter = maxdate
+        # else:
+        #     mindate_filter, maxdate_filter = None, None
+
+    book = DisnatBook.objects.filter(wallet=wallet)
+    df = DisnatLedger(book_values=book.values(), date_min_filter=mindate_filter, date_max_filter=maxdate_filter)
+    summary = df.summary()
+    html_book = df.html_table()
+    mindate = df.first_date
+    maxdate = df.last_date
+    if request.method == 'GET':
+        mindate_filter = mindate
+        maxdate_filter = maxdate
+
     context = {'wallet': wallet,
-               'book': book,
+               'book': html_book,
                'mindate': mindate,
                'maxdate': maxdate,
                'maxdate_filter': maxdate_filter,
