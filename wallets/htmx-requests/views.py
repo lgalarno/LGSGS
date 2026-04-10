@@ -301,8 +301,6 @@ def asset_list(request, pk):
     wallet = get_object_or_404(Wallet, pk=pk)
     pk_str = str(pk)
     assets = Asset.objects.filter(wallet=wallet)
-    for a in assets:
-        print(a.pk)
     request.session["last_view"][f'{wallet.pk}'] = 'assets'
 
     now = timezone.now()
