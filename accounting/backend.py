@@ -13,21 +13,6 @@ DISNAT_HEADERS = settings.DISNAT_HEADERS
 CRYPTO_HEADERS = settings.CRYPTO_HEADERS
 
 
-def csv_to_crypto_book(file, wallet):
-    obj = CryptoBook.objects.filter(wallet=wallet)
-    last_stored_element_date = None if not obj else obj.last().date
-    return csv_to_book(file, wallet=wallet, headers=CRYPTO_HEADERS, last_stored_element_date=last_stored_element_date)
-
-
-def csv_to_disnat_book(file, wallet):
-    """
-    Import data from a csv file to the db
-    """
-    obj = DisnatBook.objects.filter(wallet=wallet)
-    last_stored_element_date = None if not obj else obj.last().date_de_reglement
-    return csv_to_book(file, wallet=wallet, headers=DISNAT_HEADERS, last_stored_element_date=last_stored_element_date)
-
-
 def csv_to_book(file, wallet=None, headers=None, last_stored_element_date=None):
     file_data = file.read().decode("utf-8-sig")
     lines = file_data.split("\r\n")
@@ -123,9 +108,6 @@ def crypto_book(wallet, mindate_filter=None, maxdate_filter=None, export=False):
     if book:
         mindate = book.first().date
         maxdate = book.last().date
-        # if mindate_filter and maxdate_filter:
-        #     book = book.filter(date__gte=mindate_filter,
-        #                        date__lte=maxdate_filter)
         book_values = book.values()
         df = pd.DataFrame.from_records(book_values, exclude=['id', 'wallet_id'])
         df = df.fillna(value=np.nan)
@@ -206,25 +188,6 @@ def crypto_for_taxes(wallet, mindate_filter=None, maxdate_filter=None, export=Fa
                 frais_achat.append(frais_achat_item)
                 frais_vente.append(frais_vente_item)
                 profit_net.append(profit_net_item)
-            # for v in range(len(ventes)):
-            #     date_vente_item = ventes.at[ventes.index[v], 'date']
-            #     if date_vente_item > mindate_filter:
-            #         quantity_item = float(ventes.at[ventes.index[v], 'quantity'])
-            #         prix_vente_item = float(ventes.at[ventes.index[v], 'avg_price'])
-            #         produit_vente_item = Decimal(quantity_item * prix_vente_item).quantize(Decimal("1.00"))
-            #         cout_item = Decimal(quantity_item * prix_achat_item).quantize(Decimal("1.00"))
-            #         profit_item = produit_vente_item - cout_item
-            #         profit_net_item = (quantity_item * (prix_vente_item - prix_achat_item) -
-            #                            ventes.at[ventes.index[v], 'fees'] - frais_achat_item)
-            #         crypto.append(crypto_item)
-            #         quantity_sold.append(quantity_item)
-            #         date_achat.append(date_achat_item)
-            #         date_vente.append(date_vente_item)
-            #         produit_vente.append(produit_vente_item)
-            #         cout.append(cout_item)
-            #         profit.append(profit_item)
-            #         profit_net.append(profit_net_item)
-            #         frais_vente.append(ventes.at[ventes.index[v], 'fees'])
         summary = {
             'Nom': crypto,
             'Quantité vendue': quantity_sold,
@@ -257,133 +220,3 @@ def crypto_for_taxes(wallet, mindate_filter=None, maxdate_filter=None, export=Fa
         mindate, maxdate, net_profits = None, None, None
         final_df = "<p>Rien à afficher.</p>"
     return final_df, mindate, maxdate, net_profits
-
-
-def disnat_books(wallet, mindate_filter=None, maxdate_filter=None, export=False):
-    summary = {}
-    book = DisnatBook.objects.filter(wallet=wallet)
-    if book:
-        mindate = book.first().date_de_reglement
-        maxdate = book.last().date_de_reglement
-
-        # get summary using the full book
-        if export:
-            summary = {}
-        else:
-            summary = summary_disnat(book, mindate_filter=mindate_filter, maxdate_filter=maxdate_filter)
-
-        if mindate_filter and maxdate_filter:
-            book = book.filter(date_de_reglement__gte=mindate_filter,
-                               date_de_reglement__lte=maxdate_filter)
-
-        book_values = book.values()
-        df = pd.DataFrame.from_records(book_values, exclude=['id', 'wallet_id'])
-        df = df.fillna(value=np.nan)
-        df.columns = DISNAT_HEADERS
-        if not export:
-            df = df.to_html(index=False,
-                                  #border=0,
-                                  classes="table table-striped mt-3 table_book",
-                                  justify="left",
-                                  table_id="table_book",
-                                  na_rep='')
-    else:
-        mindate, maxdate = None, None
-        df = ""
-
-    return df, summary, mindate, maxdate
-
-
-def summary_disnat(book, mindate_filter=None, maxdate_filter=None) -> dict:
-    today = datetime.datetime.now().date()
-    book_values = book.values()
-    df = pd.DataFrame.from_records(book_values, exclude=['id', 'wallet_id'])
-    df = df.fillna(value=np.nan)
-    first_date = df.date_de_reglement[0]
-    maxdate = df.date_de_reglement[len(df)-1]
-    mindate = df.date_de_reglement[0]
-
-    # a request update may be the full period. When maxdate_filter is None, then full
-    full = ((mindate == mindate_filter) and (maxdate == maxdate_filter)) or maxdate_filter is None
-    if maxdate_filter and not full:
-        df_to_maxdate = df[df.date_de_reglement.between(mindate, maxdate_filter)].reset_index()
-        df_filtered = df[df.date_de_reglement.between(mindate_filter, maxdate_filter)].reset_index()
-        first_date = df_filtered.date_de_reglement[0]
-        last_date = df_to_maxdate.date_de_reglement[len(df_to_maxdate) - 1]
-        # to calculate cotisation, interets, dividendes,retenue_impots
-        type_agg = df_filtered.groupby('type_de_transaction').agg(montant_de_l_operation=
-                                                                  ('montant_de_l_operation', 'sum'))
-        balance = None  # set to None, so that % not shown in the view in disnat-summary-table.html
-        #######################################
-        # Calculate profits
-        #######################################
-        df_numero_id = df_to_maxdate.groupby('numero_id').filter(lambda x: len(x) > 1)
-        profits_agg_temp = df_numero_id.groupby('numero_id', as_index=False).agg(
-            montant_total=('montant_de_l_operation', 'sum'),
-            date=('date_de_reglement', 'last')
-        )
-        profits_agg = profits_agg_temp[profits_agg_temp.date.between(mindate_filter, maxdate_filter)].reset_index()
-        profits = profits_agg['montant_total'].sum()
-    else:
-        balance = df['montant_de_l_operation'].sum()
-        last_date = df['date_de_reglement'][len(df) - 1]
-        # to calculate cotisation, interets, dividendes,retenue_impots
-        type_agg = df.groupby('type_de_transaction').agg(montant_total=('montant_de_l_operation', 'sum'))
-        #######################################
-        # Calculate profits
-        #######################################
-        # filter for items with numero_id appearing more than once - should be at least 1 ACHAT
-        filtered_df = df.groupby('numero_id').filter(lambda x: len(x) > 1)
-
-        profits_agg = filtered_df.groupby('numero_id').agg(montant_total=('montant_de_l_operation', 'sum'))
-        profits = profits_agg['montant_total'].sum()
-
-    type_de_transaction = list(type_agg.index)
-    cotisations = type_agg.loc['COTISATION'].item() if 'COTISATION' in type_de_transaction else 0
-    retraits = type_agg.loc['RÉSILIATION'].item() if 'RÉSILIATION' in type_de_transaction else 0
-    investissement = cotisations + retraits
-    interets = type_agg.loc['INTÉRÊTS'].item() if 'INTÉRÊTS' in type_de_transaction else 0
-    index_dividendes = [i for i in range(len(type_de_transaction)) if
-                        type_de_transaction[i].startswith('DIVIDENDE')]
-    dividendes = type_agg.iloc[index_dividendes].sum().item()
-    retenue_impots = type_agg.loc["RETENUE D'IMPÔT"].item() if "RETENUE D'IMPÔT" in type_de_transaction else 0
-
-    total_revenue = profits + retenue_impots + dividendes + interets
-
-    # Calculate % profits if full table, not for partial
-    days_total = today - first_date
-
-    days_book = last_date - first_date
-    if full:
-        if days_total.days > 0 and cotisations > 0:
-            percent_profits_today = Decimal((profits + retenue_impots + dividendes + interets) * 100 * 365 / (days_total.days * cotisations)).quantize(Decimal("1.00"))
-        else:
-            percent_profits_today = Decimal(0).quantize(Decimal("1.00"))
-        if days_book.days > 0 and cotisations > 0:
-            percent_profits_book = Decimal((profits + retenue_impots + dividendes + interets) * 100 * 365 / (
-                    days_book.days * cotisations)).quantize(Decimal("1.00"))
-        else:
-            percent_profits_book = Decimal(0).quantize(Decimal("1.00"))
-    else:
-        percent_profits_book = None
-        percent_profits_today = None
-
-    summary = {
-        'first_date': first_date,
-        'last_date': last_date,
-        "today": today,
-        "days_book": days_book.days,
-        "days_total": days_total.days,
-        'balance': balance,
-        'cotisations': cotisations,
-        'retraits': retraits,
-        'investissement': investissement,
-        'interets': interets,
-        'dividendes':dividendes,
-        'retenue_impots': retenue_impots,
-        'profits': profits,
-        'percent_profits_today': percent_profits_today,
-        'percent_profits_book': percent_profits_book,
-        'total_revenue': total_revenue
-    }
-    return summary
