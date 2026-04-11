@@ -5,9 +5,9 @@ from django.views.decorators.http import require_http_methods
 
 import datetime
 
-from accounting.classes import DisnatLedger
+from accounting.classes import DisnatLedger, CryptoLedger
 from accounting.models import DisnatBook, CryptoBook
-from accounting.backend import crypto_book, crypto_for_taxes, csv_to_book
+from accounting.backend import csv_to_book
 from wallets.models import Wallet
 
 DISNAT_HEADERS = settings.DISNAT_HEADERS
@@ -54,14 +54,19 @@ def book_disnat(request, pk):
         mindate_filter, maxdate_filter = None, None
 
     book = DisnatBook.objects.filter(wallet=wallet)
-    df = DisnatLedger(book_values=book.values(), date_min_filter=mindate_filter, date_max_filter=maxdate_filter)
-    summary = df.summary()
-    html_book = df.html_table()
-    mindate = df.first_date
-    maxdate = df.last_date
-    if request.method == 'GET':
-        mindate_filter = mindate
-        maxdate_filter = maxdate
+    if book:
+        df = DisnatLedger(book_values=book.values(), date_min_filter=mindate_filter, date_max_filter=maxdate_filter)
+        summary = df.summary()
+        html_book = df.html_table()
+        mindate = df.first_date
+        maxdate = df.last_date
+        if request.method == 'GET':
+            mindate_filter = mindate
+            maxdate_filter = maxdate
+    else:
+        html_book = []
+        summary = {}
+        mindate, maxdate = None, None
 
     context = {'wallet': wallet,
                'book': html_book,
@@ -70,7 +75,6 @@ def book_disnat(request, pk):
                'maxdate_filter': maxdate_filter,
                'mindate_filter': mindate_filter,
                'summary': summary,
-               'link_from': "book-disnat",
                'csvfilename': wallet.name,
                }
     return render(request, 'accounting/book-disnat.html', context)
@@ -81,32 +85,34 @@ def book_crypto(request, pk):
     wallet = Wallet.objects.get(pk=pk)
     request.session["last_view"][f'{wallet.pk}'] = 'book_crypto'
     request.session["update"] = 'true'  # mock to update session because of using dict
-    book = []
     if request.method == 'POST':
-        task = request.POST.get('task')
-        if task == 'refresh':
-            mindate_filter = datetime.datetime.strptime(request.POST.get('start'), '%Y-%m-%d').date()
-            maxdate_filter = datetime.datetime.strptime(request.POST.get('end'), '%Y-%m-%d').date()
-            book, mindate, maxdate = crypto_book(wallet, mindate_filter=mindate_filter,
-                                                 maxdate_filter=maxdate_filter)
-
+        mindate_filter = datetime.datetime.strptime(request.POST.get('start'), '%Y-%m-%d').date()
+        maxdate_filter = datetime.datetime.strptime(request.POST.get('end'), '%Y-%m-%d').date()
+        book = CryptoBook.objects.filter(wallet=wallet, date__gte=mindate_filter, date__lte=maxdate_filter)
     else:
-        book, mindate, maxdate = crypto_book(wallet, mindate_filter=None,
-                                             maxdate_filter=None)
-        if book:
-            mindate_filter = mindate
-            maxdate_filter = maxdate
-        else:
-            mindate_filter, maxdate_filter = None, None
+        book = CryptoBook.objects.filter(wallet=wallet)
+
+    if book:
+        df = CryptoLedger(book_values=book.values())
+        html_book = df.html_table()
+        mindate = book.first().date
+        maxdate = book.last().date
+    else:
+        html_book = None
+        mindate, maxdate = None, None
+        mindate_filter, maxdate_filter = None, None
+
+    if request.method == 'GET':
+        mindate_filter = mindate
+        maxdate_filter = maxdate
 
     context = {'wallet': wallet,
-               'book': book,
+               'book': html_book,
                'mindate': mindate,
                'maxdate': maxdate,
                'maxdate_filter': maxdate_filter,
                'mindate_filter': mindate_filter,
                'csvfilename': wallet.name,
-               'link_from': "book-crypto"
                }
     return render(request, 'accounting/book-crypto.html', context)
 
@@ -115,28 +121,34 @@ def crypto_for_taxes_view(request, pk):
     wallet = Wallet.objects.get(pk=pk)
     request.session["last_view"][f'{wallet.pk}'] = 'crypto_taxes'
     request.session["update"] = 'true'  # mock to update session because of using dict
-    if request.method == 'POST':
-        task = request.POST.get('task')
-        if task == 'refresh':
+    book = CryptoBook.objects.filter(wallet=wallet)
+    if book:
+        maxdate = book.last().date
+        mindate = book.first().date
+        if request.method == 'POST':
             mindate_filter = datetime.datetime.strptime(request.POST.get('start'), '%Y-%m-%d').date()
             maxdate_filter = datetime.datetime.strptime(request.POST.get('end'), '%Y-%m-%d').date()
-            book, mindate, maxdate, net_profits = crypto_for_taxes(wallet, mindate_filter=mindate_filter,
-                                                                   maxdate_filter=maxdate_filter)
+            book = book.filter(date__lte=maxdate_filter)
+        else:
+            mindate_filter = mindate
+            maxdate_filter = maxdate
+        df = CryptoLedger(book_values=book.values(), date_min_filter=mindate_filter, date_max_filter=maxdate_filter, taxes=True)
+        html_book = df.table_taxes()
+        net_profits = df.net_profits
 
     else:
-        book, mindate, maxdate, net_profits = crypto_for_taxes(wallet,
-                                                               mindate_filter=None, maxdate_filter=None)
-        mindate_filter = mindate
-        maxdate_filter = maxdate
+        html_book = None
+        mindate, maxdate = None, None
+        mindate_filter, maxdate_filter = None, None
+        net_profits = None
 
     context = {'wallet': wallet,
-               'book': book,
+               'book': html_book,
                'mindate': mindate,
                'maxdate': maxdate,
                'maxdate_filter': maxdate_filter,
                'mindate_filter': mindate_filter,
                'net_profits': net_profits,
                'csvfilename': f'{wallet.name}-impôts',
-               'link_from': "crypto-for-taxes"
                }
     return render(request, 'accounting/crypto-for-taxes.html', context)

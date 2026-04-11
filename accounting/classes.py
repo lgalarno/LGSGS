@@ -8,6 +8,114 @@ import numpy as np
 import pandas as pd
 
 
+class CryptoLedger:
+    col_headers = ["Type", "Date", "ID", "Crypto", "Quantité", "Prix", "Frais"]
+
+    def __init__(self, book_values:QuerySet = None, date_min_filter:date = None, date_max_filter:date = None, taxes:bool = False):
+        self.df = pd.DataFrame.from_records(book_values, exclude=['id', 'wallet_id'])
+        self.df = self.df.fillna(value=np.nan)
+        if taxes:
+            self.date_min_filter = date_min_filter
+            self.summary_table = self._summary_table()
+            self.net_profits = self._net_profits()
+            self.total_profits = self._total_profits()
+        else:
+            self.net_profits = None
+            self.total_profits = None
+            self.summary_table = None
+
+    def html_table(self):
+            self.df.columns = self.col_headers
+            return self.df.to_html(index=False,
+                              #border=0,
+                              classes="table table-striped table_book",
+                              justify="left",
+                              table_id="table_book",
+                              na_rep='',
+                              float_format=lambda x: f'{x:10.6g}')
+
+    def _summary_table(self):
+        tbl = self.df.groupby(['type', 'number_id', 'date'], as_index=False).agg(avg_price=('price', 'mean'),
+                                                                                 quantity=('quantity', 'sum'),
+                                                                                 crypto=('crypto', 'first'),
+                                                                                 fees=('fees', 'first'))
+        n_ids = tbl.loc[tbl['type'] == "VENTE", "number_id"].unique()
+        crypto = []
+        quantity_sold = []
+        date_achat = []
+        date_vente = []
+        produit_vente = []
+        cout = []
+        frais_achat = []
+        frais_vente = []
+        profit = []
+        profit_net = []
+        for n in n_ids:
+            ventes = tbl.loc[
+                (tbl['number_id'] == n) & (tbl['type'] == "VENTE"), ['avg_price', 'quantity', 'date', 'fees']]
+            achats = tbl.loc[
+                (tbl['number_id'] == n) & (tbl['type'] == "ACHAT"), ['avg_price', 'date', 'crypto', 'fees']]
+            crypto_item = achats['crypto'].item()
+            date_achat_item = achats['date'].item()
+            prix_achat_item = achats['avg_price'].item()
+            frais_achat_item = achats['fees'].item()
+            date_vente_item = ventes['date'].item()
+
+            if date_vente_item > self.date_min_filter:  # déjà filtré pour < date_max_filter
+                quantity_item = ventes['quantity'].item()
+                prix_vente_item = ventes['avg_price'].item()
+                frais_vente_item = ventes['fees'].item()
+                produit_vente_item = Decimal(quantity_item * prix_vente_item).quantize(Decimal("1.00"))
+                cout_item = Decimal(quantity_item * prix_achat_item).quantize(Decimal("1.00"))
+                profit_item = produit_vente_item - cout_item
+                profit_net_item = (quantity_item * (prix_vente_item - prix_achat_item) -
+                                   frais_vente_item - frais_achat_item)
+                profit_net_item = Decimal(profit_net_item).quantize(Decimal("1.00"))
+                crypto.append(crypto_item)
+                quantity_sold.append(quantity_item)
+                date_achat.append(date_achat_item)
+                date_vente.append(date_vente_item)
+                produit_vente.append(produit_vente_item)
+                cout.append(cout_item)
+                profit.append(profit_item)
+                frais_achat.append(frais_achat_item)
+                frais_vente.append(frais_vente_item)
+                profit_net.append(profit_net_item)
+        summary = {
+            'Nom': crypto,
+            'Quantité vendue': quantity_sold,
+            "Date d'acquisition": date_achat,
+            'Date de disposition': date_vente,
+            'Produit de la disposition ': produit_vente,
+            'Prix de base rajusté': cout,
+            'Profit': profit,
+            "Frais d'achat": frais_achat,
+            'Frais de vente': frais_vente,
+            'Profit net': profit_net
+        }
+        summary = pd.DataFrame(summary)
+        summary.sort_values(by=['Date de disposition'], inplace=True)
+        return summary
+
+    def _net_profits(self):
+        return self.summary_table['Profit net'].sum()
+
+    def _total_profits(self):
+        return self.summary_table.Profit.sum()
+
+    def table_taxes(self):
+         # not used
+        return  self.summary_table.to_html(index=False,
+                                          #border=0,
+                                          classes="table table-striped table_book",
+                                          justify="left",
+                                          table_id="table_book",
+                                          na_rep='',
+                                          float_format=lambda x: f'{x:10.6g}'
+                                          )
+
+
+
 class DisnatLedger:
     col_headers = ["Date de transaction", "Date de règlement", "Type de transaction", "Classe d'actif",
      "Symbole", "Description", "Marché", "Quantité", "Prix", "Devise du prix", "Commission payée",
