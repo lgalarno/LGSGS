@@ -305,8 +305,6 @@ def asset_list(request, pk):
 
     now = timezone.now()
     assets_updated = request.session.get('assets_updated')
-    print('aaa')
-    print(assets_updated)
     if assets_updated and assets_updated.get(pk_str):   # assets_updated and wallet
         assets_updated_time = timezone.datetime.fromisoformat(assets_updated.get(pk_str))
         assets_updated[pk_str] = now.isoformat()
