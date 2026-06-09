@@ -45,6 +45,7 @@ dependencies = [
     "numpy>=2.4.6",
     "packaging>=26.2",
     "pandas>=3.0.3",
+    "pandas-stubs~=3.0.3",
     "peewee>=4.0.6",
     "pillow>=12.2.0",
     "platformdirs>=4.9.6",

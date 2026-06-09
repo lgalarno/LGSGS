@@ -12,7 +12,7 @@ import pandas as pd
 DISNAT_HEADERS = settings.DISNAT_HEADERS
 CRYPTO_HEADERS = settings.CRYPTO_HEADERS
 
-
+#TODO achat disnat avec 2 achats, même id
 def csv_to_crypto_book(file, wallet):
     obj = CryptoBook.objects.filter(wallet=wallet)
     last_stored_element_date = None if not obj else obj.last().date
@@ -30,7 +30,8 @@ def csv_to_disnat_book(file, wallet):
 
 def csv_to_book(file, wallet=None, headers=None, last_stored_element_date=None):
     file_data = file.read().decode("utf-8-sig")
-    lines = file_data.split("\r\n")
+    # lines = file_data.split("\r\n")
+    lines = file_data.split("\n")
     file_headers = lines.pop(0)
     # loop over the lines and save them in db. If error , store as string and then display
     valid, mess = validate_headers(file_headers, headers)
@@ -317,7 +318,11 @@ def summary_disnat(book, mindate_filter=None, maxdate_filter=None) -> dict:
         #######################################
         # Calculate profits
         #######################################
-        df_numero_id = df_to_maxdate.groupby('numero_id').filter(lambda x: len(x) > 1)
+        # filter for items with numero_id appearing more than once - should be at least 1 ACHAT
+        # et au moins 2 types de transaction (ACAT et VENTE
+        # df_numero_id = df_to_maxdate.groupby('numero_id').filter(lambda x: len(x) > 1)
+        df_numero_id = df_to_maxdate.groupby('numero_id').filter(
+            lambda x: (len(x) > 1) & (len(set(list(x['type_de_transaction']))) == 2))
         profits_agg_temp = df_numero_id.groupby('numero_id', as_index=False).agg(
             montant_total=('montant_de_l_operation', 'sum'),
             date=('date_de_reglement', 'last')
@@ -333,8 +338,10 @@ def summary_disnat(book, mindate_filter=None, maxdate_filter=None) -> dict:
         # Calculate profits
         #######################################
         # filter for items with numero_id appearing more than once - should be at least 1 ACHAT
-        filtered_df = df.groupby('numero_id').filter(lambda x: len(x) > 1)
-
+        # et au moins 2 types de transaction (ACAT et VENTE
+        # filtered_df = df.groupby('numero_id').filter(lambda x: len(x) > 1)
+        filtered_df = df.groupby('numero_id').filter(
+            lambda x: (len(x) > 1) & (len(set(list(x['type_de_transaction']))) == 2))
         profits_agg = filtered_df.groupby('numero_id').agg(montant_total=('montant_de_l_operation', 'sum'))
         profits = profits_agg['montant_total'].sum()
 
